@@ -4,6 +4,7 @@ import { RegisterRoutes } from "@/src/routes/v1/routes";
 import fs from "fs";
 import path from "path";
 import { globalErrorHandler } from "./middlewares/global-error";
+import cookieParser from "cookie-parser";
 
 // Dynamically load swagger.json
 const swaggerDocument = JSON.parse(
@@ -13,8 +14,11 @@ const swaggerDocument = JSON.parse(
 // Initialize App Express
 const app = express();
 
-// Global Middleware
-app.use(express.json()); // Help to get the json from request body
+// Parse Cookie
+app.use(cookieParser());
+
+// Json from request body
+app.use(express.json());
 
 // Global API V1
 RegisterRoutes(app);

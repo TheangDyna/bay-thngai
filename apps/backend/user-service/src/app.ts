@@ -13,8 +13,8 @@ const swaggerDocument = JSON.parse(
 // Initialize App Express
 const app = express();
 
-// Global Middleware
-app.use(express.json()); // Help to get the json from request body
+// Json from request body
+app.use(express.json());
 
 // Global API V1
 RegisterRoutes(app);

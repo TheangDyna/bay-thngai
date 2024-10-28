@@ -55,7 +55,6 @@ class ProductRepository {
 
     try {
       const mongoFilter = buildFilter(filter);
-      console.log(mongoFilter);
       const operation = ItemModel.find(mongoFilter)
         .sort(sortFields)
         .skip((page - 1) * limit)

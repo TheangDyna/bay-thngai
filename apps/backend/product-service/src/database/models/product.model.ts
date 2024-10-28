@@ -15,6 +15,6 @@ export const itemSchema = new Schema({
 });
 
 // Create a model from the schema
-const ItemModel = model<IItem>("Item", itemSchema);
+const ItemModel = model<IItem>("Product", itemSchema);
 
 export default ItemModel;

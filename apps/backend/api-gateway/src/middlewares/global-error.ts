@@ -15,13 +15,13 @@ export function globalErrorHandler(
     const message = error.message;
     const errors = error.errors;
 
-    console.error(`$UserService - globalErrorHandler() method error: ${error}`);
+    console.error(`$Api-Gateway - globalErrorHandler() method error: ${error}`);
     return res.status(status).json({ message, error: errors });
   }
 
   // Unhandle Error
   console.error(
-    `$UserService - globalErrorHandler() method unexpected error: ${error}`
+    `$Api-Gateway - globalErrorHandler() method unexpected error: ${error}`
   );
   res
     .status(HTTP_STATUS_CODE.SERVER_ERROR)

@@ -283,16 +283,7 @@
 					}
 				},
 				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "state",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
+				"parameters": []
 			}
 		},
 		"/v1/auth/facebook": {

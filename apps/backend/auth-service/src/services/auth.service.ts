@@ -283,9 +283,8 @@ class AuthService {
     }
   }
 
-  loginWithGoogle(state: string): string {
-    // const state = crypto.randomBytes(16).toString('hex')
-
+  loginWithGoogle(): string {
+    const state = crypto.randomBytes(16).toString("hex");
     const params = new URLSearchParams({
       response_type: "code",
       client_id: configs.awsCognitoClientId,
@@ -323,7 +322,7 @@ class AuthService {
 
   async getOAuthToken(query: GoogleCallbackRequest): Promise<CognitoToken> {
     try {
-      const { code, error, state } = query;
+      const { code, error } = query;
 
       if (error || !code) {
         throw new InvalidInputError({ message: error });
@@ -387,14 +386,16 @@ class AuthService {
             `${configs.userServiceUrl}/v1/users/${existingUser.Username}`,
             {
               googleSub: userInfo.sub, // Update the Google sub
-              role: state,
+              role: "user",
             }
           );
 
           // Step 3.3: Update user info in Cognito
-          await this.updateUserCongitoAttributes(existingUser.Username!, {
-            "custom:role": state!,
-          });
+          // await this.updateUserCongitoAttributes(existingUser.Username!, {
+          //   "custom:role": "user",
+          // });
+
+          await this.addToGroup(existingUser.Username!, "user");
 
           userId = user.data.data._id;
         } else {
@@ -415,13 +416,14 @@ class AuthService {
             username: userInfo.name,
             // @ts-ignore
             profile: userInfo.profile,
-            role: state,
+            role: "user",
           });
 
           // Step 4.1: Update user info in Cognito
-          await this.updateUserCongitoAttributes(userInfo.sub!, {
-            "custom:role": state!,
-          });
+          // await this.updateUserCongitoAttributes(userInfo.sub!, {
+          //   "custom:role": "user",
+          // });
+          await this.addToGroup(userInfo.sub!, "user");
 
           userId = user.data.data._id;
         } catch (error) {
@@ -440,10 +442,10 @@ class AuthService {
       }
 
       // Step 5: Check if the user is already in the group before adding
-      const groupExists = await this.checkUserInGroup(userInfo.sub!, state!);
+      const groupExists = await this.checkUserInGroup(userInfo.sub!, "user");
       if (!groupExists) {
-        await this.addToGroup(userInfo.sub!, state!);
-        console.log(`User ${userInfo.sub} added to group ${state}`);
+        await this.addToGroup(userInfo.sub!, "user");
+        console.log(`User ${userInfo.sub} added to group user`);
       }
 
       return {
@@ -476,7 +478,7 @@ class AuthService {
       await client.send(command);
 
       console.log(
-        `AuthService verifyUser() method: User added to ${groupName} group`
+        `AuthService addToGroup() method: User added to ${groupName} group`
       );
     } catch (error) {
       throw error;
@@ -524,7 +526,7 @@ class AuthService {
       Username: username,
       UserPoolId: configs.awsCognitoUserPoolId,
       UserAttributes: Object.entries(attributes).map(([key, value]) => ({
-        Name: key,
+        Name: key === "role" ? "custom:role" : key,
         Value: value,
       })),
     };

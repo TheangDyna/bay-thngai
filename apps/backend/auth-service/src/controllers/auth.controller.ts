@@ -15,7 +15,6 @@ import {
   Get,
   Post,
   Queries,
-  Query,
   Request,
   Route,
   SuccessResponse,
@@ -84,8 +83,8 @@ export class AuthController extends Controller {
   }
 
   @Get("/google")
-  public loginWithGoogle(@Query() state: string) {
-    const cognitoOAuthURL = AuthService.loginWithGoogle(state);
+  public loginWithGoogle() {
+    const cognitoOAuthURL = AuthService.loginWithGoogle();
 
     return {
       message: "Login with Google successfully",

@@ -12,7 +12,7 @@ esbuild
     outdir: "build",
     external: ["express"], // Specify Node.js packages here
     loader: {
-      ".ts": "ts",
+      ".ts": "ts"
     },
     plugins: [
       // (2) Solve: https://stackoverflow.com/questions/62136515/swagger-ui-express-plugin-issue-with-webpack-bundling-in-production-mode/63048697#63048697
@@ -20,30 +20,30 @@ esbuild
         assets: [
           {
             from: `../node_modules/swagger-ui-dist/*.css`,
-            to: "./",
+            to: "./"
           },
           {
             from: `../node_modules/swagger-ui-dist/*.js`,
-            to: "./",
+            to: "./"
           },
           {
             from: `../node_modules/swagger-ui-dist/*.png`,
-            to: "./",
+            to: "./"
           },
           {
             from: "./src/configs/.env.production",
-            to: "./configs",
-          },
-        ],
-      }),
+            to: "./configs"
+          }
+        ]
+      })
     ],
     resolveExtensions: [".ts", ".js"],
     define: {
-      "process.env.NODE_ENV": '"production"',
+      "process.env.NODE_ENV": '"production"'
     },
     alias: {
-      "@": path.resolve(__dirname, "."),
-    },
+      "@": path.resolve(__dirname, ".")
+    }
   })
   .then(() => {
     // (1) Solve: Copy swagger.json after successful build

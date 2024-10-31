@@ -3,7 +3,7 @@ export interface CognitoIdentities {
   providerName: string;
   userId: string;
   providerType: string;
-  issuer: null,
+  issuer: null;
   primary: string;
 }
 

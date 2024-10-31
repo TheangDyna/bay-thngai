@@ -4,7 +4,7 @@ import {
   LoginRequest,
   ResendVerifyUserRequest,
   SignupRequest,
-  VerifyUserRequest,
+  VerifyUserRequest
 } from "@/src/controllers/types/auth-request.type";
 import AuthService from "@/src/services/auth.service";
 import setCookie from "@/src/utils/cookie";
@@ -17,7 +17,7 @@ import {
   Queries,
   Request,
   Route,
-  SuccessResponse,
+  SuccessResponse
 } from "tsoa";
 
 @Route("v1/auth")
@@ -81,13 +81,13 @@ export class AuthController extends Controller {
       setCookie(response, "id_token", result.idToken);
       setCookie(response, "access_token", result.accessToken);
       setCookie(response, "refresh_token", result.refreshToken, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
       setCookie(response, "username", result.username!, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
       setCookie(response, "user_id", result.userId!, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
 
       return { message: "Login successfully" };
@@ -103,7 +103,7 @@ export class AuthController extends Controller {
 
     return {
       message: "Login with Google successfully",
-      data: cognitoOAuthURL,
+      data: cognitoOAuthURL
     };
   }
 
@@ -128,13 +128,13 @@ export class AuthController extends Controller {
       setCookie(response, "id_token", tokens.idToken);
       setCookie(response, "access_token", tokens.accessToken);
       setCookie(response, "refresh_token", tokens.refreshToken, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
       setCookie(response, "username", tokens.username!, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
       setCookie(response, "user_id", tokens.userId!, {
-        maxAge: 30 * 24 * 3600 * 1000,
+        maxAge: 30 * 24 * 3600 * 1000
       });
 
       response.redirect(configs.clientUrl);
@@ -157,7 +157,7 @@ export class AuthController extends Controller {
 
       const result = await AuthService.refreshToken({
         refreshToken: body.refreshToken || refreshToken,
-        username: body.username || username,
+        username: body.username || username
       });
 
       setCookie(response, "id_token", result.idToken);

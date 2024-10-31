@@ -25,83 +25,83 @@ const routePaths: RoutesConfig = {
         path: "/health",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/api-docs",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/signup",
         methods: {
           POST: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/signin",
         methods: {
           POST: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/verify",
         methods: {
           POST: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/login",
         methods: {
           POST: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/google",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/facebook",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/refresh-token",
         methods: {
           POST: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/oauth/callback",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
-      },
-    ],
+            authRequired: false
+          }
+        }
+      }
+    ]
   },
   userService: {
     path: "/v1/users",
@@ -109,37 +109,37 @@ const routePaths: RoutesConfig = {
     methods: {
       GET: {
         authRequired: true,
-        roles: ["user", "admin"],
+        roles: ["user", "admin"]
       },
       POST: {
         authRequired: true,
-        roles: ["user", "admin"],
-      },
+        roles: ["user", "admin"]
+      }
     },
     nestedRoutes: [
       {
         path: "/health",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/api-docs",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/me",
         methods: {
           GET: {
             authRequired: true,
-            roles: ["user", "admin"],
-          },
+            roles: ["user", "admin"]
+          }
         },
         nestedRoutes: [
           {
@@ -147,12 +147,12 @@ const routePaths: RoutesConfig = {
             methods: {
               GET: {
                 authRequired: true,
-                roles: ["user", "admin"],
+                roles: ["user", "admin"]
               },
               POST: {
                 authRequired: true,
-                roles: ["user", "admin"],
-              },
+                roles: ["user", "admin"]
+              }
             },
             nestedRoutes: [
               {
@@ -160,51 +160,51 @@ const routePaths: RoutesConfig = {
                 methods: {
                   DELETE: {
                     authRequired: true,
-                    roles: ["user", "admin"],
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
+                    roles: ["user", "admin"]
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
   productService: {
     path: "/v1/products",
     target: configs.productServiceUrl,
     methods: {
       GET: {
-        authRequired: false,
-      },
+        authRequired: false
+      }
     },
     nestedRoutes: [
       {
         path: "/health",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/api-docs",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
+            authRequired: false
+          }
+        }
       },
       {
         path: "/:id",
         methods: {
           GET: {
-            authRequired: false,
-          },
-        },
-      },
-    ],
-  },
+            authRequired: false
+          }
+        }
+      }
+    ]
+  }
 };
 
 export default routePaths;

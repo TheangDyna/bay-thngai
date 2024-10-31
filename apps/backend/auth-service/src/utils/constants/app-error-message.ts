@@ -7,7 +7,7 @@ export const AUTH_MESSAGES = {
     LOGOUT: "You have been logged out. See you next time!",
     WELCOME_BACK: "Great to see you again!",
     GOOGLE_LOGIN_SUCCESS:
-      "Welcome back! You've successfully signed in with Google.",
+      "Welcome back! You've successfully signed in with Google."
   },
 
   // 2. Email/Phone Number + Password Authentication
@@ -37,7 +37,7 @@ export const AUTH_MESSAGES = {
     ACCOUNT_ALREADY_EXISTS:
       "Looks like you've already signed up. Try logging in instead.",
     WEAK_PASSWORD:
-      "Your password should be at least 8 characters long and include a mix of letters and numbers.",
+      "Your password should be at least 8 characters long and include a mix of letters and numbers."
   },
 
   // 3. Google Login Authentication
@@ -54,7 +54,7 @@ export const AUTH_MESSAGES = {
       "We can't log you in because your Google account is inactive.",
     ACCOUNT_ISSUE:
       "Google account issue detected. Please check your Google account status.",
-    ACCOUNT_LINK_SUCCESS: "Your Google account has been successfully linked!",
+    ACCOUNT_LINK_SUCCESS: "Your Google account has been successfully linked!"
   },
 
   // 4. Authorization Errors
@@ -73,7 +73,7 @@ export const AUTH_MESSAGES = {
       "Your account has been suspended. Please contact support for assistance.",
     ACCOUNT_DISABLED: "Your account has been temporarily disabled.",
     POLICY_VIOLATION:
-      "Account suspended due to policy violations. Reach out to support for more info.",
+      "Account suspended due to policy violations. Reach out to support for more info."
   },
 
   // 5. Multi-Factor Authentication (If Applicable)
@@ -86,7 +86,7 @@ export const AUTH_MESSAGES = {
     INVALID_VERIFICATION_CODE:
       "That code doesn't seem right. Please try again.",
     VERIFICATION_FAILED: "Verification failed. Please enter the correct code.",
-    VERIFICATION_SUCCESS: "You're verified! Redirecting you now.",
+    VERIFICATION_SUCCESS: "You're verified! Redirecting you now."
   },
 
   // 6. Account Registration
@@ -98,7 +98,7 @@ export const AUTH_MESSAGES = {
       "Something went wrong during sign-up. Please try again.",
     REGISTRATION_FAILED:
       "We couldn't create your account at this time. Please contact support.",
-    SIGNUP_SNAFU: "Oops! We hit a snag. Please refresh and try again.",
+    SIGNUP_SNAFU: "Oops! We hit a snag. Please refresh and try again."
   },
 
   // 7. General Error Messages
@@ -113,7 +113,7 @@ export const AUTH_MESSAGES = {
       "Some of the information entered isn't valid. Please check and try again.",
     INVALID_FIELDS:
       "Invalid input detected. Please correct the highlighted fields.",
-    REQUIRED_FIELDS: "Please fill out all required fields.",
+    REQUIRED_FIELDS: "Please fill out all required fields."
   },
 
   // 8. Helpful Tips and Guidance
@@ -131,7 +131,7 @@ export const AUTH_MESSAGES = {
     PHONE_FORMAT:
       "Please enter a valid phone number, including the country code.",
     PHONE_FORMAT_TIP:
-      "Phone numbers should contain only digits. Please remove any spaces or dashes.",
+      "Phone numbers should contain only digits. Please remove any spaces or dashes."
   },
 
   // 9. Security and Privacy Messages
@@ -143,7 +143,7 @@ export const AUTH_MESSAGES = {
     SECURITY_NOTIFICATION:
       "For your security, we recommend changing your password regularly.",
     LOGOUT_REMINDER:
-      "Remember to log out from shared devices to keep your account safe.",
+      "Remember to log out from shared devices to keep your account safe."
   },
 
   // 10. Encouraging User Actions
@@ -154,8 +154,8 @@ export const AUTH_MESSAGES = {
     PASSWORD_RESET_PROMPT: "Forgot your password? Click here to reset it.",
     NEED_PASSWORD_HELP:
       "Need help accessing your account? Reset your password.",
-    TROUBLE_LOGGING_IN: "Trouble logging in? Let's get you a new password.",
-  },
+    TROUBLE_LOGGING_IN: "Trouble logging in? Let's get you a new password."
+  }
 };
 
 export const APP_ERROR_MESSAGE = {
@@ -169,6 +169,6 @@ export const APP_ERROR_MESSAGE = {
   invalidEmail: "Enter a valid email address",
   existedEmail: "Email already exists",
   // Product Resource Message Error
-  productDoesntExist: "Product does not exist",
+  productDoesntExist: "Product does not exist"
   // ...
 };

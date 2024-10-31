@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 const userJoiSchema = Joi.object({
   sub: Joi.string(),
@@ -9,6 +9,6 @@ const userJoiSchema = Joi.object({
   profile: Joi.string(),
   phone_number: Joi.string(),
   role: Joi.string()
-}).xor('email', 'phone_number'); // Either email or phone_number must be present
+}).xor("email", "phone_number"); // Either email or phone_number must be present
 
 export default userJoiSchema;

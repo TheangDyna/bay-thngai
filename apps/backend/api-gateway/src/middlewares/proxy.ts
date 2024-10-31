@@ -19,7 +19,7 @@ const proxyConfigs: ProxyConfig = {
           message: "Proxy request initiated",
           target: routePaths.authService.target,
           method: req.method,
-          url: req.url,
+          url: req.url
         });
       },
       proxyRes: (proxyRes, req, res) => {
@@ -28,7 +28,7 @@ const proxyConfigs: ProxyConfig = {
           statusCode: proxyRes.statusCode,
           method: req.method,
           url: req.url,
-          target: routePaths.authService.target,
+          target: routePaths.authService.target
         });
 
         // Set CORS headers on the response
@@ -50,7 +50,7 @@ const proxyConfigs: ProxyConfig = {
           error: err.message,
           method: req.method,
           url: req.url,
-          target: routePaths.productService.target,
+          target: routePaths.productService.target
         });
 
         // Handle proxy error, send a custom response to the client
@@ -58,7 +58,7 @@ const proxyConfigs: ProxyConfig = {
         // res.end("Error occurred while communicating with the service.");
         if (res instanceof express.response.constructor) {
           (res as Response).writeHead(502, {
-            "Content-Type": "text/plain",
+            "Content-Type": "text/plain"
           });
           (res as Response).end(
             "Error occurred while communicating with the service."
@@ -67,8 +67,8 @@ const proxyConfigs: ProxyConfig = {
           // Handle case where res is not a standard HTTP response
           res.end();
         }
-      },
-    },
+      }
+    }
   },
   [routePaths.userService.path]: {
     target: routePaths.userService.target,
@@ -79,7 +79,7 @@ const proxyConfigs: ProxyConfig = {
           message: "Proxy request initiated",
           target: routePaths.userService.target,
           method: req.method,
-          url: req.url,
+          url: req.url
         });
       },
       proxyRes: (proxyRes, req, res) => {
@@ -88,7 +88,7 @@ const proxyConfigs: ProxyConfig = {
           statusCode: proxyRes.statusCode,
           method: req.method,
           url: req.url,
-          target: routePaths.userService.target,
+          target: routePaths.userService.target
         });
 
         // Set CORS headers on the response
@@ -110,7 +110,7 @@ const proxyConfigs: ProxyConfig = {
           error: err.message,
           method: req.method,
           url: req.url,
-          target: routePaths.userService.target,
+          target: routePaths.userService.target
         });
 
         // Handle proxy error, send a custom response to the client
@@ -118,7 +118,7 @@ const proxyConfigs: ProxyConfig = {
         // res.end("Error occurred while communicating with the service.");
         if (res instanceof express.response.constructor) {
           (res as Response).writeHead(502, {
-            "Content-Type": "text/plain",
+            "Content-Type": "text/plain"
           });
           (res as Response).end(
             "Error occurred while communicating with the service."
@@ -127,8 +127,8 @@ const proxyConfigs: ProxyConfig = {
           // Handle case where res is not a standard HTTP response
           res.end();
         }
-      },
-    },
+      }
+    }
   },
   [routePaths.productService.path]: {
     target: routePaths.productService.target,
@@ -139,7 +139,7 @@ const proxyConfigs: ProxyConfig = {
           message: "Proxy request initiated",
           target: routePaths.productService.target,
           method: req.method,
-          url: req.url,
+          url: req.url
         });
       },
       proxyRes: (proxyRes, req, res) => {
@@ -148,7 +148,7 @@ const proxyConfigs: ProxyConfig = {
           statusCode: proxyRes.statusCode,
           method: req.method,
           url: req.url,
-          target: routePaths.productService.target,
+          target: routePaths.productService.target
         });
 
         // Set CORS headers on the response
@@ -170,7 +170,7 @@ const proxyConfigs: ProxyConfig = {
           error: err.message,
           method: req.method,
           url: req.url,
-          target: routePaths.productService.target,
+          target: routePaths.productService.target
         });
 
         // Handle proxy error, send a custom response to the client
@@ -178,7 +178,7 @@ const proxyConfigs: ProxyConfig = {
         // res.end("Error occurred while communicating with the service.");
         if (res instanceof express.response.constructor) {
           (res as Response).writeHead(502, {
-            "Content-Type": "text/plain",
+            "Content-Type": "text/plain"
           });
           (res as Response).end(
             "Error occurred while communicating with the service."
@@ -187,9 +187,9 @@ const proxyConfigs: ProxyConfig = {
           // Handle case where res is not a standard HTTP response
           res.end();
         }
-      },
-    },
-  },
+      }
+    }
+  }
 };
 
 const applyProxy = (app: express.Application) => {

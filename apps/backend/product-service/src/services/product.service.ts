@@ -1,7 +1,7 @@
 import {
   ProductCreateRequest,
   ProductGetAllRequest,
-  ProductUpdateRequest,
+  ProductUpdateRequest
 } from "@/src/controllers/types/product-request.type";
 import { IItem } from "@/src/database/models/product.model";
 import ProductRepository from "../database/repositories/product.repository";
@@ -15,7 +15,7 @@ export class ProductService {
         page,
         limit,
         filter: filter && JSON.parse(filter),
-        sort: sort && JSON.parse(sort),
+        sort: sort && JSON.parse(sort)
       };
       const result = await ProductRepository.getAll(newQueries);
 

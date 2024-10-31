@@ -45,7 +45,7 @@ function loadConfig(): Config {
     AWS_SECRET_ACCESS_KEY: Joi.string().required(),
     // aws cognito
     AWS_COGNITO_USER_POOL_ID: Joi.string().required(),
-    AWS_COGNITO_CLIENT_ID: Joi.string().required(),
+    AWS_COGNITO_CLIENT_ID: Joi.string().required()
   })
     .unknown()
     .required();
@@ -72,7 +72,7 @@ function loadConfig(): Config {
     awsCloudwatchLogsGroupName: envVars.AWS_CLOUDWATCH_LOGS_GROUP_NAME,
     // aws cognito
     awsCognitoUserPoolId: envVars.AWS_COGNITO_USER_POOL_ID,
-    awsCognitoClientId: envVars.AWS_COGNITO_CLIENT_ID,
+    awsCognitoClientId: envVars.AWS_COGNITO_CLIENT_ID
   };
 }
 

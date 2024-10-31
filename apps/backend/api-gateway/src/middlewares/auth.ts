@@ -8,7 +8,7 @@ import axios from "axios";
 import {
   AuthenticationError,
   AuthorizationError,
-  NotFoundError,
+  NotFoundError
 } from "../utils/errors";
 
 declare global {
@@ -31,7 +31,7 @@ declare global {
 const verifier = CognitoJwtVerifier.create({
   userPoolId: configs.awsCognitoUserPoolId,
   tokenUse: "access",
-  clientId: configs.awsCognitoClientId,
+  clientId: configs.awsCognitoClientId
 });
 
 // TODO: implement the authenticateToken function
@@ -73,8 +73,8 @@ const authenticateToken = async (
             `${configs.userServiceUrl}/v1/users/me`,
             {
               headers: {
-                Cookie: `username=${userPayload.sub}`,
-              },
+                Cookie: `username=${userPayload.sub}`
+              }
             }
           );
           role.push(data.data.role);
@@ -88,7 +88,7 @@ const authenticateToken = async (
 
       req.currentUser = {
         username: payload.username,
-        role,
+        role
       };
     }
 

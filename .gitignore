@@ -94,7 +94,3 @@ development
 node_modules
 
 build
-
-.npmrc
-
-yarn.lock

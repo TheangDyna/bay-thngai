@@ -98,7 +98,7 @@ class AuthService {
 
       return `User created successfully. Please check your ${result.CodeDeliveryDetails?.DeliveryMedium?.toLowerCase()} for a verification code.`;
     } catch (error) {
-      console.error(`AuthService signup() method error: `, error);
+      console.error(`AuthService - signup() method error: `, error);
 
       if (error instanceof ApplicationError) {
         throw error;
@@ -131,10 +131,6 @@ class AuthService {
     try {
       const command = new ConfirmSignUpCommand(params);
       await client.send(command);
-      console.log(
-        "AuthService verifyUser() method: User verified successfully"
-      );
-
       // Retrieve the user to get the `role` attribute
       const userInfo = await this.getUserByUsername(username);
       const role =
@@ -156,7 +152,7 @@ class AuthService {
         role,
       });
     } catch (error) {
-      console.error("AuthService verifyUser() method error:", error);
+      console.error("AuthService - verifyUser() method error:", error);
 
       // Mismatch Code
       if (typeof error === "object" && error !== null && "name" in error) {
@@ -184,10 +180,6 @@ class AuthService {
     try {
       const command = new ResendConfirmationCodeCommand(params);
       await client.send(command);
-      console.log(
-        "AuthService resendVerifyUser() method: User verified successfully"
-      );
-
       // Retrieve the user to get the `role` attribute
       const userInfo = await this.getUserByUsername(username);
       const role =
@@ -209,7 +201,7 @@ class AuthService {
         role,
       });
     } catch (error) {
-      console.error("AuthService resendVerifyUser() method error:", error);
+      console.error("AuthService - resendVerifyUser() method error:", error);
 
       // Mismatch Code
       if (typeof error === "object" && error !== null && "name" in error) {
@@ -246,18 +238,11 @@ class AuthService {
         result.AuthenticationResult?.IdToken!
       );
 
-      // Get the user info from the user service
-      const userInfo = await axios.get(
-        `${configs.userServiceUrl}/v1/users/${congitoUsername.sub}`
-      );
-      console.log("userInfo: ", userInfo);
-
       return {
         accessToken: result.AuthenticationResult?.AccessToken!,
         idToken: result.AuthenticationResult?.IdToken!,
         refreshToken: result.AuthenticationResult?.RefreshToken!,
         username: congitoUsername.sub,
-        userId: userInfo.data.data._id,
       };
     } catch (error) {
       // Mismatch Password | Email or Phone Number
@@ -278,7 +263,7 @@ class AuthService {
         }
       }
 
-      console.error("AuthService login() method error:", error);
+      console.error("AuthService - login() method error:", error);
       throw new Error(`Error verifying user: ${error}`);
     }
   }
@@ -362,9 +347,7 @@ class AuthService {
       // @ts-ignore
       const email = userInfo.email;
       const existingUser = await this.getUserByEmail(email);
-      console.log("existingUser: ", existingUser);
-
-      let userId: string;
+      // let userId: string;
 
       // Step 3: Case User is already signin with Email | Phone Number / Password, but they try to signin with Google | Facebook
       if (existingUser && existingUser.UserStatus !== "EXTERNAL_PROVIDER") {
@@ -382,7 +365,7 @@ class AuthService {
           });
 
           // Step 3.2: Update user info in user service
-          const user = await axios.put(
+          await axios.put(
             `${configs.userServiceUrl}/v1/users/${existingUser.Username}`,
             {
               googleSub: userInfo.sub, // Update the Google sub
@@ -397,19 +380,13 @@ class AuthService {
 
           await this.addToGroup(existingUser.Username!, "user");
 
-          userId = user.data.data._id;
-        } else {
-          const user = await axios.get(
-            `${configs.userServiceUrl}/v1/users/${existingUser.Username}`
-          );
-
-          userId = user.data.data._id;
+          // userId = user.data.data._id;
         }
       }
       // Step 4: Case User is never signin with Google | Facebook
       else {
         try {
-          const user = await axios.post(`${configs.userServiceUrl}/v1/users`, {
+          await axios.post(`${configs.userServiceUrl}/v1/users`, {
             googleSub: userInfo.sub,
             email,
             // @ts-ignore
@@ -425,19 +402,10 @@ class AuthService {
           // });
           await this.addToGroup(userInfo.sub!, "user");
 
-          userId = user.data.data._id;
+          // userId = user.data.data._id;
         } catch (error) {
-          if (axios.isAxiosError(error) && error.response?.status === 409) {
-            console.log(
-              "User already exists in user service, retrieving existing user info."
-            );
-            const existingUserResponse = await axios.get(
-              `${configs.userServiceUrl}/v1/users/${userInfo.sub}`
-            );
-            userId = existingUserResponse.data.data._id;
-          } else {
-            throw error; // Re-throw if it's a different error
-          }
+          console.error("AuthService - getOAuthToken() method error:", error);
+          throw error; // Re-throw if it's a different error
         }
       }
 
@@ -445,7 +413,6 @@ class AuthService {
       const groupExists = await this.checkUserInGroup(userInfo.sub!, "user");
       if (!groupExists) {
         await this.addToGroup(userInfo.sub!, "user");
-        console.log(`User ${userInfo.sub} added to group user`);
       }
 
       return {
@@ -453,16 +420,15 @@ class AuthService {
         idToken: token.idToken,
         refreshToken: token.refreshToken,
         username: userInfo.sub,
-        userId,
       };
     } catch (error) {
+      console.error("AuthService - getOAuthToken() method error:", error);
       throw error;
     }
   }
 
   getUserInfoFromToken(token: string) {
     const decodedToken = jwtDecode(token);
-    console.log("decodedToken: ", decodedToken);
     return decodedToken;
   }
 
@@ -476,10 +442,6 @@ class AuthService {
     try {
       const command = new AdminAddUserToGroupCommand(params);
       await client.send(command);
-
-      console.log(
-        `AuthService addToGroup() method: User added to ${groupName} group`
-      );
     } catch (error) {
       throw error;
     }
@@ -496,7 +458,7 @@ class AuthService {
       const userInfo = await client.send(command);
       return userInfo;
     } catch (error) {
-      console.error("AuthService getUserByUsername() method error:", error);
+      console.error("AuthService - getUserByUsername() method error:", error);
       throw error;
     }
   }
@@ -513,7 +475,7 @@ class AuthService {
       const response = await client.send(listUsersCommand);
       return response.Users && response.Users[0];
     } catch (error) {
-      console.error("AuthService getUserByEmail() method error:", error);
+      console.error("AuthService - getUserByEmail() method error:", error);
       throw error;
     }
   }
@@ -536,7 +498,7 @@ class AuthService {
       await client.send(command);
     } catch (error) {
       console.error(
-        "AuthService updateUserCongitoAttributes() method error:",
+        "AuthService - updateUserCongitoAttributes() method error:",
         error
       );
       throw error;
@@ -571,7 +533,7 @@ class AuthService {
       const command = new AdminLinkProviderForUserCommand(params);
       await client.send(command);
     } catch (error) {
-      console.error(`AuthService linkAccount() method error: `, error);
+      console.error(`AuthService - linkAccount() method error: `, error);
       throw error;
     }
   }
@@ -594,9 +556,9 @@ class AuthService {
       );
     } catch (error) {
       console.error(
-        `Error checking if user ${username} is in group ${groupName}:`,
-        error
+        `Error checking if user ${username} is in group ${groupName}:`
       );
+      console.error("AuthService - checkUserInGroup() method error:", error);
       throw error;
     }
   }
@@ -635,7 +597,7 @@ class AuthService {
         throw error;
       }
 
-      console.error("AuthService refreshToken() method error:", error);
+      console.error("AuthService - refreshToken() method error:", error);
       throw new Error(`Error refreshing token: ${error}`);
     }
   }

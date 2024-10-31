@@ -60,11 +60,7 @@ class UserRepository {
 
     try {
       const mongoFilter = buildFilter(filter);
-      console.log(mongoFilter);
-      const operation = UserModel.find({
-        age: { $gte: 18, $lte: 28 },
-        gender: "Male",
-      })
+      const operation = UserModel.find(mongoFilter)
         .sort(sortFields)
         .skip((page - 1) * limit)
         .limit(limit);
@@ -111,7 +107,7 @@ class UserRepository {
 
       return result;
     } catch (error) {
-      console.error(`UserRepository - findById() method error: ${error}`);
+      console.error(`UserRepository - findBySub() method error: ${error}`);
       throw error;
     }
   }
@@ -148,17 +144,13 @@ class UserRepository {
     }
   }
 
-  async updateBySub(updateInfo: UserUpdateRepoParams) {
+  async updateById(updateInfo: UserUpdateRepoParams) {
     try {
       const { id, ...newUpdateInfo } = updateInfo;
 
-      const result = await UserModel.findOneAndUpdate(
-        {
-          $or: [{ userId: id }, { googleSub: id }, { facebookSub: id }],
-        },
-        newUpdateInfo,
-        { new: true }
-      );
+      const result = await UserModel.findByIdAndUpdate(id, newUpdateInfo, {
+        new: true,
+      });
 
       if (!result) {
         throw new NotFoundError();
@@ -176,24 +168,24 @@ class UserRepository {
       const result = await UserModel.findByIdAndDelete(userId);
 
       if (!result) {
-        throw new NotFoundError();
+        throw new NotFoundError("User not found!");
       }
     } catch (error) {
-      console.error(`UserRepository - updateById() method error: ${error}`);
+      console.error(`UserRepository - deleteById() method error: ${error}`);
       throw error;
     }
   }
 
-  async addFavorite(userId: string, jobId: string): Promise<IUser> {
+  async addFavorite(userId: string, productId: string): Promise<IUser> {
     try {
       const user = await UserModel.findByIdAndUpdate(
         userId,
-        { $addToSet: { favorites: jobId } },
+        { $addToSet: { favorites: productId } },
         { new: true }
       );
 
       if (!user) {
-        throw new NotFoundError("User not found");
+        throw new NotFoundError("User not found!");
       }
 
       return user;
@@ -203,16 +195,16 @@ class UserRepository {
     }
   }
 
-  async removeFavorite(userId: string, jobId: string): Promise<IUser> {
+  async removeFavorite(userId: string, productId: string): Promise<IUser> {
     try {
       const user = await UserModel.findByIdAndUpdate(
         userId,
-        { $pull: { favorites: jobId } },
+        { $pull: { favorites: productId } },
         { new: true }
       );
 
       if (!user) {
-        throw new NotFoundError("User not found");
+        throw new NotFoundError("User not found!");
       }
 
       return user;
@@ -227,7 +219,7 @@ class UserRepository {
       const user = await UserModel.findById(userId).select("favorites");
 
       if (!user) {
-        throw new NotFoundError("User not found");
+        throw new NotFoundError("User not found!");
       }
 
       return user.favorites;

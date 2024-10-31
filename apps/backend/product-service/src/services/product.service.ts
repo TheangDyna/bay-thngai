@@ -33,39 +33,46 @@ export class ProductService {
       const newProduct = await ProductRepository.createProduct(productRequest);
       return newProduct;
     } catch (error) {
-      console.log(`ProductService - createProduct() method error: ${error}`);
+      console.error(`ProductService - createProduct() method error: ${error}`);
       throw error;
     }
   }
 
-  public async getProductById(id: string): Promise<IItem> {
+  public async getProductById(productId: string): Promise<IItem> {
     try {
-      const product = await ProductRepository.getProductById(id);
+      const product = await ProductRepository.getProductById(productId);
       return product;
     } catch (error) {
+      console.error(`ProductService - getProductById() method error: ${error}`);
       throw error;
     }
   }
 
-  public async updateProduct(
-    id: string,
+  public async updateProductById(
+    productId: string,
     productRequest: ProductUpdateRequest
   ): Promise<IItem> {
     try {
-      const updatedProduct = await ProductRepository.updateProduct(
-        id,
+      const updatedProduct = await ProductRepository.updateProductById(
+        productId,
         productRequest
       );
       return updatedProduct;
     } catch (error) {
+      console.error(
+        `ProductService - updateProductById() method error: ${error}`
+      );
       throw error;
     }
   }
 
-  public async deleteProduct(id: string): Promise<void> {
+  public async deleteProductById(id: string): Promise<void> {
     try {
-      await ProductRepository.deleteProduct(id);
+      await ProductRepository.deleteProductById(id);
     } catch (error) {
+      console.error(
+        `ProductService - deleteProductById() method error: ${error}`
+      );
       throw error;
     }
   }

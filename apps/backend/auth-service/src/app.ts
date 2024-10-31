@@ -20,11 +20,11 @@ app.use(cookieParser());
 // Json from request body
 app.use(express.json());
 
+// API Documentations
+app.use("/v1/auth/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Global API V1
 RegisterRoutes(app);
-
-// API Documentations
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ERROR Handler
 app.use(globalErrorHandler);

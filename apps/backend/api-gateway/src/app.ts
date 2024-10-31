@@ -21,8 +21,8 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 
 // Health check endpoint
-app.get("/health", (_: Request, res: Response) => {
-  res.status(200).send("OK");
+app.get("/v1/api-gateway/health", (_: Request, res: Response) => {
+  res.status(200).send({ message: "OK" });
 });
 
 // Apply rate limit to all routes

@@ -8,6 +8,7 @@ import {
   ProductSortParams,
 } from "./types/product-repository.type";
 import { SortOrder } from "mongoose";
+import { NotFoundError } from "@/src/utils/errors";
 
 class ProductRepository {
   async getAll(queries: ProductGetAllRepoParams) {
@@ -82,52 +83,64 @@ class ProductRepository {
       const newProduct = await ItemModel.create(productRequest);
       return newProduct;
     } catch (error) {
+      console.error(
+        `ProductRepository - createProduct() method error: ${error}`
+      );
       throw error;
     }
   }
 
-  public async getProductById(id: string): Promise<IItem> {
+  public async getProductById(productId: string): Promise<IItem> {
     try {
-      const product = await ItemModel.findById(id);
+      const product = await ItemModel.findById(productId);
       if (!product) {
-        throw new Error("Product not found!");
+        throw new NotFoundError("Product not found!");
       }
 
       return product;
     } catch (error) {
+      console.error(
+        `ProductRepository - getProductById() method error: ${error}`
+      );
       throw error;
     }
   }
 
-  public async updateProduct(
-    id: string,
+  public async updateProductById(
+    productId: string,
     productRequest: ProductUpdateRequest
   ): Promise<IItem> {
     try {
       const updatedProduct = await ItemModel.findByIdAndUpdate(
-        id,
+        productId,
         productRequest,
         { new: true }
       );
 
       if (!updatedProduct) {
-        throw new Error("Product not found!");
+        throw new NotFoundError("Product not found!");
       }
 
       return updatedProduct;
     } catch (error) {
+      console.error(
+        `ProductRepository - updateProductById() method error: ${error}`
+      );
       throw error;
     }
   }
 
-  public async deleteProduct(id: string): Promise<void> {
+  public async deleteProductById(productId: string): Promise<void> {
     try {
-      const deleteProduct = await ItemModel.findByIdAndDelete(id);
+      const deleteProduct = await ItemModel.findByIdAndDelete(productId);
 
       if (!deleteProduct) {
-        throw new Error("Product not found!");
+        throw new NotFoundError("Product not found!");
       }
     } catch (error) {
+      console.error(
+        `ProductRepository - deleteProductById() method error: ${error}`
+      );
       throw error;
     }
   }

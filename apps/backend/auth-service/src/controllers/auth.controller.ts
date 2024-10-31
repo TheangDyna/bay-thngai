@@ -22,6 +22,15 @@ import {
 
 @Route("v1/auth")
 export class AuthController extends Controller {
+  @Get("/health")
+  public async getHealth(): Promise<{ message: string }> {
+    try {
+      return { message: "OK" };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Post("/signup")
   public async signup(
     @Body() body: SignupRequest
@@ -31,6 +40,7 @@ export class AuthController extends Controller {
 
       return { message: result };
     } catch (error) {
+      console.error(`AuthController - signup() method error: ${error}`);
       throw error;
     }
   }
@@ -39,8 +49,9 @@ export class AuthController extends Controller {
   public async verifyUser(@Body() body: VerifyUserRequest) {
     try {
       await AuthService.verifyUser(body);
-      return { message: `You've verified successfully` };
+      return { message: "You've verified successfully" };
     } catch (error) {
+      console.error(`AuthController - verifyUser() method error: ${error}`);
       throw error;
     }
   }
@@ -49,8 +60,11 @@ export class AuthController extends Controller {
   public async resendVerifyUser(@Body() body: ResendVerifyUserRequest) {
     try {
       await AuthService.resendVerifyUser(body);
-      return { message: `You've verified successfully` };
+      return { message: "You've verified successfully" };
     } catch (error) {
+      console.error(
+        `AuthController - resendVerifyUser() method error: ${error}`
+      );
       throw error;
     }
   }
@@ -78,6 +92,7 @@ export class AuthController extends Controller {
 
       return { message: "Login successfully" };
     } catch (error) {
+      console.error(`AuthController - login() method error: ${error}`);
       throw error;
     }
   }
@@ -124,6 +139,7 @@ export class AuthController extends Controller {
 
       response.redirect(configs.clientUrl);
     } catch (error) {
+      console.error(`AuthController - oauthCallback() method error: ${error}`);
       throw error;
     }
   }
@@ -149,6 +165,7 @@ export class AuthController extends Controller {
 
       return { message: "Token refreshed successfully" };
     } catch (error) {
+      console.error(`AuthController - refreshToken() method error: ${error}`);
       throw error;
     }
   }

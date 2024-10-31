@@ -88,6 +88,35 @@ export function RegisterRoutes(app: Router) {
 
 
     
+        app.get('/v1/products/health',
+            ...(fetchMiddlewares<RequestHandler>(ProductController)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.getHealth)),
+
+            async function ProductController_getHealth(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ProductController();
+
+              await templateService.apiHandler({
+                methodName: 'getHealth',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/v1/products',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
             ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.getAllProducts)),
@@ -120,9 +149,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.post('/v1/products',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
-            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.createItem)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.createProduct)),
 
-            async function ProductController_createItem(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_createProduct(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ProductCreateRequest"},
             };
@@ -136,7 +165,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'createItem',
+                methodName: 'createProduct',
                 controller,
                 response,
                 next,
@@ -148,13 +177,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/v1/products/:id',
+        app.get('/v1/products/:productId',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
-            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.getItemById)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.getProductById)),
 
-            async function ProductController_getItemById(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_getProductById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    productId: {"in":"path","name":"productId","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -166,7 +195,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'getItemById',
+                methodName: 'getProductById',
                 controller,
                 response,
                 next,
@@ -178,13 +207,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/v1/products/:id',
+        app.put('/v1/products/:productId',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
-            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.updateItem)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.updateProductById)),
 
-            async function ProductController_updateItem(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_updateProductById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    productId: {"in":"path","name":"productId","required":true,"dataType":"string"},
                     requestBody: {"in":"body","name":"requestBody","required":true,"ref":"ProductUpdateRequest"},
             };
 
@@ -197,7 +226,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'updateItem',
+                methodName: 'updateProductById',
                 controller,
                 response,
                 next,
@@ -209,13 +238,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/v1/products/:id',
+        app.delete('/v1/products/:productId',
             ...(fetchMiddlewares<RequestHandler>(ProductController)),
-            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.deleteItemById)),
+            ...(fetchMiddlewares<RequestHandler>(ProductController.prototype.deleteProductById)),
 
-            async function ProductController_deleteItemById(request: ExRequest, response: ExResponse, next: any) {
+            async function ProductController_deleteProductById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                    productId: {"in":"path","name":"productId","required":true,"dataType":"string"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -227,7 +256,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new ProductController();
 
               await templateService.apiHandler({
-                methodName: 'deleteItemById',
+                methodName: 'deleteProductById',
                 controller,
                 response,
                 next,

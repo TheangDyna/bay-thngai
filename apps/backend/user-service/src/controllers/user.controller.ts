@@ -26,6 +26,15 @@ import { Request as ExpressRequest } from "express";
 
 @Route("v1/users")
 export class UsersController extends Controller {
+  @Get("/health")
+  public async getHealth(): Promise<{ message: string }> {
+    try {
+      return { message: "OK" };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Get()
   public async getAllUsers(
     @Queries() queries: UserGetAllControllerParams
@@ -35,7 +44,7 @@ export class UsersController extends Controller {
 
       return { message: "success", data: response };
     } catch (error) {
-      console.error(`UsersController - createUser() method error: ${error}`);
+      console.error(`UsersController - getAllUsers() method error: ${error}`);
       throw error;
     }
   }
@@ -70,15 +79,13 @@ export class UsersController extends Controller {
     @Request() request: ExpressRequest
   ): Promise<UserProfileResponse> {
     try {
-      const sub = request.cookies["username"];
+      const sub = request.cookies["username"]; // user_id
 
       const response = await UserService.getUserBySub(sub);
 
       return { message: "success", data: response };
     } catch (error) {
-      console.error(
-        `UsersController - getUserProfile() method error: ${error}`
-      );
+      console.error(`UsersController - getMe() method error: ${error}`);
       throw error;
     }
   }
@@ -86,13 +93,13 @@ export class UsersController extends Controller {
   @Post("/me/favorites")
   public async addFavorite(
     @Request() request: ExpressRequest,
-    @Body() body: { jobId: string }
+    @Body() body: { productId: string }
   ): Promise<UserProfileResponse> {
     try {
       const userId = request.cookies["user_id"];
-      const { jobId } = body;
+      const { productId } = body;
 
-      const response = await UserService.addFavorite(userId, jobId);
+      const response = await UserService.addFavorite(userId, productId);
 
       return {
         message: "Favorite added successfully",
@@ -120,15 +127,15 @@ export class UsersController extends Controller {
     }
   }
 
-  @Delete("/me/favorites/{jobId}")
+  @Delete("/me/favorites/{productId}")
   public async removeFavorite(
     @Request() request: ExpressRequest,
-    @Path() jobId: string
+    @Path() productId: string
   ): Promise<UserProfileResponse> {
     try {
       const userId = request.cookies["user_id"];
 
-      const response = await UserService.removeFavorite(userId, jobId);
+      const response = await UserService.removeFavorite(userId, productId);
 
       return {
         message: "Favorite removed successfully",
@@ -147,8 +154,7 @@ export class UsersController extends Controller {
     @Path() userId: string
   ): Promise<UserProfileResponse> {
     try {
-      console.log("userId: ", userId);
-      const response = await UserService.getUserBySub(userId);
+      const response = await UserService.getUserById(userId);
 
       return { message: "success", data: response };
     } catch (error) {
@@ -166,11 +172,13 @@ export class UsersController extends Controller {
   ): Promise<UserProfileResponse> {
     try {
       const newUpdateUserInfo = { id: userId, ...updateUserInfo };
-      const response = await UserService.updateUserBySub(newUpdateUserInfo);
+      const response = await UserService.updateUserById(newUpdateUserInfo);
 
       return { message: "success", data: response };
     } catch (error) {
-      console.error(`UsersController - createUser() method error: ${error}`);
+      console.error(
+        `UsersController - updateUserById() method error: ${error}`
+      );
       throw error;
     }
   }
@@ -181,7 +189,9 @@ export class UsersController extends Controller {
     try {
       await UserService.deleteUserById(userId);
     } catch (error) {
-      console.error(`UsersController - createUser() method error: ${error}`);
+      console.error(
+        `UsersController - deleteUserById() method error: ${error}`
+      );
       throw error;
     }
   }

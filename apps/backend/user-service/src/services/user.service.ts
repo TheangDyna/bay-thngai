@@ -43,14 +43,13 @@ class UserService {
 
       return user;
     } catch (error) {
-      console.error(`UserService - getUserById() method error: ${error}`);
+      console.error(`UserService - getUserBySub() method error: ${error}`);
       throw error;
     }
   }
 
   async createNewUser(userInfo: UserCreationRepoParams) {
     try {
-      console.log("userInfo", userInfo);
       const newUser = await UserRepository.create(userInfo);
 
       return newUser;
@@ -60,13 +59,13 @@ class UserService {
     }
   }
 
-  async updateUserBySub(userInfo: UserUpdateRepoParams) {
+  async updateUserById(userInfo: UserUpdateRepoParams) {
     try {
-      const updatedUser = await UserRepository.updateBySub(userInfo);
+      const updatedUser = await UserRepository.updateById(userInfo);
 
       return updatedUser;
     } catch (error) {
-      console.error(`UserService - createNewUser() method error: ${error}`);
+      console.error(`UserService - updateUserById() method error: ${error}`);
       throw error;
     }
   }
@@ -75,14 +74,14 @@ class UserService {
     try {
       await UserRepository.deleteById(userId);
     } catch (error) {
-      console.error(`UserService - createNewUser() method error: ${error}`);
+      console.error(`UserService - deleteUserById() method error: ${error}`);
       throw error;
     }
   }
 
-  async addFavorite(userId: string, jobId: string): Promise<IUser> {
+  async addFavorite(userId: string, productId: string): Promise<IUser> {
     try {
-      const user = await UserRepository.addFavorite(userId, jobId);
+      const user = await UserRepository.addFavorite(userId, productId);
       return user;
     } catch (error) {
       console.error(`UserService - addFavorite() method error: ${error}`);
@@ -90,9 +89,9 @@ class UserService {
     }
   }
 
-  async removeFavorite(userId: string, jobId: string): Promise<IUser> {
+  async removeFavorite(userId: string, productId: string): Promise<IUser> {
     try {
-      const user = await UserRepository.removeFavorite(userId, jobId);
+      const user = await UserRepository.removeFavorite(userId, productId);
       return user;
     } catch (error) {
       console.error(`UserService - removeFavorite() method error: ${error}`);

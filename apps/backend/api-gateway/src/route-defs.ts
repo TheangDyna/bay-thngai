@@ -17,12 +17,20 @@ export interface RoutesConfig {
 }
 
 const routePaths: RoutesConfig = {
-  AUTH_SERVICE: {
+  authService: {
     path: "/v1/auth",
     target: configs.authServiceUrl,
     nestedRoutes: [
       {
         path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          },
+        },
+      },
+      {
+        path: "/api-docs",
         methods: {
           GET: {
             authRequired: false,
@@ -95,7 +103,7 @@ const routePaths: RoutesConfig = {
       },
     ],
   },
-  USER_SERVICE: {
+  userService: {
     path: "/v1/users",
     target: configs.userServiceUrl,
     methods: {
@@ -111,6 +119,14 @@ const routePaths: RoutesConfig = {
     nestedRoutes: [
       {
         path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          },
+        },
+      },
+      {
+        path: "/api-docs",
         methods: {
           GET: {
             authRequired: false,
@@ -165,6 +181,14 @@ const routePaths: RoutesConfig = {
     nestedRoutes: [
       {
         path: "/health",
+        methods: {
+          GET: {
+            authRequired: false,
+          },
+        },
+      },
+      {
+        path: "/api-docs",
         methods: {
           GET: {
             authRequired: false,

@@ -64,7 +64,6 @@ const authenticateToken = async (
 
       let role: string[] = [];
       const userPayload = await jwtDecode(req.cookies?.["id_token"]);
-      console.log("userPayload", userPayload);
 
       // @ts-ignore
       if (userPayload["cognito:username"].includes("google")) {
@@ -78,7 +77,6 @@ const authenticateToken = async (
               },
             }
           );
-          console.log("data", data.data.role);
           role.push(data.data.role);
         } else {
           // @ts-ignore
@@ -87,7 +85,6 @@ const authenticateToken = async (
       } else {
         role = payload["cognito:groups"] || [];
       }
-      console.log("role", role);
 
       req.currentUser = {
         username: payload.username,

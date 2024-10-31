@@ -3,10 +3,9 @@ export interface UserFilterParams {
 }
 
 export interface UserSortParams {
-  username?: 'asc' | 'desc';
-  createdAt?: 'asc' | 'desc';
+  username?: "asc" | "desc";
+  createdAt?: "asc" | "desc";
 }
-
 
 export interface UserGetAllRepoParams {
   page?: number;

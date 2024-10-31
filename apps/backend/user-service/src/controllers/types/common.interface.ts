@@ -1,11 +1,11 @@
 export interface APIResponse<T = undefined> {
   message: string;
-  data?: T
+  data?: T;
 }
 
 export interface APIErrorResponse<T = undefined> {
   message: string;
-  error?: T
+  error?: T;
 }
 
 export interface PaginationParams {

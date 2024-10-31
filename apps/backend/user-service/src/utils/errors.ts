@@ -7,7 +7,7 @@ export class ApplicationError extends Error {
   constructor({
     message,
     status,
-    errors,
+    errors
   }: {
     message: string;
     status: number;
@@ -24,7 +24,7 @@ export class ApplicationError extends Error {
 export class InvalidInputError extends ApplicationError {
   constructor({
     message = "Invalid input provided.",
-    errors,
+    errors
   }: {
     message?: string;
     errors?: {};
@@ -65,7 +65,7 @@ export class ResourceConflictError extends ApplicationError {
 export class InternalServerError extends ApplicationError {
   constructor({
     message = "An internal server error occurred.",
-    errors,
+    errors
   }: {
     message: string;
     errors?: {};

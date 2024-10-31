@@ -30,12 +30,12 @@ const userSchema = new mongoose.Schema(
     profile: {
       type: String,
       default:
-        "https://microservice-sample-resource.s3.amazonaws.com/default_pic.jpg",
+        "https://microservice-sample-resource.s3.amazonaws.com/default_pic.jpg"
     },
     gender: { type: String },
     age: { type: Number },
     role: { type: String, default: "user" },
-    favorites: { type: [String], default: [] },
+    favorites: { type: [String], default: [] }
   },
   {
     timestamps: true,
@@ -43,8 +43,8 @@ const userSchema = new mongoose.Schema(
       transform: function (_doc, ret) {
         delete ret.__v;
         ret._id = ret._id.toString();
-      },
-    },
+      }
+    }
   }
 );
 

@@ -2,7 +2,7 @@ import { UserGetAllControllerParams } from "@/src/controllers/types/user-control
 import { IUser } from "@/src/database/models/user.model";
 import {
   UserCreationRepoParams,
-  UserUpdateRepoParams,
+  UserUpdateRepoParams
 } from "@/src/database/repositories/types/user-repository.type";
 import UserRepository from "@/src/database/repositories/user.repository";
 
@@ -15,7 +15,7 @@ class UserService {
         page,
         limit,
         filter: filter && JSON.parse(filter),
-        sort: sort && JSON.parse(sort),
+        sort: sort && JSON.parse(sort)
       };
       const result = await UserRepository.getAll(newQueries);
 

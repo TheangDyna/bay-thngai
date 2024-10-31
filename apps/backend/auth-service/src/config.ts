@@ -37,7 +37,7 @@ function loadConfig(): Config {
     AWS_REDIRECT_URI: Joi.string().required(),
     USER_SERVICE_URL: Joi.string().required(),
     AWS_ACCESS_KEY_ID: Joi.string().required(),
-    AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+    AWS_SECRET_ACCESS_KEY: Joi.string().required()
   })
     .unknown()
     .required();
@@ -60,7 +60,7 @@ function loadConfig(): Config {
     awsRedirectUri: envVars.AWS_REDIRECT_URI,
     userServiceUrl: envVars.USER_SERVICE_URL,
     awsAccessKeyId: envVars.AWS_ACCESS_KEY_ID,
-    awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY,
+    awsSecretAccessKey: envVars.AWS_SECRET_ACCESS_KEY
   };
 }
 

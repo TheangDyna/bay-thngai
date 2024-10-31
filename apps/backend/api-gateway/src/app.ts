@@ -7,7 +7,7 @@ import { globalErrorHandler } from "./middlewares/global-error";
 import {
   authenticateToken,
   authorizeRole,
-  routeConfigMiddleware,
+  routeConfigMiddleware
 } from "./middlewares/auth";
 import cookieParser from "cookie-parser";
 

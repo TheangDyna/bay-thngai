@@ -1,11 +1,11 @@
 import ItemModel, { IItem } from "@/src/database/models/product.model";
 import {
   ProductCreateRequest,
-  ProductUpdateRequest,
+  ProductUpdateRequest
 } from "@/src/controllers/types/product-request.type";
 import {
   ProductGetAllRepoParams,
-  ProductSortParams,
+  ProductSortParams
 } from "./types/product-repository.type";
 import { SortOrder } from "mongoose";
 import { NotFoundError } from "@/src/utils/errors";
@@ -16,17 +16,20 @@ class ProductRepository {
       page = 1,
       limit = 10,
       filter = {},
-      sort = { name: "desc" },
+      sort = { name: "desc" }
     } = queries;
 
     // Convert sort from {'field': 'desc'} to {'field': -1}
-    const sortFields = Object.keys(sort).reduce((acc, key) => {
-      const direction = sort[key as keyof ProductSortParams];
-      if (direction === "asc" || direction === "desc") {
-        acc[key as keyof ProductSortParams] = direction === "asc" ? 1 : -1;
-      }
-      return acc;
-    }, {} as Record<keyof ProductSortParams, SortOrder>);
+    const sortFields = Object.keys(sort).reduce(
+      (acc, key) => {
+        const direction = sort[key as keyof ProductSortParams];
+        if (direction === "asc" || direction === "desc") {
+          acc[key as keyof ProductSortParams] = direction === "asc" ? 1 : -1;
+        }
+        return acc;
+      },
+      {} as Record<keyof ProductSortParams, SortOrder>
+    );
 
     // Build MongoDB filter object
     const buildFilter = (filter: Record<string, any>) => {
@@ -68,7 +71,7 @@ class ProductRepository {
         [ItemModel.collection.collectionName]: result,
         totalItems,
         totalPages: Math.ceil(totalItems / limit),
-        currentPage: page,
+        currentPage: page
       };
     } catch (error) {
       console.error(`ProductRepository - getAll() method error: ${error}`);

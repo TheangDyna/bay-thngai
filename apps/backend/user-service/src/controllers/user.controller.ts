@@ -10,7 +10,7 @@ import {
   Delete,
   Queries,
   Middlewares,
-  Request,
+  Request
 } from "tsoa";
 import UserService from "@/src/services/user.service";
 import validateRequest from "@/src/middlewares/validate-input";
@@ -20,7 +20,7 @@ import {
   UserGetAllControllerParams,
   UserProfileResponse,
   UsersPaginatedResponse,
-  UserUpdateRequestParams,
+  UserUpdateRequestParams
 } from "@/src/controllers/types/user-controller.type";
 import { Request as ExpressRequest } from "express";
 
@@ -103,7 +103,7 @@ export class UsersController extends Controller {
 
       return {
         message: "Favorite added successfully",
-        data: response,
+        data: response
       };
     } catch (error) {
       console.error(`UsersController - addFavorite() method error: ${error}`);
@@ -139,7 +139,7 @@ export class UsersController extends Controller {
 
       return {
         message: "Favorite removed successfully",
-        data: response,
+        data: response
       };
     } catch (error) {
       console.error(

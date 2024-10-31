@@ -4,13 +4,13 @@ import {
   UserCreationRepoParams,
   UserGetAllRepoParams,
   UserSortParams,
-  UserUpdateRepoParams,
+  UserUpdateRepoParams
 } from "@/src/database/repositories/types/user-repository.type";
 import { APP_ERROR_MESSAGE } from "@/src/utils/constants/app-error-message";
 import {
   InvalidInputError,
   NotFoundError,
-  ResourceConflictError,
+  ResourceConflictError
 } from "@/src/utils/errors";
 import mongoose, { SortOrder } from "mongoose";
 
@@ -20,17 +20,20 @@ class UserRepository {
       page = 1,
       limit = 10,
       filter = {},
-      sort = { createdAt: "desc" },
+      sort = { createdAt: "desc" }
     } = queries;
 
     // Convert sort from {'field': 'desc'} to {'field': -1}
-    const sortFields = Object.keys(sort).reduce((acc, key) => {
-      const direction = sort[key as keyof UserSortParams];
-      if (direction === "asc" || direction === "desc") {
-        acc[key as keyof UserSortParams] = direction === "asc" ? 1 : -1;
-      }
-      return acc;
-    }, {} as Record<keyof UserSortParams, SortOrder>);
+    const sortFields = Object.keys(sort).reduce(
+      (acc, key) => {
+        const direction = sort[key as keyof UserSortParams];
+        if (direction === "asc" || direction === "desc") {
+          acc[key as keyof UserSortParams] = direction === "asc" ? 1 : -1;
+        }
+        return acc;
+      },
+      {} as Record<keyof UserSortParams, SortOrder>
+    );
 
     // Build MongoDB filter object
     const buildFilter = (filter: Record<string, any>) => {
@@ -72,7 +75,7 @@ class UserRepository {
         [UserModel.collection.collectionName]: result,
         totalItems,
         totalPages: Math.ceil(totalItems / limit),
-        currentPage: page,
+        currentPage: page
       };
     } catch (error) {
       console.error(`UserRepository - getAll() method error: error`);
@@ -98,7 +101,7 @@ class UserRepository {
   async findBySub(sub: string) {
     try {
       const result = await UserModel.findOne({
-        $or: [{ sub: sub }, { googleSub: sub }, { facebookSub: sub }],
+        $or: [{ sub: sub }, { googleSub: sub }, { facebookSub: sub }]
       });
 
       if (!result) {
@@ -136,7 +139,7 @@ class UserRepository {
         }
 
         throw new InvalidInputError({
-          errors: validationErrors, // Now passing the structured errors
+          errors: validationErrors // Now passing the structured errors
         });
       }
 
@@ -149,7 +152,7 @@ class UserRepository {
       const { id, ...newUpdateInfo } = updateInfo;
 
       const result = await UserModel.findByIdAndUpdate(id, newUpdateInfo, {
-        new: true,
+        new: true
       });
 
       if (!result) {

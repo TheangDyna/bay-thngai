@@ -9,10 +9,12 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
 import { AuthProvider } from "@/contexts/auth/AuthContext";
 import ProtectedRoute from "@/contexts/auth/ProtectedRoute";
-import LoginPage from "@/pages/LoginPage";
-import NotFoundPage from "@/pages/NotFoundPage";
-import DashboardPage from "@/pages/DashboardPage";
-import ListProductsPage from "@/pages/ListProductsPage";
+import Login from "@/pages/Login";
+import NotFound from "@/pages/NotFound";
+import Dashboard from "@/pages/Dashboard";
+import ProductList from "@/pages/ProductList";
+import ProductCreate from "@/pages/ProductCreate";
+import { Toaster } from "@/components/ui/toaster";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -22,7 +24,7 @@ const AppRoutes: React.FC = () => {
           <Routes>
             {/* Public Routes */}
             <Route index element={<Navigate replace to="/dashboard" />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<Login />} />
 
             {/* Protected Dashboard Routes */}
             <Route
@@ -35,17 +37,27 @@ const AppRoutes: React.FC = () => {
                 </ProtectedRoute>
               }
             >
-              <Route path="dashboard" index element={<DashboardPage />} />
-              <Route path="/list-products" element={<ListProductsPage />} />
-              {/* <Route path="profile" element={<ProfilePage />} /> */}
+              <Route path="dashboard" element={<Dashboard />} />
+
+              {/* products Route */}
+              <Route path="products" element={<Outlet />}>
+                <Route index element={<ProductList />} />
+                <Route path=":productId" element={<div>Product Detail</div>} />
+                <Route path="new" element={<ProductCreate />} />
+                <Route
+                  path=":productId/edit"
+                  element={<div>Product Edit</div>}
+                />
+              </Route>
             </Route>
 
             {/* 404 Route */}
-            <Route path="/404" element={<NotFoundPage />} />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
+      <Toaster />
     </ThemeProvider>
   );
 };

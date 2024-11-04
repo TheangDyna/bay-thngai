@@ -9,7 +9,7 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { menuItems } from "@/libs/constants";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLocation } from "react-router-dom";
 
 export const AppSidebar: React.FC = () => {

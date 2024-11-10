@@ -72,6 +72,11 @@ export const menuItems: MenuSection[] = [
         url: "#"
       },
       {
+        title: "Create Category",
+        icon: Boxes,
+        url: "/categories/new"
+      },
+      {
         title: "Inventory",
         icon: Inbox,
         url: "#"

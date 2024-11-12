@@ -17,7 +17,7 @@
     "product-service": "yarn workspace product-service dev",
     "admin": "yarn workspace admin dev",
     "client": "yarn workspace client dev",
-    "dev": "concurrently \"yarn api-gateway dev\" \"yarn auth-service dev\" \"yarn user-service dev\" \"yarn product-service dev\"",
+    "backend": "concurrently \"yarn api-gateway dev\" \"yarn auth-service dev\" \"yarn user-service dev\"",
     "format": "prettier --write ."
   },
   "devDependencies": {

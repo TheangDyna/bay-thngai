@@ -16,9 +16,10 @@ export interface UserGetAllRepoParams {
 
 export interface UserCreationRepoParams {
   sub?: string;
-  email?: string;
-  phone_number?: string;
-  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 }
 
 export interface UserUpdateRepoParams {

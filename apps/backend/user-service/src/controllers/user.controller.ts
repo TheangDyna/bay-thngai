@@ -9,12 +9,12 @@ import {
   Put,
   Delete,
   Queries,
-  Middlewares,
+  // Middlewares,
   Request
 } from "tsoa";
 import UserService from "@/src/services/user.service";
-import validateRequest from "@/src/middlewares/validate-input";
-import userJoiSchema from "@/src/schemas/user.schema";
+// import validateRequest from "@/src/middlewares/validate-input";
+// import userJoiSchema from "@/src/schemas/user.schema";
 import {
   UserCreationRequestParams,
   UserGetAllControllerParams,
@@ -51,10 +51,12 @@ export class UsersController extends Controller {
 
   @SuccessResponse("201", "Created")
   @Post()
-  @Middlewares(validateRequest(userJoiSchema))
+  // @Middlewares(validateRequest(userJoiSchema))
   public async createUser(
     @Body() requestBody: UserCreationRequestParams
   ): Promise<UserProfileResponse> {
+    console.log(requestBody);
+
     try {
       // Create New User
       const response = await UserService.createNewUser(requestBody);

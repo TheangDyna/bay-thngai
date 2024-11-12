@@ -1,24 +1,16 @@
 import configs from "@/src/config";
 import {
+  CreateUserRequest,
   GoogleCallbackRequest,
   LoginRequest,
-  ResendVerifyUserRequest,
+  ResendVerifyCodeRequest,
   SignupRequest,
   VerifyUserRequest
 } from "@/src/controllers/types/auth-request.type";
 import AuthService from "@/src/services/auth.service";
 import setCookie from "@/src/utils/cookie";
 import { Response, Request as ExpressRequest } from "express";
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Queries,
-  Request,
-  Route,
-  SuccessResponse
-} from "tsoa";
+import { Body, Controller, Get, Post, Queries, Request, Route } from "tsoa";
 
 @Route("v1/auth")
 export class AuthController extends Controller {
@@ -31,12 +23,26 @@ export class AuthController extends Controller {
     }
   }
 
+  @Post("/create-user")
+  public async createUser(
+    @Body() body: CreateUserRequest
+  ): Promise<{ message: string }> {
+    try {
+      const result = await AuthService.createUser(body);
+
+      return { message: result };
+    } catch (error) {
+      console.error(`AuthController - createUser() method error: ${error}`);
+      throw error;
+    }
+  }
+
   @Post("/signup")
   public async signup(
     @Body() body: SignupRequest
   ): Promise<{ message: string }> {
     try {
-      const result = await AuthService.signup(body);
+      const result = await AuthService.createUser(body);
 
       return { message: result };
     } catch (error) {
@@ -56,14 +62,14 @@ export class AuthController extends Controller {
     }
   }
 
-  @Post("/resend-verify")
-  public async resendVerifyUser(@Body() body: ResendVerifyUserRequest) {
+  @Post("/resend-code")
+  public async resendVerifyCode(@Body() body: ResendVerifyCodeRequest) {
     try {
-      await AuthService.resendVerifyUser(body);
-      return { message: "You've verified successfully" };
+      const result = await AuthService.resendVerifyCode(body);
+      return { message: result };
     } catch (error) {
       console.error(
-        `AuthController - resendVerifyUser() method error: ${error}`
+        `AuthController - resendVerifyCode() method error: ${error}`
       );
       throw error;
     }
@@ -105,15 +111,6 @@ export class AuthController extends Controller {
       message: "Login with Google successfully",
       data: cognitoOAuthURL
     };
-  }
-
-  @Get("/facebook")
-  @SuccessResponse(302, "Redirect")
-  public loginWithFacebook(@Request() request: Express.Request) {
-    const response = (request as any).res as Response;
-    const cognitoOAuthURL = AuthService.loginWithFacebook();
-
-    response.redirect(cognitoOAuthURL);
   }
 
   @Get("/oauth/callback")

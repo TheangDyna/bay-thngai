@@ -16,9 +16,10 @@ import {
   UserType
 } from "@aws-sdk/client-cognito-identity-provider";
 import {
+  CreateUserRequest,
   GoogleCallbackRequest,
   LoginRequest,
-  ResendVerifyUserRequest,
+  ResendVerifyCodeRequest,
   SignupRequest,
   VerifyUserRequest
 } from "@/src/controllers/types/auth-request.type";
@@ -53,10 +54,8 @@ class AuthService {
       .digest("base64");
   }
 
-  async signup(body: SignupRequest): Promise<string> {
-    const existingUser = await this.getUserByEmail(
-      (body.email || body.phone_number) as string
-    );
+  async createUser(body: CreateUserRequest): Promise<string> {
+    const existingUser = await this.getUserByEmail(body.email);
     if (existingUser) {
       throw new ResourceConflictError(
         AUTH_MESSAGES.AUTHENTICATION.ACCOUNT_ALREADY_EXISTS
@@ -64,25 +63,34 @@ class AuthService {
     }
 
     const inputBody = {
-      name: `${body.sur_name} ${body.last_name}`,
+      given_name: body.firstName,
+      family_name: body.lastName,
+      "custom:role": body.role || "user",
       ...Object.keys(body)
-        .filter((key) => key !== "sur_name" && key !== "last_name")
+        .filter(
+          (key) => key !== "firstName" && key !== "lastName" && key !== "role"
+        )
         .reduce<Record<string, any>>((obj, key) => {
           obj[key] = body[key as keyof SignupRequest];
           return obj;
         }, {})
     };
 
-    const allowedAttributes = ["email", "phone_number", "name", "custom:role"];
+    const allowedAttributes = [
+      "email",
+      "given_name",
+      "family_name",
+      "custom:role"
+    ];
 
     const attributes = Object.keys(inputBody)
-      .filter((key) => allowedAttributes.includes(key) || key === "role")
+      .filter((key) => allowedAttributes.includes(key))
       .map((key) => ({
-        Name: key === "role" ? "custom:role" : key,
+        Name: key,
         Value: inputBody[key as keyof typeof inputBody]
       }));
 
-    const username = (body.email || body.phone_number) as string;
+    const username = body.email;
 
     const params: SignUpCommandInput = {
       ClientId: configs.awsCognitoClientId,
@@ -98,7 +106,7 @@ class AuthService {
 
       return `User created successfully. Please check your ${result.CodeDeliveryDetails?.DeliveryMedium?.toLowerCase()} for a verification code.`;
     } catch (error) {
-      console.error(`AuthService - signup() method error: `, error);
+      console.error(`AuthService - createUp() method error: `, error);
 
       if (error instanceof ApplicationError) {
         throw error;
@@ -113,13 +121,12 @@ class AuthService {
         }
       }
 
-      throw new Error(`Error signing up user: ${error}`);
+      throw new Error(`Error creating user: ${error}`);
     }
   }
 
   async verifyUser(body: VerifyUserRequest): Promise<void> {
-    const username = (body.email ||
-      body.phone_number?.replace(/^\+/, "")) as string;
+    const username = body.email;
 
     const params = {
       ClientId: configs.awsCognitoClientId,
@@ -142,15 +149,24 @@ class AuthService {
       await this.addToGroup(username, role);
 
       // Send user info to the `User Service`
-      await axios.post(`${configs.userServiceUrl}/v1/users`, {
+
+      const newBody = {
         sub: userInfo.Username,
         email: body.email,
-        phone_number: body.phone_number,
-        username: userInfo.UserAttributes?.find(
-          (attr: any) => attr.Name === "name"
+        firstName: userInfo.UserAttributes?.find(
+          (attr: any) => attr.Name === "given_name"
+        )?.Value,
+        lastName: userInfo.UserAttributes?.find(
+          (attr: any) => attr.Name === "family_name"
         )?.Value,
         role
-      });
+      };
+
+      console.log("userInfo", userInfo);
+
+      console.log("newBody", newBody);
+
+      await axios.post(`${configs.userServiceUrl}/v1/users`, newBody);
     } catch (error) {
       console.error("AuthService - verifyUser() method error:", error);
 
@@ -167,10 +183,8 @@ class AuthService {
     }
   }
 
-  async resendVerifyUser(body: ResendVerifyUserRequest): Promise<void> {
-    const username = (body.email ||
-      body.phone_number?.replace(/^\+/, "")) as string;
-
+  async resendVerifyCode(body: ResendVerifyCodeRequest): Promise<string> {
+    const username = body.email;
     const params = {
       ClientId: configs.awsCognitoClientId,
       Username: username,
@@ -179,45 +193,20 @@ class AuthService {
 
     try {
       const command = new ResendConfirmationCodeCommand(params);
-      await client.send(command);
-      // Retrieve the user to get the `role` attribute
-      const userInfo = await this.getUserByUsername(username);
-      const role =
-        userInfo.UserAttributes?.find(
-          (attr: any) => attr.Name === "custom:role"
-        )?.Value || "user";
-
-      // Add the user to the group based on the `role` attribute
-      await this.addToGroup(username, role);
-
-      // Send user info to the `User Service`
-      await axios.post(`${configs.userServiceUrl}/v1/users`, {
-        sub: userInfo.Username,
-        email: body.email,
-        phone_number: body.phone_number,
-        username: userInfo.UserAttributes?.find(
-          (attr: any) => attr.Name === "name"
-        )?.Value,
-        role
-      });
+      const result = await client.send(command);
+      return `Resend code successfully. Please check your ${result.CodeDeliveryDetails?.DeliveryMedium?.toLowerCase()} for a verification code.`;
     } catch (error) {
-      console.error("AuthService - resendVerifyUser() method error:", error);
-
-      // Mismatch Code
-      if (typeof error === "object" && error !== null && "name" in error) {
-        if ((error as { name: string }).name === "CodeMismatchException") {
-          throw new InvalidInputError({
-            message: AUTH_MESSAGES.MFA.VERIFICATION_FAILED
-          });
-        }
-      }
+      console.error(
+        "AuthService - resendConfirmationCode() method error:",
+        error
+      );
 
       throw new Error(`Error resend verifying user: ${error}`);
     }
   }
 
   async login(body: LoginRequest): Promise<CognitoToken> {
-    const username = (body.email || body.phone_number) as string;
+    const username = body.email;
 
     const params: InitiateAuthCommandInput = {
       AuthFlow: "USER_PASSWORD_AUTH",
@@ -443,6 +432,7 @@ class AuthService {
       const command = new AdminAddUserToGroupCommand(params);
       await client.send(command);
     } catch (error) {
+      console.error("AuthService - addToGroup() method error:", error);
       throw error;
     }
   }

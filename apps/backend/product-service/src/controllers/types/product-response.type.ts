@@ -1,9 +1,9 @@
-import { IItem } from "@/src/database/models/product.model";
+import { IProduct } from "@/src/database/models/product.model";
 
 export interface ProductPaginatedResponse {
   message: string;
   data: {
-    [key: string]: IItem[] | number;
+    [key: string]: IProduct[] | number;
     totalItems: number;
     totalPages: number;
     currentPage: number;
@@ -12,5 +12,5 @@ export interface ProductPaginatedResponse {
 
 export interface ProductResponse {
   message: string;
-  data: IItem;
+  data: IProduct;
 }

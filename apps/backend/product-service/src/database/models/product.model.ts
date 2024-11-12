@@ -1,20 +1,20 @@
 import { Schema, model } from "mongoose";
 
 // Interface to describe a single document
-export interface IItem {
+export interface IProduct {
   name: string;
   category: string;
   price: number;
 }
 
 // Schema definition
-export const itemSchema = new Schema({
+export const productSchema = new Schema({
   name: { type: String, require: true },
   category: { type: String, require: true },
   price: { type: Number, require: true }
 });
 
 // Create a model from the schema
-const ItemModel = model<IItem>("Product", itemSchema);
+const ProductModel = model<IProduct>("Product", productSchema);
 
-export default ItemModel;
+export default ProductModel;

@@ -13,10 +13,12 @@
     "db:insert": "ts-node src/database/scripts/insert-data.ts"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "mongoose": "^8.7.1",
+    "openai": "^4.71.1",
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.5.1"
   },

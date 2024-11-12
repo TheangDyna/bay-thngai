@@ -1,31 +1,34 @@
 export interface SignupRequest {
-  sur_name?: string;
-  last_name?: string;
-  email?: string;
-  phone_number?: string;
-  password?: string;
-  role?: "admin" | "user";
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+export interface CreateUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role?: "user" | "admin";
 }
 
 export interface VerifyUserRequest {
-  email?: string;
-  phone_number?: string;
+  email: string;
   code: string;
 }
 
-export interface ResendVerifyUserRequest {
-  email?: string;
-  phone_number?: string;
+export interface ResendVerifyCodeRequest {
+  email: string;
 }
 
 export interface LoginRequest {
-  email?: string;
-  phone_number?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
 export interface GoogleCallbackRequest {
-  code?: string;
-  state?: string;
+  code: string;
+  state: string;
   error?: string;
 }

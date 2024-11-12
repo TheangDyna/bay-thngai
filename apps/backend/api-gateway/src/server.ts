@@ -4,7 +4,7 @@ import configs from "@/src/config";
 async function run() {
   try {
     app.listen(configs.port, () => {
-      console.log(`API Gateway running on Port: ${configs.port}`);
+      console.info(`API Gateway running on Port: ${configs.port}`);
     });
   } catch (error) {
     console.error(error);

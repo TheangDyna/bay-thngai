@@ -3,12 +3,11 @@ import Joi from "joi";
 const userJoiSchema = Joi.object({
   sub: Joi.string(),
   googleSub: Joi.string(),
-  facebookSub: Joi.string(),
-  username: Joi.string().required(), // Username is a required string
-  email: Joi.string().email(), // Email must be a valid email if provided
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string().email().required(),
   profile: Joi.string(),
-  phone_number: Joi.string(),
-  role: Joi.string()
-}).xor("email", "phone_number"); // Either email or phone_number must be present
+  role: Joi.string().required()
+}).xor("sub", "googleSub");
 
 export default userJoiSchema;

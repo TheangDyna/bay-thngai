@@ -36,12 +36,10 @@ export interface UsersPaginatedResponse {
 export interface UserCreationRequestParams {
   sub?: string;
   googleSub?: string;
-  facebookSub?: string;
-  email?: string;
-  phone_number?: string;
-  profile?: string;
-  username: string;
-  role?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 }
 
 export interface UserUpdateRequestParams {

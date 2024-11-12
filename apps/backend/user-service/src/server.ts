@@ -6,7 +6,7 @@ async function run() {
   try {
     await connectToMongoDB();
     app.listen(configs.port, () => {
-      console.log(`User Service running on Port: ${configs.port}`);
+      console.info(`User Service running on Port: ${configs.port}`);
     });
   } catch (error) {
     console.error(error);

@@ -15,7 +15,7 @@ import {
   ProductGetAllRequest,
   ProductUpdateRequest
 } from "@/src/controllers/types/product-request.type";
-import { IItem } from "@/src/database/models/product.model";
+import { IProduct } from "@/src/database/models/product.model";
 import ProductService from "@/src/services/product.service";
 import {
   ProductPaginatedResponse,
@@ -29,6 +29,23 @@ export class ProductController extends Controller {
     try {
       return { message: "OK" };
     } catch (error) {
+      console.error(`ProductsController - getHealth() method error: ${error}`);
+      throw error;
+    }
+  }
+
+  @Post("/user-prompt")
+  public async userPrompt(
+    @Body() requestBody: { prompt: string }
+  ): Promise<{ message: string; data: any }> {
+    try {
+      const { prompt } = requestBody;
+
+      const result = await ProductService.userPrompt(prompt);
+
+      return { message: "success", data: result };
+    } catch (error) {
+      console.error(`ProductsController - userPrompt() method error: ${error}`);
       throw error;
     }
   }
@@ -56,7 +73,7 @@ export class ProductController extends Controller {
   @Post()
   public async createProduct(
     @Body() requestBody: ProductCreateRequest
-  ): Promise<IItem> {
+  ): Promise<IProduct> {
     try {
       const newProduct = await ProductService.createProduct(requestBody);
 

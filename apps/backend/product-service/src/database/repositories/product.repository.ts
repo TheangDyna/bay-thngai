@@ -1,4 +1,4 @@
-import ItemModel, { IItem } from "@/src/database/models/product.model";
+import ProductModel, { IProduct } from "@/src/database/models/product.model";
 import {
   ProductCreateRequest,
   ProductUpdateRequest
@@ -11,7 +11,39 @@ import { SortOrder } from "mongoose";
 import { NotFoundError } from "@/src/utils/errors";
 
 class ProductRepository {
-  async getAll(queries: ProductGetAllRepoParams) {
+  public async dynamicQuery(aiGeneratedInstructions: any): Promise<any> {
+    try {
+      // Extract query details from AI-generated instructions
+      const { operation, query = {}, options = {} } = aiGeneratedInstructions;
+
+      // Cast operation to ensure it's a valid Mongoose method
+      const mongooseQuery = (ProductModel as any)[operation](query); // Type assertion to 'any'
+
+      // Apply additional methods like limit, sort, etc.
+      let finalQuery = mongooseQuery;
+
+      // Apply additional methods like limit, sort, etc.
+      if (options.sort) finalQuery = mongooseQuery.sort(options.sort);
+
+      if (options.limit) finalQuery = mongooseQuery.limit(options.limit);
+
+      if (options.select) finalQuery = mongooseQuery.select(options.select);
+
+      if (options.skip) finalQuery = mongooseQuery.skip(options.skip);
+
+      // Execute the built query
+      const result = await finalQuery.exec();
+
+      return result;
+    } catch (error) {
+      console.error(
+        `ProductRepository - dynamicQuery() method error: ${error}`
+      );
+      throw error;
+    }
+  }
+
+  async getAll(queries: ProductGetAllRepoParams): Promise<any> {
     const {
       page = 1,
       limit = 10,
@@ -59,16 +91,16 @@ class ProductRepository {
 
     try {
       const mongoFilter = buildFilter(filter);
-      const operation = ItemModel.find(mongoFilter)
+      const operation = ProductModel.find(mongoFilter)
         .sort(sortFields)
         .skip((page - 1) * limit)
         .limit(limit);
 
       const result = await operation;
-      const totalItems = await ItemModel.countDocuments(mongoFilter);
+      const totalItems = await ProductModel.countDocuments(mongoFilter);
 
       return {
-        [ItemModel.collection.collectionName]: result,
+        [ProductModel.collection.collectionName]: result,
         totalItems,
         totalPages: Math.ceil(totalItems / limit),
         currentPage: page
@@ -81,9 +113,9 @@ class ProductRepository {
 
   public async createProduct(
     productRequest: ProductCreateRequest
-  ): Promise<IItem> {
+  ): Promise<IProduct> {
     try {
-      const newProduct = await ItemModel.create(productRequest);
+      const newProduct = await ProductModel.create(productRequest);
       return newProduct;
     } catch (error) {
       console.error(
@@ -93,9 +125,9 @@ class ProductRepository {
     }
   }
 
-  public async getProductById(productId: string): Promise<IItem> {
+  public async getProductById(productId: string): Promise<IProduct> {
     try {
-      const product = await ItemModel.findById(productId);
+      const product = await ProductModel.findById(productId);
       if (!product) {
         throw new NotFoundError("Product not found!");
       }
@@ -112,9 +144,9 @@ class ProductRepository {
   public async updateProductById(
     productId: string,
     productRequest: ProductUpdateRequest
-  ): Promise<IItem> {
+  ): Promise<IProduct> {
     try {
-      const updatedProduct = await ItemModel.findByIdAndUpdate(
+      const updatedProduct = await ProductModel.findByIdAndUpdate(
         productId,
         productRequest,
         { new: true }
@@ -135,7 +167,7 @@ class ProductRepository {
 
   public async deleteProductById(productId: string): Promise<void> {
     try {
-      const deleteProduct = await ItemModel.findByIdAndDelete(productId);
+      const deleteProduct = await ProductModel.findByIdAndDelete(productId);
 
       if (!deleteProduct) {
         throw new NotFoundError("Product not found!");

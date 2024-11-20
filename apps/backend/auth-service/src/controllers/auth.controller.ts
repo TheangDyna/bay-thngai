@@ -2,20 +2,25 @@ import configs from "@/src/config";
 import {
   CreateUserRequest,
   GoogleCallbackRequest,
-  LoginRequest,
+  RefreshTokenRequest,
   ResendVerifyCodeRequest,
-  SignupRequest,
+  LoginRequest,
+  RegisterRequest,
   VerifyUserRequest
 } from "@/src/controllers/types/auth-request.type";
 import AuthService from "@/src/services/auth.service";
 import setCookie from "@/src/utils/cookie";
-import { Response, Request as ExpressRequest } from "express";
+import {
+  Request as ExpressRequest,
+  Response as ExpressResponse
+} from "express";
 import { Body, Controller, Get, Post, Queries, Request, Route } from "tsoa";
+import { GoogleResponse, Response } from "./types/auth-response.type";
 
 @Route("v1/auth")
 export class AuthController extends Controller {
   @Get("/health")
-  public async getHealth(): Promise<{ message: string }> {
+  async getHealth(): Promise<Response> {
     try {
       return { message: "OK" };
     } catch (error) {
@@ -24,49 +29,49 @@ export class AuthController extends Controller {
   }
 
   @Post("/create-user")
-  public async createUser(
-    @Body() body: CreateUserRequest
-  ): Promise<{ message: string }> {
+  async createUser(@Body() body: CreateUserRequest): Promise<Response> {
     try {
-      const result = await AuthService.createUser(body);
+      const message = await AuthService.createUser(body);
 
-      return { message: result };
+      return { message };
     } catch (error) {
       console.error(`AuthController - createUser() method error: ${error}`);
       throw error;
     }
   }
 
-  @Post("/signup")
-  public async signup(
-    @Body() body: SignupRequest
-  ): Promise<{ message: string }> {
+  @Post("/register")
+  async register(@Body() body: RegisterRequest): Promise<Response> {
     try {
-      const result = await AuthService.createUser(body);
+      const message = await AuthService.createUser(body);
 
-      return { message: result };
+      return { message };
     } catch (error) {
-      console.error(`AuthController - signup() method error: ${error}`);
+      console.error(`AuthController - register() method error: ${error}`);
       throw error;
     }
   }
 
   @Post("/verify")
-  public async verifyUser(@Body() body: VerifyUserRequest) {
+  async verifyUser(@Body() body: VerifyUserRequest) {
     try {
-      await AuthService.verifyUser(body);
-      return { message: "You've verified successfully" };
+      const message = await AuthService.verifyUser(body);
+
+      return { message };
     } catch (error) {
       console.error(`AuthController - verifyUser() method error: ${error}`);
       throw error;
     }
   }
 
-  @Post("/resend-code")
-  public async resendVerifyCode(@Body() body: ResendVerifyCodeRequest) {
+  @Post("/resend-verify-code")
+  async resendVerifyCode(
+    @Body() body: ResendVerifyCodeRequest
+  ): Promise<Response> {
     try {
-      const result = await AuthService.resendVerifyCode(body);
-      return { message: result };
+      const message = await AuthService.resendVerifyCode(body);
+
+      return { message };
     } catch (error) {
       console.error(
         `AuthController - resendVerifyCode() method error: ${error}`
@@ -76,23 +81,20 @@ export class AuthController extends Controller {
   }
 
   @Post("/login")
-  public async login(
-    @Request() request: Express.Request,
+  async login(
+    @Request() request: ExpressRequest,
     @Body() body: LoginRequest
-  ) {
+  ): Promise<Response> {
     try {
-      const response = (request as any).res as Response;
-      const result = await AuthService.login(body);
+      const response = request.res as ExpressResponse;
+      const token = await AuthService.login(body);
 
-      setCookie(response, "id_token", result.idToken);
-      setCookie(response, "access_token", result.accessToken);
-      setCookie(response, "refresh_token", result.refreshToken, {
+      setCookie(response, "id_token", token.idToken);
+      setCookie(response, "access_token", token.accessToken);
+      setCookie(response, "refresh_token", token.refreshToken, {
         maxAge: 30 * 24 * 3600 * 1000
       });
-      setCookie(response, "username", result.username!, {
-        maxAge: 30 * 24 * 3600 * 1000
-      });
-      setCookie(response, "user_id", result.userId!, {
+      setCookie(response, "sub", token.sub, {
         maxAge: 30 * 24 * 3600 * 1000
       });
 
@@ -104,7 +106,7 @@ export class AuthController extends Controller {
   }
 
   @Get("/google")
-  public loginWithGoogle() {
+  loginWithGoogle(): GoogleResponse {
     const cognitoOAuthURL = AuthService.loginWithGoogle();
 
     return {
@@ -114,12 +116,12 @@ export class AuthController extends Controller {
   }
 
   @Get("/oauth/callback")
-  public async oauthCallback(
-    @Request() request: Express.Request,
+  async oauthCallback(
+    @Request() request: ExpressRequest,
     @Queries() query: GoogleCallbackRequest
   ) {
     try {
-      const response = (request as any).res as Response;
+      const response = request.res as ExpressResponse;
       const tokens = await AuthService.getOAuthToken(query);
 
       setCookie(response, "id_token", tokens.idToken);
@@ -127,10 +129,7 @@ export class AuthController extends Controller {
       setCookie(response, "refresh_token", tokens.refreshToken, {
         maxAge: 30 * 24 * 3600 * 1000
       });
-      setCookie(response, "username", tokens.username!, {
-        maxAge: 30 * 24 * 3600 * 1000
-      });
-      setCookie(response, "user_id", tokens.userId!, {
+      setCookie(response, "sub", tokens.sub, {
         maxAge: 30 * 24 * 3600 * 1000
       });
 
@@ -142,19 +141,18 @@ export class AuthController extends Controller {
   }
 
   @Post("/refresh-token")
-  public async refreshToken(
+  async refreshToken(
     @Request() request: ExpressRequest,
-    @Body() body: { refreshToken?: string; username?: string }
+    @Body() body: RefreshTokenRequest
   ) {
     try {
-      const response = (request as any).res as Response;
-
+      const response = request.res as ExpressResponse;
       const refreshToken = request.cookies["refresh_token"];
-      const username = request.cookies["username"];
+      const sub = request.cookies["sub"];
 
       const result = await AuthService.refreshToken({
         refreshToken: body.refreshToken || refreshToken,
-        username: body.username || username
+        sub: body.sub || sub
       });
 
       setCookie(response, "id_token", result.idToken);

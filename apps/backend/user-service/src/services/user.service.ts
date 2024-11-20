@@ -1,13 +1,13 @@
-import { UserGetAllControllerParams } from "@/src/controllers/types/user-controller.type";
+import { UserGetAllController } from "@/src/controllers/types/user-controller.type";
 import { IUser } from "@/src/database/models/user.model";
 import {
-  UserCreationRepoParams,
-  UserUpdateRepoParams
+  UserCreationRepo,
+  UserUpdateRepo
 } from "@/src/database/repositories/types/user-repository.type";
 import UserRepository from "@/src/database/repositories/user.repository";
 
 class UserService {
-  async getAllUsers(queries: UserGetAllControllerParams) {
+  async getAllUsers(queries: UserGetAllController) {
     try {
       const { page, limit, filter, sort } = queries;
 
@@ -48,9 +48,9 @@ class UserService {
     }
   }
 
-  async createNewUser(userInfo: UserCreationRepoParams) {
+  async createUser(userInfo: UserCreationRepo) {
     try {
-      const newUser = await UserRepository.create(userInfo);
+      const newUser = await UserRepository.createUser(userInfo);
 
       return newUser;
     } catch (error) {
@@ -59,9 +59,9 @@ class UserService {
     }
   }
 
-  async updateUserById(userInfo: UserUpdateRepoParams) {
+  async updateUserById(userInfo: UserUpdateRepo) {
     try {
-      const updatedUser = await UserRepository.updateById(userInfo);
+      const updatedUser = await UserRepository.updateUserById(userInfo);
 
       return updatedUser;
     } catch (error) {

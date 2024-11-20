@@ -1,10 +1,10 @@
 import UserModel, { IUser } from "@/src/database/models/user.model";
 import {
   MongoError,
-  UserCreationRepoParams,
-  UserGetAllRepoParams,
-  UserSortParams,
-  UserUpdateRepoParams
+  UserCreationRepo,
+  UserGetAllRepo,
+  UserSort,
+  UserUpdateRepo
 } from "@/src/database/repositories/types/user-repository.type";
 import { APP_ERROR_MESSAGE } from "@/src/utils/constants/app-error-message";
 import {
@@ -15,7 +15,7 @@ import {
 import mongoose, { SortOrder } from "mongoose";
 
 class UserRepository {
-  async getAll(queries: UserGetAllRepoParams) {
+  async getAll(queries: UserGetAllRepo) {
     const {
       page = 1,
       limit = 10,
@@ -26,13 +26,13 @@ class UserRepository {
     // Convert sort from {'field': 'desc'} to {'field': -1}
     const sortFields = Object.keys(sort).reduce(
       (acc, key) => {
-        const direction = sort[key as keyof UserSortParams];
+        const direction = sort[key as keyof UserSort];
         if (direction === "asc" || direction === "desc") {
-          acc[key as keyof UserSortParams] = direction === "asc" ? 1 : -1;
+          acc[key as keyof UserSort] = direction === "asc" ? 1 : -1;
         }
         return acc;
       },
-      {} as Record<keyof UserSortParams, SortOrder>
+      {} as Record<keyof UserSort, SortOrder>
     );
 
     // Build MongoDB filter object
@@ -101,7 +101,7 @@ class UserRepository {
   async findBySub(sub: string) {
     try {
       const result = await UserModel.findOne({
-        $or: [{ sub: sub }, { googleSub: sub }, { facebookSub: sub }]
+        $or: [{ sub: sub }, { googleSub: sub }]
       });
 
       if (!result) {
@@ -115,13 +115,13 @@ class UserRepository {
     }
   }
 
-  async create(newInfo: UserCreationRepoParams) {
+  async createUser(newInfo: UserCreationRepo) {
     try {
       const result = await UserModel.create(newInfo);
 
       return result;
     } catch (error) {
-      console.error(`UserRepository - create() method error: ${error}`);
+      console.error(`UserRepository - createUser() method error: ${error}`);
 
       // Duplicate Email
       if ((error as MongoError).code === 11000) {
@@ -147,13 +147,17 @@ class UserRepository {
     }
   }
 
-  async updateById(updateInfo: UserUpdateRepoParams) {
+  async updateUserById(updateInfo: UserUpdateRepo) {
     try {
-      const { id, ...newUpdateInfo } = updateInfo;
+      const { userId, ...newUpdateInfo } = updateInfo;
 
-      const result = await UserModel.findByIdAndUpdate(id, newUpdateInfo, {
-        new: true
-      });
+      const result = await UserModel.findOneAndUpdate(
+        {
+          $or: [{ _id: userId }, { sub: userId }, { googleSub: userId }]
+        },
+        newUpdateInfo,
+        { new: true }
+      );
 
       if (!result) {
         throw new NotFoundError();
@@ -161,7 +165,7 @@ class UserRepository {
 
       return result;
     } catch (error) {
-      console.error(`UserRepository - updateById() method error: ${error}`);
+      console.error(`UserRepository - updateUserById() method error: ${error}`);
       throw error;
     }
   }

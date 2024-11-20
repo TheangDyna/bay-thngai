@@ -19,14 +19,17 @@ import {
   CreateUserRequest,
   GoogleCallbackRequest,
   LoginRequest,
+  RegisterRequest,
   ResendVerifyCodeRequest,
-  SignupRequest,
   VerifyUserRequest
 } from "@/src/controllers/types/auth-request.type";
 import crypto from "crypto";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { CognitoToken } from "@/src/services/types/auth-service.type";
+import {
+  CognitoToken,
+  UserInfoFromToken
+} from "@/src/services/types/auth-service.type";
 import {
   ApplicationError,
   AuthenticationError,
@@ -45,15 +48,6 @@ const client = new CognitoIdentityProviderClient({
 });
 
 class AuthService {
-  // Generate the SECRET_HASH
-  private generateSecretHash(username: string): string {
-    const secret = configs.awsCognitoClientSecret;
-    return crypto
-      .createHmac("SHA256", secret)
-      .update(username + configs.awsCognitoClientId)
-      .digest("base64");
-  }
-
   async createUser(body: CreateUserRequest): Promise<string> {
     const existingUser = await this.getUserByEmail(body.email);
     if (existingUser) {
@@ -63,25 +57,16 @@ class AuthService {
     }
 
     const inputBody = {
-      given_name: body.firstName,
-      family_name: body.lastName,
       "custom:role": body.role || "user",
       ...Object.keys(body)
-        .filter(
-          (key) => key !== "firstName" && key !== "lastName" && key !== "role"
-        )
+        .filter((key) => key !== "role")
         .reduce<Record<string, any>>((obj, key) => {
-          obj[key] = body[key as keyof SignupRequest];
+          obj[key] = body[key as keyof RegisterRequest];
           return obj;
         }, {})
     };
 
-    const allowedAttributes = [
-      "email",
-      "given_name",
-      "family_name",
-      "custom:role"
-    ];
+    const allowedAttributes = ["email", "custom:role"];
 
     const attributes = Object.keys(inputBody)
       .filter((key) => allowedAttributes.includes(key))
@@ -125,7 +110,7 @@ class AuthService {
     }
   }
 
-  async verifyUser(body: VerifyUserRequest): Promise<void> {
+  async verifyUser(body: VerifyUserRequest): Promise<string> {
     const username = body.email;
 
     const params = {
@@ -151,22 +136,14 @@ class AuthService {
       // Send user info to the `User Service`
 
       const newBody = {
+        _id: userInfo.Username,
         sub: userInfo.Username,
         email: body.email,
-        firstName: userInfo.UserAttributes?.find(
-          (attr: any) => attr.Name === "given_name"
-        )?.Value,
-        lastName: userInfo.UserAttributes?.find(
-          (attr: any) => attr.Name === "family_name"
-        )?.Value,
         role
       };
 
-      console.log("userInfo", userInfo);
-
-      console.log("newBody", newBody);
-
       await axios.post(`${configs.userServiceUrl}/v1/users`, newBody);
+      return "You've verified successfully";
     } catch (error) {
       console.error("AuthService - verifyUser() method error:", error);
 
@@ -206,32 +183,42 @@ class AuthService {
   }
 
   async login(body: LoginRequest): Promise<CognitoToken> {
-    const username = body.email;
+    const email = body.email;
 
     const params: InitiateAuthCommandInput = {
       AuthFlow: "USER_PASSWORD_AUTH",
       ClientId: configs.awsCognitoClientId,
       AuthParameters: {
-        USERNAME: username,
-        PASSWORD: body.password!,
-        SECRET_HASH: this.generateSecretHash(username)
+        USERNAME: email,
+        PASSWORD: body.password,
+        SECRET_HASH: this.generateSecretHash(email)
       }
     };
 
     try {
       const command = new InitiateAuthCommand(params);
-      const result = await client.send(command);
+      const response = await client.send(command);
+
+      if (!response.AuthenticationResult) {
+        throw new Error("AuthenticationResult is undefined");
+      }
+
+      const idToken = response.AuthenticationResult?.IdToken ?? "";
+      const accessToken = response.AuthenticationResult?.AccessToken ?? "";
+      const refreshToken = response.AuthenticationResult?.RefreshToken ?? "";
+
+      if (!idToken) {
+        throw new Error("Failed to retrieve ID token.");
+      }
 
       // Get the user info
-      const congitoUsername = await this.getUserInfoFromToken(
-        result.AuthenticationResult?.IdToken!
-      );
+      const cognitoUsername = this.getUserInfoFromToken(idToken);
 
       return {
-        accessToken: result.AuthenticationResult?.AccessToken!,
-        idToken: result.AuthenticationResult?.IdToken!,
-        refreshToken: result.AuthenticationResult?.RefreshToken!,
-        username: congitoUsername.sub
+        accessToken,
+        idToken,
+        refreshToken,
+        sub: cognitoUsername.sub
       };
     } catch (error) {
       // Mismatch Password | Email or Phone Number
@@ -333,13 +320,15 @@ class AuthService {
 
       // Step 2: Get the user info from token
       const userInfo = this.getUserInfoFromToken(token.idToken);
-      // @ts-ignore
       const email = userInfo.email;
       const existingUser = await this.getUserByEmail(email);
-      // let userId: string;
 
       // Step 3: Case User is already signin with Email | Phone Number / Password, but they try to signin with Google | Facebook
-      if (existingUser && existingUser.UserStatus !== "EXTERNAL_PROVIDER") {
+      if (
+        existingUser &&
+        existingUser.Username &&
+        existingUser.UserStatus !== "EXTERNAL_PROVIDER"
+      ) {
         const isLinked = existingUser.Attributes?.some(
           (attr: any) =>
             attr.Name === "identities" && attr.Value?.includes("Google")
@@ -348,67 +337,52 @@ class AuthService {
         if (!isLinked) {
           // Step 3.1: Link the user to the existing Cognito user if not already linked
           await this.linkAccount({
-            sourceUserId: userInfo.sub!,
+            sourceUserId: userInfo.sub,
             providerName: "Google",
-            destinationUserId: existingUser.Username!
+            destinationUserId: existingUser.Username
           });
 
           // Step 3.2: Update user info in user service
           await axios.put(
             `${configs.userServiceUrl}/v1/users/${existingUser.Username}`,
             {
-              googleSub: userInfo.sub, // Update the Google sub
-              role: "user"
+              googleSub: userInfo.sub // Update the Google sub
             }
           );
-
-          // Step 3.3: Update user info in Cognito
-          // await this.updateUserCongitoAttributes(existingUser.Username!, {
-          //   "custom:role": "user",
-          // });
-
-          await this.addToGroup(existingUser.Username!, "user");
-
-          // userId = user.data.data._id;
         }
       }
+
       // Step 4: Case User is never signin with Google | Facebook
       else {
         try {
           await axios.post(`${configs.userServiceUrl}/v1/users`, {
+            _id: userInfo.sub,
             googleSub: userInfo.sub,
             email,
-            // @ts-ignore
-            username: userInfo.name,
-            // @ts-ignore
-            profile: userInfo.profile,
             role: "user"
           });
 
           // Step 4.1: Update user info in Cognito
-          // await this.updateUserCongitoAttributes(userInfo.sub!, {
-          //   "custom:role": "user",
-          // });
-          await this.addToGroup(userInfo.sub!, "user");
-
-          // userId = user.data.data._id;
+          await this.updateUserCongitoAttributes(userInfo.sub, {
+            "custom:role": "user"
+          });
         } catch (error) {
           console.error("AuthService - getOAuthToken() method error:", error);
-          throw error; // Re-throw if it's a different error
+          throw error;
         }
       }
 
       // Step 5: Check if the user is already in the group before adding
-      const groupExists = await this.checkUserInGroup(userInfo.sub!, "user");
+      const groupExists = await this.checkUserInGroup(userInfo.sub, "user");
       if (!groupExists) {
-        await this.addToGroup(userInfo.sub!, "user");
+        await this.addToGroup(userInfo.sub, "user");
       }
 
       return {
         accessToken: token.accessToken,
         idToken: token.idToken,
         refreshToken: token.refreshToken,
-        username: userInfo.sub
+        sub: userInfo.sub
       };
     } catch (error) {
       console.error("AuthService - getOAuthToken() method error:", error);
@@ -416,12 +390,59 @@ class AuthService {
     }
   }
 
-  getUserInfoFromToken(token: string) {
-    const decodedToken = jwtDecode(token);
+  async refreshToken({
+    refreshToken,
+    sub
+  }: {
+    refreshToken: string;
+    sub: string;
+  }) {
+    if (!refreshToken || !sub) {
+      throw new AuthenticationError();
+    }
+
+    const params = {
+      AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
+      ClientId: configs.awsCognitoClientId,
+      AuthParameters: {
+        REFRESH_TOKEN: refreshToken,
+        SECRET_HASH: this.generateSecretHash(sub)
+      }
+    };
+
+    try {
+      const command = new InitiateAuthCommand(params);
+      const result = await client.send(command);
+
+      return {
+        accessToken: result.AuthenticationResult?.AccessToken!,
+        idToken: result.AuthenticationResult?.IdToken!,
+        refreshToken: result.AuthenticationResult?.RefreshToken || refreshToken // Reuse the old refresh token if a new one isn't provided
+      };
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        throw error;
+      }
+
+      console.error("AuthService - refreshToken() method error:", error);
+      throw new Error(`Error refreshing token: ${error}`);
+    }
+  }
+
+  private generateSecretHash(username: string): string {
+    const secret = configs.awsCognitoClientSecret;
+    return crypto
+      .createHmac("SHA256", secret)
+      .update(username + configs.awsCognitoClientId)
+      .digest("base64");
+  }
+
+  private getUserInfoFromToken(token: string): UserInfoFromToken {
+    const decodedToken = jwtDecode(token) as UserInfoFromToken;
     return decodedToken;
   }
 
-  async addToGroup(username: string, groupName: string) {
+  private async addToGroup(username: string, groupName: string) {
     const params = {
       GroupName: groupName,
       Username: username,
@@ -437,7 +458,7 @@ class AuthService {
     }
   }
 
-  async getUserByUsername(username: string) {
+  private async getUserByUsername(username: string) {
     const params = {
       Username: username,
       UserPoolId: configs.awsCognitoUserPoolId
@@ -453,7 +474,7 @@ class AuthService {
     }
   }
 
-  async getUserByEmail(email: string): Promise<UserType | undefined> {
+  private async getUserByEmail(email: string): Promise<UserType | undefined> {
     const params = {
       Filter: `email = "${email}"`,
       UserPoolId: configs.awsCognitoUserPoolId,
@@ -470,7 +491,7 @@ class AuthService {
     }
   }
 
-  async updateUserCongitoAttributes(
+  private async updateUserCongitoAttributes(
     username: string,
     attributes: { [key: string]: string }
   ): Promise<void> {
@@ -495,7 +516,7 @@ class AuthService {
     }
   }
 
-  async linkAccount({
+  private async linkAccount({
     sourceUserId,
     providerName,
     destinationUserId
@@ -528,7 +549,7 @@ class AuthService {
     }
   }
 
-  async checkUserInGroup(
+  private async checkUserInGroup(
     username: string,
     groupName: string
   ): Promise<boolean | undefined> {
@@ -550,45 +571,6 @@ class AuthService {
       );
       console.error("AuthService - checkUserInGroup() method error:", error);
       throw error;
-    }
-  }
-
-  async refreshToken({
-    refreshToken,
-    username
-  }: {
-    refreshToken: string;
-    username: string;
-  }) {
-    if (!refreshToken || !username) {
-      throw new AuthenticationError();
-    }
-
-    const params = {
-      AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
-      ClientId: configs.awsCognitoClientId,
-      AuthParameters: {
-        REFRESH_TOKEN: refreshToken,
-        SECRET_HASH: this.generateSecretHash(username)
-      }
-    };
-
-    try {
-      const command = new InitiateAuthCommand(params);
-      const result = await client.send(command);
-
-      return {
-        accessToken: result.AuthenticationResult?.AccessToken!,
-        idToken: result.AuthenticationResult?.IdToken!,
-        refreshToken: result.AuthenticationResult?.RefreshToken || refreshToken // Reuse the old refresh token if a new one isn't provided
-      };
-    } catch (error) {
-      if (error instanceof ApplicationError) {
-        throw error;
-      }
-
-      console.error("AuthService - refreshToken() method error:", error);
-      throw new Error(`Error refreshing token: ${error}`);
     }
   }
 }

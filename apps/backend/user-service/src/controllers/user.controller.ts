@@ -16,11 +16,11 @@ import UserService from "@/src/services/user.service";
 // import validateRequest from "@/src/middlewares/validate-input";
 // import userJoiSchema from "@/src/schemas/user.schema";
 import {
-  UserCreationRequestParams,
-  UserGetAllControllerParams,
+  UserCreationRequest,
+  UserGetAllController,
   UserProfileResponse,
   UsersPaginatedResponse,
-  UserUpdateRequestParams
+  UserUpdateRequest
 } from "@/src/controllers/types/user-controller.type";
 import { Request as ExpressRequest } from "express";
 
@@ -37,7 +37,7 @@ export class UsersController extends Controller {
 
   @Get()
   public async getAllUsers(
-    @Queries() queries: UserGetAllControllerParams
+    @Queries() queries: UserGetAllController
   ): Promise<UsersPaginatedResponse> {
     try {
       const response = await UserService.getAllUsers(queries);
@@ -53,13 +53,10 @@ export class UsersController extends Controller {
   @Post()
   // @Middlewares(validateRequest(userJoiSchema))
   public async createUser(
-    @Body() requestBody: UserCreationRequestParams
+    @Body() requestBody: UserCreationRequest
   ): Promise<UserProfileResponse> {
-    console.log(requestBody);
-
     try {
-      // Create New User
-      const response = await UserService.createNewUser(requestBody);
+      const response = await UserService.createUser(requestBody);
 
       // Schedule Notification Job 1 Minute Later
       // await agenda.schedule(
@@ -81,7 +78,7 @@ export class UsersController extends Controller {
     @Request() request: ExpressRequest
   ): Promise<UserProfileResponse> {
     try {
-      const sub = request.cookies["username"]; // user_id
+      const sub = request.cookies["sub"];
 
       const response = await UserService.getUserBySub(sub);
 
@@ -170,10 +167,10 @@ export class UsersController extends Controller {
   @Put("/{userId}")
   public async updateUserById(
     @Path() userId: string,
-    @Body() updateUserInfo: UserUpdateRequestParams
+    @Body() updateUserInfo: UserUpdateRequest
   ): Promise<UserProfileResponse> {
     try {
-      const newUpdateUserInfo = { id: userId, ...updateUserInfo };
+      const newUpdateUserInfo = { userId, ...updateUserInfo };
       const response = await UserService.updateUserById(newUpdateUserInfo);
 
       return { message: "success", data: response };

@@ -8,7 +8,7 @@ export interface APIErrorResponse<T = undefined> {
   error?: T;
 }
 
-export interface PaginationParams {
+export interface Pagination {
   page?: number;
   limit?: number;
   filter?: string;

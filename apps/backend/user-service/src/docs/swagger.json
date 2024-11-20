@@ -18,16 +18,13 @@
 					"googleSub": {
 						"type": "string"
 					},
-					"facebookSub": {
+					"firstName": {
 						"type": "string"
 					},
-					"username": {
+					"lastName": {
 						"type": "string"
 					},
 					"email": {
-						"type": "string"
-					},
-					"phone_number": {
 						"type": "string"
 					},
 					"profile": {
@@ -43,6 +40,12 @@
 					"role": {
 						"type": "string"
 					},
+					"favorites": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -52,6 +55,21 @@
 						"format": "date-time"
 					}
 				},
+				"required": [
+					"_id",
+					"sub",
+					"googleSub",
+					"firstName",
+					"lastName",
+					"email",
+					"profile",
+					"gender",
+					"age",
+					"role",
+					"favorites",
+					"createdAt",
+					"updatedAt"
+				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -107,7 +125,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserGetAllControllerParams": {
+			"UserGetAllController": {
 				"properties": {
 					"page": {
 						"type": "number",
@@ -143,27 +161,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserCreationRequestParams": {
+			"UserCreationRequest": {
 				"properties": {
+					"_id": {
+						"type": "string"
+					},
 					"sub": {
 						"type": "string"
 					},
 					"googleSub": {
 						"type": "string"
 					},
-					"facebookSub": {
-						"type": "string"
-					},
 					"email": {
-						"type": "string"
-					},
-					"phone_number": {
-						"type": "string"
-					},
-					"profile": {
-						"type": "string"
-					},
-					"username": {
 						"type": "string"
 					},
 					"role": {
@@ -171,12 +180,14 @@
 					}
 				},
 				"required": [
-					"username"
+					"_id",
+					"email",
+					"role"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"UserUpdateRequestParams": {
+			"UserUpdateRequest": {
 				"properties": {
 					"sub": {
 						"type": "string"
@@ -184,10 +195,10 @@
 					"googleSub": {
 						"type": "string"
 					},
-					"facebookSub": {
+					"firstName": {
 						"type": "string"
 					},
-					"username": {
+					"lastName": {
 						"type": "string"
 					},
 					"profile": {
@@ -320,7 +331,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserCreationRequestParams"
+								"$ref": "#/components/schemas/UserCreationRequest"
 							}
 						}
 					}
@@ -500,7 +511,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserUpdateRequestParams"
+								"$ref": "#/components/schemas/UserUpdateRequest"
 							}
 						}
 					}

@@ -1,13 +1,9 @@
-export interface SignupRequest {
-  firstName: string;
-  lastName: string;
+export interface RegisterRequest {
   email: string;
   password: string;
 }
 
 export interface CreateUserRequest {
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
   role?: "user" | "admin";
@@ -31,4 +27,9 @@ export interface GoogleCallbackRequest {
   code: string;
   state: string;
   error?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
+  sub: string;
 }

@@ -7,14 +7,20 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Response": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateUserRequest": {
 				"properties": {
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
 					"email": {
 						"type": "string"
 					},
@@ -36,14 +42,8 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"SignupRequest": {
+			"RegisterRequest": {
 				"properties": {
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
 					"email": {
 						"type": "string"
 					},
@@ -102,6 +102,22 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"GoogleResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"GoogleCallbackRequest": {
 				"properties": {
 					"code": {
@@ -117,6 +133,22 @@
 				"required": [
 					"code",
 					"state"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RefreshTokenRequest": {
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					},
+					"sub": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"refreshToken",
+					"sub"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -142,15 +174,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Response"
 								}
 							}
 						}
@@ -169,15 +193,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Response"
 								}
 							}
 						}
@@ -197,24 +213,16 @@
 				}
 			}
 		},
-		"/v1/auth/signup": {
+		"/v1/auth/register": {
 			"post": {
-				"operationId": "Signup",
+				"operationId": "Register",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Response"
 								}
 							}
 						}
@@ -227,7 +235,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/SignupRequest"
+								"$ref": "#/components/schemas/RegisterRequest"
 							}
 						}
 					}
@@ -271,7 +279,7 @@
 				}
 			}
 		},
-		"/v1/auth/resend-code": {
+		"/v1/auth/resend-verify-code": {
 			"post": {
 				"operationId": "ResendVerifyCode",
 				"responses": {
@@ -280,15 +288,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Response"
 								}
 							}
 						}
@@ -317,15 +317,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Response"
 								}
 							}
 						}
@@ -354,19 +346,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"data": {
-											"type": "string"
-										},
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"data",
-										"message"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/GoogleResponse"
 								}
 							}
 						}
@@ -443,15 +423,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"username": {
-										"type": "string"
-									},
-									"refreshToken": {
-										"type": "string"
-									}
-								},
-								"type": "object"
+								"$ref": "#/components/schemas/RefreshTokenRequest"
 							}
 						}
 					}

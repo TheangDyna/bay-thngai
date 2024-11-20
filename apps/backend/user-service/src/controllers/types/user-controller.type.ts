@@ -1,26 +1,11 @@
+import { IUser } from "@/src/database/models/user.model";
 import { PaginationResponse } from "./common.interface";
 
-export interface UserGetAllControllerParams {
+export interface UserGetAllController {
   page?: number;
   limit?: number;
   filter?: string;
   sort?: string;
-}
-
-export interface IUser {
-  _id?: string;
-  sub?: string;
-  googleSub?: string;
-  facebookSub?: string;
-  username?: string;
-  email?: string;
-  phone_number?: string;
-  profile?: string;
-  gender?: string;
-  age?: number;
-  role?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export interface UserProfileResponse {
@@ -33,20 +18,19 @@ export interface UsersPaginatedResponse {
   data: PaginationResponse<IUser>;
 }
 
-export interface UserCreationRequestParams {
+export interface UserCreationRequest {
+  _id: string;
   sub?: string;
   googleSub?: string;
   email: string;
-  firstName: string;
-  lastName: string;
   role: string;
 }
 
-export interface UserUpdateRequestParams {
+export interface UserUpdateRequest {
   sub?: string;
   googleSub?: string;
-  facebookSub?: string;
-  username?: string;
+  firstName?: string;
+  lastName?: string;
   profile?: string;
   gender?: string;
   age?: number;

@@ -12,11 +12,17 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "Response": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CreateUserRequest": {
         "dataType": "refObject",
         "properties": {
-            "firstName": {"dataType":"string"},
-            "lastName": {"dataType":"string"},
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
             "role": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["user"]},{"dataType":"enum","enums":["admin"]}]},
@@ -24,11 +30,9 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SignupRequest": {
+    "RegisterRequest": {
         "dataType": "refObject",
         "properties": {
-            "firstName": {"dataType":"string"},
-            "lastName": {"dataType":"string"},
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
         },
@@ -61,12 +65,30 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "GoogleResponse": {
+        "dataType": "refObject",
+        "properties": {
+            "message": {"dataType":"string","required":true},
+            "data": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "GoogleCallbackRequest": {
         "dataType": "refObject",
         "properties": {
             "code": {"dataType":"string","required":true},
             "state": {"dataType":"string","required":true},
             "error": {"dataType":"string"},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RefreshTokenRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "refreshToken": {"dataType":"string","required":true},
+            "sub": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -147,13 +169,13 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/v1/auth/signup',
+        app.post('/v1/auth/register',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.signup)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.register)),
 
-            async function AuthController_signup(request: ExRequest, response: ExResponse, next: any) {
+            async function AuthController_register(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    body: {"in":"body","name":"body","required":true,"ref":"SignupRequest"},
+                    body: {"in":"body","name":"body","required":true,"ref":"RegisterRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -165,7 +187,7 @@ export function RegisterRoutes(app: Router) {
                 const controller = new AuthController();
 
               await templateService.apiHandler({
-                methodName: 'signup',
+                methodName: 'register',
                 controller,
                 response,
                 next,
@@ -207,7 +229,7 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/v1/auth/resend-code',
+        app.post('/v1/auth/resend-verify-code',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.resendVerifyCode)),
 
@@ -335,7 +357,7 @@ export function RegisterRoutes(app: Router) {
             async function AuthController_refreshToken(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                    body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"username":{"dataType":"string"},"refreshToken":{"dataType":"string"}}},
+                    body: {"in":"body","name":"body","required":true,"ref":"RefreshTokenRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

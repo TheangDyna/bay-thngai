@@ -15,19 +15,19 @@ const models: TsoaRoute.Models = {
     "IUser": {
         "dataType": "refObject",
         "properties": {
-            "_id": {"dataType":"string"},
-            "sub": {"dataType":"string"},
-            "googleSub": {"dataType":"string"},
-            "facebookSub": {"dataType":"string"},
-            "username": {"dataType":"string"},
-            "email": {"dataType":"string"},
-            "phone_number": {"dataType":"string"},
-            "profile": {"dataType":"string"},
-            "gender": {"dataType":"string"},
-            "age": {"dataType":"double"},
-            "role": {"dataType":"string"},
-            "createdAt": {"dataType":"datetime"},
-            "updatedAt": {"dataType":"datetime"},
+            "_id": {"dataType":"string","required":true},
+            "sub": {"dataType":"string","required":true},
+            "googleSub": {"dataType":"string","required":true},
+            "firstName": {"dataType":"string","required":true},
+            "lastName": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "profile": {"dataType":"string","required":true},
+            "gender": {"dataType":"string","required":true},
+            "age": {"dataType":"double","required":true},
+            "role": {"dataType":"string","required":true},
+            "favorites": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
@@ -51,7 +51,7 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserGetAllControllerParams": {
+    "UserGetAllController": {
         "dataType": "refObject",
         "properties": {
             "page": {"dataType":"double"},
@@ -71,28 +71,25 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserCreationRequestParams": {
+    "UserCreationRequest": {
         "dataType": "refObject",
         "properties": {
+            "_id": {"dataType":"string","required":true},
             "sub": {"dataType":"string"},
             "googleSub": {"dataType":"string"},
-            "facebookSub": {"dataType":"string"},
-            "email": {"dataType":"string"},
-            "phone_number": {"dataType":"string"},
-            "profile": {"dataType":"string"},
-            "username": {"dataType":"string","required":true},
-            "role": {"dataType":"string"},
+            "email": {"dataType":"string","required":true},
+            "role": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserUpdateRequestParams": {
+    "UserUpdateRequest": {
         "dataType": "refObject",
         "properties": {
             "sub": {"dataType":"string"},
             "googleSub": {"dataType":"string"},
-            "facebookSub": {"dataType":"string"},
-            "username": {"dataType":"string"},
+            "firstName": {"dataType":"string"},
+            "lastName": {"dataType":"string"},
             "profile": {"dataType":"string"},
             "gender": {"dataType":"string"},
             "age": {"dataType":"double"},
@@ -153,7 +150,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UsersController_getAllUsers(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    queries: {"in":"queries","name":"queries","required":true,"ref":"UserGetAllControllerParams"},
+                    queries: {"in":"queries","name":"queries","required":true,"ref":"UserGetAllController"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -183,7 +180,7 @@ export function RegisterRoutes(app: Router) {
 
             async function UsersController_createUser(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
-                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserCreationRequestParams"},
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"UserCreationRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -366,7 +363,7 @@ export function RegisterRoutes(app: Router) {
             async function UsersController_updateUserById(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
                     userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                    updateUserInfo: {"in":"body","name":"updateUserInfo","required":true,"ref":"UserUpdateRequestParams"},
+                    updateUserInfo: {"in":"body","name":"updateUserInfo","required":true,"ref":"UserUpdateRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

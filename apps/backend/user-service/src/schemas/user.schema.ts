@@ -3,8 +3,8 @@ import Joi from "joi";
 const userJoiSchema = Joi.object({
   sub: Joi.string(),
   googleSub: Joi.string(),
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
+  firstName: Joi.string(),
+  lastName: Joi.string(),
   email: Joi.string().email().required(),
   profile: Joi.string(),
   role: Joi.string().required()

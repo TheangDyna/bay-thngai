@@ -1,32 +1,37 @@
-export interface UserFilterParams {
+export interface UserFilter {
   gender?: string;
 }
 
-export interface UserSortParams {
-  username?: "asc" | "desc";
+export interface UserSort {
+  firstName?: "asc" | "desc";
+  lastName?: "asc" | "desc";
   createdAt?: "asc" | "desc";
 }
 
-export interface UserGetAllRepoParams {
+export interface UserGetAllRepo {
   page?: number;
   limit?: number;
-  filter?: UserFilterParams;
-  sort?: UserSortParams;
+  filter?: UserFilter;
+  sort?: UserSort;
 }
 
-export interface UserCreationRepoParams {
+export interface UserCreationRepo {
   sub?: string;
+  googleSub?: string;
   email: string;
-  firstName: string;
-  lastName: string;
   role: string;
 }
 
-export interface UserUpdateRepoParams {
-  id?: string;
-  username?: string;
+export interface UserUpdateRepo {
+  userId: string; // _id, sub, googleSub
+  sub?: string;
+  googleSub?: string;
+  firstName?: string;
+  lastName?: string;
+  profile?: string;
   gender?: string;
   age?: number;
+  role?: string;
 }
 
 export interface MongoError extends Error {

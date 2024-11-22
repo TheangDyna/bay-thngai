@@ -199,11 +199,13 @@
 							"application/json": {
 								"schema": {
 									"properties": {
+										"data": {},
 										"message": {
 											"type": "string"
 										}
 									},
 									"required": [
+										"data",
 										"message"
 									],
 									"type": "object"

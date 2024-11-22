@@ -14,10 +14,9 @@ RUN npm install && npm install -g nodemon
 COPY tsconfig.json ./
 COPY nodemon.json ./
 COPY src ./src
-COPY tsoa.json ./
 
 # Expose the application's port
-EXPOSE 4003
+EXPOSE 4000
 
 # Command to run the application
 CMD ["npm", "run", "dev"]

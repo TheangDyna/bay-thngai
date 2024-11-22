@@ -18,13 +18,12 @@
     "admin": "yarn workspace admin dev",
     "client": "yarn workspace client dev",
     "backend": "concurrently \"yarn api-gateway dev\" \"yarn auth-service dev\" \"yarn user-service dev\"",
+    "docker:dev": "docker-compose -f ./docker-compose.dev.yml up -d",
+    "docker:stop": "docker-compose -f ./docker-compose.dev.yml down",
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.12.2",
-    "@typescript-eslint/parser": "^8.12.2",
     "concurrently": "^9.0.1",
-    "eslint": "^9.13.0",
     "prettier": "^3.3.3"
   }
 }

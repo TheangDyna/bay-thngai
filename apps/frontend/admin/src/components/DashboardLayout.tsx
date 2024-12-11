@@ -2,8 +2,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/contexts/theme/ModeToggle";
 import React from "react";
-import { Search } from "./Search";
-import { UserNav } from "./UserNav";
+import { Search } from "@/components/Search";
+import { UserNav } from "@/components/UserNav";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

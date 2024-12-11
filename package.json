@@ -11,20 +11,13 @@
     "apps/frontend/*"
   ],
   "scripts": {
-    "api-gateway": "yarn workspace api-gateway dev",
-    "auth-service": "yarn workspace auth-service dev",
-    "user-service": "yarn workspace user-service dev",
-    "product-service": "yarn workspace product-service dev",
     "admin": "yarn workspace admin dev",
     "client": "yarn workspace client dev",
-    "dev": "concurrently \"yarn api-gateway dev\" \"yarn auth-service dev\" \"yarn user-service dev\" \"yarn product-service dev\"",
+    "core-api": "yarn workspace core-api dev",
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.12.2",
-    "@typescript-eslint/parser": "^8.12.2",
     "concurrently": "^9.0.1",
-    "eslint": "^9.13.0",
     "prettier": "^3.3.3"
   }
 }

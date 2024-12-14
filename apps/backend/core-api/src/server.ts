@@ -1,7 +1,7 @@
 import app from "./app";
 import { config } from "./configs/config";
-import { connectDatabase } from "./configs/database";
-import { logger } from "./utils/logger";
+import { connectDatabase } from "./configs/database.config";
+import logger from "./utils/logger";
 
 const startServer = async (): Promise<void> => {
   try {
@@ -14,6 +14,16 @@ const startServer = async (): Promise<void> => {
       logger.info(
         `Swagger documentation available at http://localhost:${config.port}/api-docs`
       );
+    });
+    process.on("unhandledRejection", (err: Error) => {
+      logger.error("Unhandled Rejection:", err);
+      process.exit(1);
+    });
+
+    // Handle uncaught exceptions
+    process.on("uncaughtException", (err: Error) => {
+      logger.error("Uncaught Exception:", err);
+      process.exit(1);
     });
   } catch (error) {
     logger.error("Failed to start server:", error);

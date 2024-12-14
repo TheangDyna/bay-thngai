@@ -6,8 +6,7 @@ import { ProductCreateInput, ProductUpdateInput } from "../types/product.types";
 export class ProductController {
   public static getAllProducts = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      const queryString = req.query;
-      const products = await ProductService.getAllProducts(queryString);
+      const products = await ProductService.getAllProducts(req.query);
       res.status(200).json({
         status: "success",
         results: products.length,

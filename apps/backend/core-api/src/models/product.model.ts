@@ -11,6 +11,12 @@ const productSchema = new Schema<IProductDocument>(
   },
   {
     timestamps: true,
+    toObject: {
+      transform: (_doc, ret) => {
+        delete ret.__v;
+        return ret;
+      }
+    },
     toJSON: {
       transform: (_doc, ret) => {
         delete ret.__v;

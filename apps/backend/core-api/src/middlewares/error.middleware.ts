@@ -1,88 +1,159 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils/appError";
+import { MongoServerError } from "mongodb";
+import { Error as MongooseError } from "mongoose";
+import { CognitoIdentityProviderServiceException } from "@aws-sdk/client-cognito-identity-provider";
 import { config } from "../configs/config";
-import { logger } from "../utils/logger";
+import logger from "../utils/logger";
+import { AppError } from "../utils/appError";
 
-// Database error handlers
-const handleCastErrorDB = (err: any): AppError => {
-  const message = `Invalid ${err.path}: ${err.value}.`;
-  return new AppError(message, 400);
-};
-
-const handleDuplicateFieldsDB = (err: any): AppError => {
-  const match = err.message.match(/(["'])(\\?.)*?\1/);
-  const value = match ? match[0] : "unknown value";
-
-  const message = `Duplicate field value: ${value}. Please use another value!`;
-  return new AppError(message, 400);
-};
-
-const handleValidationErrorDB = (err: any): AppError => {
-  const errors = Object.values(err.errors).map((el: any) => el.message);
-
-  const message = `Invalid input data. ${errors.join(". ")}`;
-  return new AppError(message, 400);
-};
-
-// JWT error handlers
-const handleJWTError = (): AppError =>
-  new AppError("Invalid token. Please log in again!", 401);
-
-const handleJWTExpiredError = (): AppError =>
-  new AppError("Your token has expired! Please log in again.", 401);
-
-// Error response functions
-const sendErrorDev = (err: AppError, res: Response): void => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack
-  });
-};
-
-const sendErrorProd = (err: AppError, res: Response): void => {
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message
-    });
-  } else {
-    // Log error
-    logger.error("Unexpected Error:", err);
-
-    res.status(500).json({
-      status: "error",
-      message: "Something went very wrong!"
-    });
+const COGNITO_ERROR_MAP: Record<
+  string,
+  { message: string; statusCode: number }
+> = {
+  UserNotFoundException: { message: "User not found", statusCode: 404 },
+  UsernameExistsException: {
+    message: "Email already registered",
+    statusCode: 409
+  },
+  InvalidPasswordException: {
+    message: "Password does not meet requirements",
+    statusCode: 400
+  },
+  CodeMismatchException: {
+    message: "Invalid verification code",
+    statusCode: 400
+  },
+  ExpiredCodeException: {
+    message: "Verification code has expired",
+    statusCode: 400
+  },
+  NotAuthorizedException: {
+    message: "Incorrect username or password",
+    statusCode: 401
   }
 };
 
-// Main error handling middleware
-const globalErrorHandler = (
-  err: any,
-  _req: Request,
+class ErrorHandler {
+  private static instance: ErrorHandler;
+
+  private constructor() {}
+
+  public static getInstance(): ErrorHandler {
+    if (!ErrorHandler.instance) {
+      ErrorHandler.instance = new ErrorHandler();
+    }
+    return ErrorHandler.instance;
+  }
+
+  private handleCognitoError(
+    error: CognitoIdentityProviderServiceException
+  ): AppError {
+    const { name } = error;
+    const defaultError = {
+      message: "Authentication service error",
+      statusCode: 500
+    };
+    const mappedError = COGNITO_ERROR_MAP[name] || defaultError;
+
+    return new AppError(mappedError.message, mappedError.statusCode);
+  }
+
+  private handleMongoError(error: MongoServerError): AppError {
+    switch (error.code) {
+      case 11000:
+        const field = error ? Object.keys(error.keyValue)[0] : "unknown";
+        const value = error.keyValue ? error.keyValue[field] : "unknown";
+
+        return new AppError(
+          `Duplicate value "${value}" for field "${field}". Please use a unique value.`,
+          409
+        );
+      default:
+        return new AppError("Database error", 500);
+    }
+  }
+
+  private handleMongooseError(error: MongooseError): AppError {
+    if (error instanceof MongooseError.ValidationError) {
+      const errorMessages = Object.values(error.errors)
+        .map((err) => `${err.path}: ${err.message}`)
+        .join(", ");
+
+      return new AppError(`Validation failed: ${errorMessages}`, 400);
+    }
+
+    if (error instanceof MongooseError.CastError) {
+      return new AppError(`Invalid ${error.path}: ${error.value}`, 400);
+    }
+
+    return new AppError("Database error", 500);
+  }
+
+  // private handleJWTError(error: Error): AppError {
+  //   if (error.name === "JsonWebTokenError") {
+  //     return new AppError("Invalid token", 401);
+  //   }
+
+  //   if (error.name === "TokenExpiredError") {
+  //     return new AppError("Token expired", 401);
+  //   }
+
+  //   return new AppError("Authentication error", 401);
+  // }
+
+  public handleError(error: Error | AppError | any): AppError {
+    // Already handled errors
+    if (error instanceof AppError) {
+      return error;
+    }
+
+    // Cognito errors
+    if (error instanceof CognitoIdentityProviderServiceException) {
+      return this.handleCognitoError(error);
+    }
+
+    // MongoDB errors
+    if (error instanceof MongoServerError) {
+      return this.handleMongoError(error);
+    }
+
+    // Mongoose errors
+    if (error instanceof MongooseError) {
+      return this.handleMongooseError(error);
+    }
+
+    // Unhandled errors
+    return new AppError("Internal server error", 500);
+  }
+}
+
+export const errorHandler = (
+  err: Error | AppError | any,
+  req: Request,
   res: Response,
   _next: NextFunction
 ): void => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+  const handler = ErrorHandler.getInstance();
+  const error = handler.handleError(err);
 
   if (config.nodeEnv === "development") {
-    sendErrorDev(err, res);
-  } else if (config.nodeEnv === "production") {
-    let error = { ...err };
-
-    // Ensure error message and custom properties are preserved
-    error.message = err.message;
-    if (err.name === "CastError") error = handleCastErrorDB(error);
-    if (err.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (err.name === "ValidationError") error = handleValidationErrorDB(error);
-    if (err.name === "JsonWebTokenError") error = handleJWTError();
-    if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
-
-    sendErrorProd(error, res);
+    logger.error({
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      originalError: err
+    });
+  } else {
+    logger.error({
+      message: error.message,
+      code: error.code,
+      path: req.path
+    });
   }
-};
 
-export default globalErrorHandler;
+  res.status(error.statusCode).json({
+    status: error.status,
+    message: error.message,
+    ...(config.nodeEnv === "development" && { stack: error.stack })
+  });
+};

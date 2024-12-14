@@ -14,6 +14,7 @@
     "admin": "yarn workspace admin dev",
     "client": "yarn workspace client dev",
     "core-api": "yarn workspace core-api dev",
+    "core-api:prod": "yarn workspace core-api prod",
     "format": "prettier --write ."
   },
   "devDependencies": {

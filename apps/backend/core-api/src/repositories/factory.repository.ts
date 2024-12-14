@@ -1,6 +1,6 @@
 import { Model, Document } from "mongoose";
-import { AppError } from "../types/error.types";
 import { APIFeatures } from "../utils/apiFeatures";
+import { AppError } from "../utils/appError";
 
 export class FactoryRepository {
   static async getAll<T extends Document>(

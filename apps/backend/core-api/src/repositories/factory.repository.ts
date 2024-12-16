@@ -22,7 +22,7 @@ export class FactoryRepository {
   ): Promise<T> {
     const doc = await Model.findById(id);
     if (!doc) {
-      throw new AppError("Document not found", 404);
+      throw new AppError("Document not found.", 404);
     }
     return doc;
   }
@@ -44,7 +44,7 @@ export class FactoryRepository {
       runValidators: true
     });
     if (!doc) {
-      throw new AppError("Document not found", 404);
+      throw new AppError("Document not found.", 404);
     }
     return doc;
   }
@@ -55,7 +55,7 @@ export class FactoryRepository {
   ): Promise<void> {
     const doc = await Model.findByIdAndDelete(id);
     if (!doc) {
-      throw new AppError("Document not found", 404);
+      throw new AppError("Document not found.", 404);
     }
   }
 }

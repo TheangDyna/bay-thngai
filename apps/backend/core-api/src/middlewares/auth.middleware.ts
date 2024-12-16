@@ -5,7 +5,7 @@ import { UserService } from "../services/user.service";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { IUserDocument } from "../types/user.types";
 import { AuthService } from "../services/auth.service";
-import setCookie from "../utils/cookie";
+import { setCookie } from "../utils/cookie";
 
 export interface AuthenticatedRequest extends Request {
   user?: IUserDocument;
@@ -77,11 +77,11 @@ export const protect = async (
 
     // 4. Validate payload and fetch the user from the database
     if (!payload || !payload.username) {
-      throw new AppError("Invalid or expired token. Please log in again", 401);
+      throw new AppError("Invalid or expired token. Please log in again.", 401);
     }
 
     try {
-      const user = await UserService.getUserByCognitoId(payload.username);
+      const user = await UserService.getUserByCognitoId(payload.sub);
       req.user = user;
     } catch (error) {
       throw new AppError(

@@ -25,6 +25,7 @@ export interface CognitoToken {
 
 export interface UserInfoFromIdToken {
   sub: string;
+  email: string;
   [key: string]: any;
 }
 

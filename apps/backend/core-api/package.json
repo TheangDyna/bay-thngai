@@ -12,6 +12,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.709.0",
     "@types/cors": "^2.8.17",
     "aws-jwt-verify": "^4.0.1",
+    "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

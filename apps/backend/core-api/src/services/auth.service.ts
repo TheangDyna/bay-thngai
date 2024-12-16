@@ -5,6 +5,8 @@ import {
   ConfirmSignUpCommand,
   ConfirmSignUpCommandInput,
   ForgotPasswordCommand,
+  GlobalSignOutCommand,
+  GlobalSignOutCommandInput,
   InitiateAuthCommand,
   InitiateAuthCommandInput,
   ResendConfirmationCodeCommand,
@@ -27,31 +29,17 @@ import { UserService } from "./user.service";
 import { AppError } from "../utils/appError";
 import { decodeIdToken } from "../utils/decodeIdToken";
 import crypto from "crypto";
+import axios from "axios";
 
 export class AuthService {
   public static async signUp(data: SignUpInput): Promise<void> {
     const { email, password } = data;
 
-    const userData = {
-      "custom:role": "user",
-      email
-    };
-
-    const allowedAttributes = ["email", "custom:role"];
-
-    const attributes = Object.keys(userData)
-      .filter((key) => allowedAttributes.includes(key))
-      .map((key) => ({
-        Name: key,
-        Value: userData[key as keyof typeof userData]
-      }));
-
     const params: SignUpCommandInput = {
       ClientId: config.awsCognitoClientId,
       Username: email,
       Password: password,
-      SecretHash: this.generateSecretHash(email),
-      UserAttributes: attributes
+      SecretHash: this.generateSecretHash(email)
     };
 
     const command = new SignUpCommand(params);
@@ -85,16 +73,20 @@ export class AuthService {
 
     const command = new ConfirmSignUpCommand(params);
     await cognitoClient.send(command);
-    const userInfo: AdminGetUserResponse = await this.getUserByUsername(email);
+
+    const userInfo = await this.getUserByUsername(email);
+    if (!userInfo.Username) {
+      throw new AppError("Authentication failed.", 401);
+    }
 
     await UserService.createUser({
       email,
-      cognitoId: userInfo.Username!
+      cognitoId: userInfo.Username
     });
   }
 
   public static async signIn(data: SignInInput): Promise<CognitoToken> {
-    const { email, password } = data; // current username only email
+    const { email, password } = data;
 
     const params: InitiateAuthCommandInput = {
       AuthFlow: "USER_PASSWORD_AUTH",
@@ -120,8 +112,102 @@ export class AuthService {
     }
 
     const userInfo = decodeIdToken(idToken);
+    const username = userInfo["cognito:username"];
 
-    return { idToken, accessToken, refreshToken, username: userInfo.sub };
+    if (!username) {
+      throw new AppError("Authentication failed.", 401);
+    }
+
+    return { idToken, accessToken, refreshToken, username };
+  }
+
+  public static async googleLogin(): Promise<string> {
+    const state = crypto.randomBytes(16).toString("hex");
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: config.awsCognitoClientId,
+      redirect_uri: config.awsRedirectUri,
+      identity_provider: "Google",
+      scope: "profile email openid aws.cognito.signin.user.admin",
+      state: state,
+      prompt: "select_account"
+    });
+    const cognitoOAuthURL = `${
+      config.awsCognitoDomain
+    }/oauth2/authorize?${params.toString()}`;
+
+    return cognitoOAuthURL;
+  }
+
+  public static async googleCallback(
+    queryString: Record<string, any>
+  ): Promise<CognitoToken> {
+    const { code, error } = queryString;
+
+    if (error || !code) {
+      throw new AppError(error, 400);
+    }
+
+    const authorizationHeader = `Basic ${Buffer.from(
+      `${config.awsCognitoClientId}:${config.awsCognitoClientSecret}`
+    ).toString("base64")}`;
+
+    const params = new URLSearchParams({
+      grant_type: "authorization_code",
+      code: code,
+      client_id: config.awsCognitoClientId,
+      redirect_uri: config.awsRedirectUri
+    });
+
+    const response = await axios.post(
+      `${config.awsCognitoDomain}/oauth2/token`,
+      params,
+      {
+        headers: {
+          Authorization: authorizationHeader,
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      }
+    );
+
+    const {
+      id_token: idToken,
+      access_token: accessToken,
+      refresh_token: refreshToken
+    } = response.data || {};
+
+    if (!idToken || !accessToken || !refreshToken) {
+      throw new AppError("Authentication failed. Missing tokens.", 401);
+    }
+
+    const userInfo = decodeIdToken(idToken);
+    const email = userInfo.email;
+    const cognitoId = userInfo.sub;
+    const username = userInfo["cognito:username"];
+
+    if (!email || !cognitoId || !username) {
+      throw new AppError("Authentication failed.", 401);
+    }
+
+    try {
+      await UserService.getUserByCognitoId(cognitoId);
+    } catch (error) {
+      if (error instanceof AppError && error.statusCode === 404) {
+        await UserService.createUser({
+          email,
+          cognitoId
+        });
+      } else {
+        throw error;
+      }
+    }
+
+    return {
+      idToken,
+      accessToken,
+      refreshToken,
+      username
+    };
   }
 
   public static async refreshAccessToken(
@@ -187,6 +273,14 @@ export class AuthService {
     const command = new ConfirmForgotPasswordCommand(params);
     await cognitoClient.send(command);
   } // not yet
+
+  public static async signOut(accessToken: string): Promise<void> {
+    const params: GlobalSignOutCommandInput = {
+      AccessToken: accessToken
+    };
+    const command = new GlobalSignOutCommand(params);
+    await cognitoClient.send(command);
+  }
 
   private static generateSecretHash(username: string): string {
     const secret = config.awsCognitoClientSecret;

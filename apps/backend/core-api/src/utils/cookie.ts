@@ -17,4 +17,11 @@ const setCookie = (
   res.cookie(name, value, { ...defaultOptions, ...options });
 };
 
-export default setCookie;
+const clearCookie = (res: Response, name: string) => {
+  res.cookie(name, "", {
+    expires: new Date(0),
+    httpOnly: true
+  });
+};
+
+export { setCookie, clearCookie };

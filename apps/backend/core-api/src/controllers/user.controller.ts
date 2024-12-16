@@ -23,39 +23,4 @@ export class UserController {
       });
     }
   );
-
-  // public static createProduct = catchAsync(
-  //   async (req: Request, res: Response): Promise<void> => {
-  //     const productData: ProductCreateInput = req.body;
-  //     const product = await ProductService.createProduct(productData);
-  //     res.status(201).json({
-  //       status: "success",
-  //       data: product
-  //     });
-  //   }
-  // );
-
-  // public static updateProduct = catchAsync(
-  //   async (req: Request, res: Response): Promise<void> => {
-  //     const productData: ProductUpdateInput = req.body;
-  //     const product = await ProductService.updateProduct(
-  //       req.params.id,
-  //       productData
-  //     );
-  //     res.status(200).json({
-  //       status: "success",
-  //       data: product
-  //     });
-  //   }
-  // );
-
-  // public static deleteProduct = catchAsync(
-  //   async (req: Request, res: Response): Promise<void> => {
-  //     await ProductService.deleteProduct(req.params.id);
-  //     res.status(204).json({
-  //       status: "success",
-  //       data: null
-  //     });
-  //   }
-  // );
 }

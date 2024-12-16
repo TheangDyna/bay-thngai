@@ -1,7 +1,3 @@
-import { config as loadEnv } from "dotenv";
-
-loadEnv();
-
 interface Config {
   nodeEnv: string;
   port: string;

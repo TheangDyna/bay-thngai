@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { productRoutes } from "./routes/product.routes";
 import { authRoutes } from "./routes/auth.routes";

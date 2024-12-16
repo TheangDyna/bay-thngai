@@ -5,8 +5,11 @@ import {
   UpdateProductSchema
 } from "../validators/product.validators";
 import { validate } from "../middlewares/validation.middleware";
+import { protect, restrictTo } from "../middlewares/auth.middleware";
 
 const router = Router();
+
+router.use(protect, restrictTo("admin"));
 
 router
   .route("/")

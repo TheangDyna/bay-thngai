@@ -10,25 +10,25 @@ const COGNITO_ERROR_MAP: Record<
   string,
   { message: string; statusCode: number }
 > = {
-  UserNotFoundException: { message: "User not found", statusCode: 404 },
+  UserNotFoundException: { message: "User not found.", statusCode: 404 },
   UsernameExistsException: {
-    message: "Email already registered",
+    message: "Email already registered.",
     statusCode: 409
   },
   InvalidPasswordException: {
-    message: "Password does not meet requirements",
+    message: "Password does not meet requirements.",
     statusCode: 400
   },
   CodeMismatchException: {
-    message: "Invalid verification code",
+    message: "Invalid verification code.",
     statusCode: 400
   },
   ExpiredCodeException: {
-    message: "Verification code has expired",
+    message: "Verification code has expired.",
     statusCode: 400
   },
   NotAuthorizedException: {
-    message: "Incorrect username or password",
+    message: "Incorrect username or password.",
     statusCode: 401
   }
 };
@@ -50,7 +50,7 @@ class ErrorHandler {
   ): AppError {
     const { name } = error;
     const defaultError = {
-      message: "Authentication service error",
+      message: "Authentication service error.",
       statusCode: 500
     };
     const mappedError = COGNITO_ERROR_MAP[name] || defaultError;
@@ -69,7 +69,7 @@ class ErrorHandler {
           409
         );
       default:
-        return new AppError("Database error", 500);
+        return new AppError("Database error.", 500);
     }
   }
 
@@ -79,27 +79,15 @@ class ErrorHandler {
         .map((err) => `${err.path}: ${err.message}`)
         .join(", ");
 
-      return new AppError(`Validation failed: ${errorMessages}`, 400);
+      return new AppError(`Validation failed: ${errorMessages}.`, 400);
     }
 
     if (error instanceof MongooseError.CastError) {
-      return new AppError(`Invalid ${error.path}: ${error.value}`, 400);
+      return new AppError(`Invalid ${error.path}: ${error.value}.`, 400);
     }
 
-    return new AppError("Database error", 500);
+    return new AppError("Database error.", 500);
   }
-
-  // private handleJWTError(error: Error): AppError {
-  //   if (error.name === "JsonWebTokenError") {
-  //     return new AppError("Invalid token", 401);
-  //   }
-
-  //   if (error.name === "TokenExpiredError") {
-  //     return new AppError("Token expired", 401);
-  //   }
-
-  //   return new AppError("Authentication error", 401);
-  // }
 
   public handleError(error: Error | AppError | any): AppError {
     // Already handled errors
@@ -123,7 +111,7 @@ class ErrorHandler {
     }
 
     // Unhandled errors
-    return new AppError("Internal server error", 500);
+    return new AppError("Internal server error.", 500);
   }
 }
 

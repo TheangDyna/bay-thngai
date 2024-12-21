@@ -38,7 +38,7 @@ export const protect = async (
     let payload;
 
     // 2. Handle refresh token if access token is missing
-    if (!accessToken && refreshToken && username) {
+    if (!accessToken && username && refreshToken) {
       try {
         const cognitoToken = await AuthService.refreshAccessToken(
           username,
@@ -55,16 +55,14 @@ export const protect = async (
           maxAge: 30 * 24 * 3600 * 1000 // 30 days
         });
 
-        // Verify the refreshed access token
         payload = await verifier.verify(cognitoToken.accessToken);
       } catch (error) {
         throw new AppError(
-          "Failed to refresh tokens. Please log in again.",
+          "Invalid or expired token. Please log in again.",
           401
         );
       }
     } else {
-      // 3. Verify the access token
       try {
         payload = await verifier.verify(accessToken);
       } catch (error) {
@@ -75,7 +73,6 @@ export const protect = async (
       }
     }
 
-    // 4. Validate payload and fetch the user from the database
     if (!payload || !payload.username) {
       throw new AppError("Invalid or expired token. Please log in again.", 401);
     }

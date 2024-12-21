@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ProductService } from "../services/product.service";
 import { catchAsync } from "../utils/catchAsync";
-import { ProductCreateInput, ProductUpdateInput } from "../types/product.types";
+import { CreateProductInput, UpdateProductInput } from "../types/product.types";
 
 export class ProductController {
   public static getAllProducts = catchAsync(
@@ -27,7 +27,7 @@ export class ProductController {
 
   public static createProduct = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      const productData: ProductCreateInput = req.body;
+      const productData: CreateProductInput = req.body;
       const product = await ProductService.createProduct(productData);
       res.status(201).json({
         status: "success",
@@ -38,7 +38,7 @@ export class ProductController {
 
   public static updateProduct = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      const productData: ProductUpdateInput = req.body;
+      const productData: UpdateProductInput = req.body;
       const product = await ProductService.updateProduct(
         req.params.id,
         productData

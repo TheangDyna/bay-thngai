@@ -1,6 +1,46 @@
 import { z } from "zod";
 
-const UserSchema = z.object({});
+export const UserRoleSchema = z.enum(["user", "admin"]);
+export const GenderSchema = z.enum(["male", "female"]);
+export const ActivityLevelSchema = z.enum([
+  "sedentary",
+  "lightly active",
+  "moderately active",
+  "very active",
+  "extra active"
+]);
+export const DietaryPreferencesSchema = z.enum([
+  "vegetarian",
+  "vegan",
+  "gluten-free",
+  "low-carb",
+  "high-protein",
+  "halal",
+  "kosher"
+]);
+export const HealthGoalsSchema = z.enum([
+  "weight loss",
+  "weight gain",
+  "maintenance",
+  "muscle gain",
+  "improved health"
+]);
 
+export const UserSchema = z.object({
+  email: z.string().email(),
+  cognitoId: z.string(),
+  role: UserRoleSchema.optional().default("user"),
+  firstName: z.string().trim().optional(),
+  lastName: z.string().trim().optional(),
+  age: z.number().min(1).max(120).optional(),
+  gender: GenderSchema.optional(),
+  height: z.number().min(50).optional(),
+  weight: z.number().min(20).optional(),
+  activityLevel: ActivityLevelSchema.optional().default("moderately active"),
+  dietaryPreferences: z.array(DietaryPreferencesSchema).optional().default([]),
+  healthGoals: HealthGoalsSchema.optional().default("maintenance"),
+  allergies: z.array(z.string()).optional().default([]),
+  dailyCalorieTarget: z.number().positive().optional().default(2000)
+});
 export const CreateUserSchema = UserSchema;
 export const UpdateUserSchema = UserSchema.partial();

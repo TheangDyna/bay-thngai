@@ -1,23 +1,12 @@
 import { Document } from "mongoose";
+import { z } from "zod";
+import { UserSchema } from "../validators/user.validators";
 
-export type UserRole = "user" | "admin";
+export type IUser = z.infer<typeof UserSchema>;
 
-export interface IUser {
-  email: string;
-  cognitoId: string;
-  role?: UserRole;
-  firstName?: string;
-  lastName?: string;
-}
-
-export interface UserCreateInput {
-  email: string;
-  cognitoId: string;
-  role?: string;
-}
+export type CreateUserInput = z.infer<typeof UserSchema>;
 
 export interface IUserDocument extends IUser, Document {
-  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }

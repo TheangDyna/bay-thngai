@@ -2,16 +2,13 @@ import { Document } from "mongoose";
 import { z } from "zod";
 import {
   CreateProductSchema,
+  ProductSchema,
   UpdateProductSchema
 } from "../validators/product.validators";
 
-export interface IProduct {
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  inStock: boolean;
-}
+export type IProduct = z.infer<typeof ProductSchema>;
+export type CreateProductInput = z.infer<typeof CreateProductSchema>;
+export type UpdateProductInput = z.infer<typeof UpdateProductSchema>;
 
 export interface IProductDocument extends IProduct, Document {
   createdAt: Date;
@@ -28,6 +25,3 @@ export interface ProductsResponse {
   results: number;
   data: IProductDocument[];
 }
-
-export type ProductCreateInput = z.infer<typeof CreateProductSchema>;
-export type ProductUpdateInput = z.infer<typeof UpdateProductSchema>;

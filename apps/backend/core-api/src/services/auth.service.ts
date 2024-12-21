@@ -30,6 +30,7 @@ import { AppError } from "../utils/appError";
 import { decodeIdToken } from "../utils/decodeIdToken";
 import crypto from "crypto";
 import axios from "axios";
+import { CreateUserSchema } from "../validators/user.validators";
 
 export class AuthService {
   public static async signUp(data: SignUpInput): Promise<void> {
@@ -79,10 +80,12 @@ export class AuthService {
       throw new AppError("Authentication failed.", 401);
     }
 
-    await UserService.createUser({
+    const userData = CreateUserSchema.parse({
       email,
       cognitoId: userInfo.Username
     });
+
+    await UserService.createUser(userData);
   }
 
   public static async signIn(data: SignInInput): Promise<CognitoToken> {
@@ -193,10 +196,11 @@ export class AuthService {
       await UserService.getUserByCognitoId(cognitoId);
     } catch (error) {
       if (error instanceof AppError && error.statusCode === 404) {
-        await UserService.createUser({
+        const userData = CreateUserSchema.parse({
           email,
           cognitoId
         });
+        await UserService.createUser(userData);
       } else {
         throw error;
       }

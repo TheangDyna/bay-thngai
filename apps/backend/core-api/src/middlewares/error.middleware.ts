@@ -5,6 +5,8 @@ import { CognitoIdentityProviderServiceException } from "@aws-sdk/client-cognito
 import { config } from "../configs/config";
 import logger from "../utils/logger";
 import { AppError } from "../utils/appError";
+import { z } from "zod";
+import { formatZodErrors } from "../utils/formatZodErrors";
 
 const COGNITO_ERROR_MAP: Record<
   string,
@@ -43,6 +45,14 @@ class ErrorHandler {
       ErrorHandler.instance = new ErrorHandler();
     }
     return ErrorHandler.instance;
+  }
+
+  private handleZodError(error: z.ZodError): AppError {
+    const errorMessage = formatZodErrors(error.errors);
+
+    logger.error(errorMessage);
+
+    return new AppError(`${errorMessage}`, 400);
   }
 
   private handleCognitoError(
@@ -93,6 +103,11 @@ class ErrorHandler {
     // Already handled errors
     if (error instanceof AppError) {
       return error;
+    }
+
+    // Handle Zod validation errors
+    if (error instanceof z.ZodError) {
+      return this.handleZodError(error);
     }
 
     // Cognito errors

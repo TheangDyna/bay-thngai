@@ -9,6 +9,7 @@ import { rateLimiter } from "./middlewares/rateLimiter.middleware";
 import helmet from "helmet";
 import cors from "cors";
 import { userRoutes } from "./routes/user.routes";
+import { cuisineRoutes } from "./routes/cuisine.routes";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
 
 // Error handling

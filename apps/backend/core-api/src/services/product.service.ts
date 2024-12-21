@@ -2,8 +2,8 @@ import { Product } from "../models/product.model";
 import { FactoryRepository } from "../repositories/factory.repository";
 import {
   IProductDocument,
-  ProductCreateInput,
-  ProductUpdateInput
+  CreateProductInput,
+  UpdateProductInput
 } from "../types/product.types";
 
 export class ProductService {
@@ -18,14 +18,14 @@ export class ProductService {
   }
 
   public static async createProduct(
-    data: ProductCreateInput
+    data: CreateProductInput
   ): Promise<IProductDocument> {
     return await FactoryRepository.createOne(Product, data);
   }
 
   public static async updateProduct(
     id: string,
-    data: ProductUpdateInput
+    data: UpdateProductInput
   ): Promise<IProductDocument> {
     return await FactoryRepository.updateOne(Product, id, data);
   }

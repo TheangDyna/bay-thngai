@@ -27,6 +27,19 @@ export class FactoryRepository {
     return doc;
   }
 
+  static async getBy<T extends Document>(
+    Model: Model<T>,
+    fieldObj: Record<string, any>
+  ): Promise<T> {
+    const doc = await Model.findOne(fieldObj);
+
+    if (!doc) {
+      throw new AppError("Document not found.", 404);
+    }
+
+    return doc;
+  }
+
   static async createOne<T extends Document>(
     Model: Model<T>,
     data: any

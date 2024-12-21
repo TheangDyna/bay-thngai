@@ -1,33 +1,30 @@
 import { z } from "zod";
 
 export const SignUpSchema = z.object({
-  email: z.string().email("Invalid email format").trim(),
-  password: z.string().min(6, "Password must be at least 6 characters").trim()
+  email: z.string().email().trim(),
+  password: z.string().min(6).trim()
 });
 
 export const ResendConfirmCodeSchema = z.object({
-  email: z.string().email("Invalid email format").trim()
+  email: z.string().email().trim()
 });
 
 export const ConfirmSignUpSchema = z.object({
-  email: z.string().email("Invalid email format").trim(),
-  code: z.string().length(6, "Code must be 6 characters").trim()
+  email: z.string().email().trim(),
+  code: z.string().length(6).trim()
 });
 
 export const SignInSchema = z.object({
-  email: z.string().min(1, "Email is required").trim(),
-  password: z.string().min(1, "Password is required").trim()
+  email: z.string().trim(),
+  password: z.string().trim()
 });
 
 export const ForgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email format").trim()
+  email: z.string().email().trim()
 });
 
 export const ResetPasswordSchema = z.object({
-  email: z.string().min(1, "Email is required").trim(),
-  code: z.string().length(6, "Code must be 6 characters").trim(),
-  newPassword: z
-    .string()
-    .min(6, "New password must be at least 6 characters")
-    .trim()
+  email: z.string().trim(),
+  code: z.string().length(6).trim(),
+  newPassword: z.string().min(6).trim()
 });

@@ -38,8 +38,6 @@ const COGNITO_ERROR_MAP: Record<
 class ErrorHandler {
   private static instance: ErrorHandler;
 
-  private constructor() {}
-
   public static getInstance(): ErrorHandler {
     if (!ErrorHandler.instance) {
       ErrorHandler.instance = new ErrorHandler();

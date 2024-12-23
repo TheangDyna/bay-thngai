@@ -4,8 +4,6 @@ import { UserSchema } from "../validators/user.validators";
 
 export type IUser = z.infer<typeof UserSchema>;
 
-export type CreateUserInput = z.infer<typeof UserSchema>;
-
 export interface IUserDocument extends IUser, Document {
   createdAt: Date;
   updatedAt: Date;

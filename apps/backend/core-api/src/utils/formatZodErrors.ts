@@ -30,6 +30,12 @@ export const formatZodErrors = (errors: z.ZodError["issues"]) => {
         return `Field '${fieldPath}' must be a valid ${error.validation}.`;
 
       case z.ZodIssueCode.too_small:
+        if (
+          (error.type === "string" || error.type === "array") &&
+          error.minimum === 1
+        ) {
+          return `Field '${fieldPath}' is required.`;
+        }
         return `Field '${fieldPath}' must be ${
           error.exact
             ? `exactly`

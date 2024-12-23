@@ -10,8 +10,8 @@ export const ResendConfirmCodeSchema = z.object({
 });
 
 export const ConfirmSignUpSchema = z.object({
-  email: z.string().email().trim(),
-  code: z.string().length(6).trim()
+  email: z.string().trim().email(),
+  code: z.string().trim().length(6)
 });
 
 export const SignInSchema = z.object({
@@ -20,11 +20,11 @@ export const SignInSchema = z.object({
 });
 
 export const ForgotPasswordSchema = z.object({
-  email: z.string().email().trim()
+  email: z.string().trim().email()
 });
 
 export const ResetPasswordSchema = z.object({
   email: z.string().trim(),
-  code: z.string().length(6).trim(),
-  newPassword: z.string().min(6).trim()
+  code: z.string().trim().length(6),
+  newPassword: z.string().trim().min(6)
 });

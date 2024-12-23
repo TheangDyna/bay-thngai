@@ -33,7 +33,30 @@ import axios from "axios";
 import { CreateUserSchema } from "../validators/user.validators";
 
 export class AuthService {
-  public static async signUp(data: SignUpInput): Promise<void> {
+  private userService = new UserService();
+
+  private generateSecretHash(username: string): string {
+    const secret = config.awsCognitoClientSecret;
+    return crypto
+      .createHmac("SHA256", secret)
+      .update(username + config.awsCognitoClientId)
+      .digest("base64");
+  }
+
+  private async getUserByUsername(
+    username: string
+  ): Promise<AdminGetUserResponse> {
+    const params = {
+      Username: username,
+      UserPoolId: config.awsCognitoUserPoolId
+    };
+
+    const command = new AdminGetUserCommand(params);
+    const userInfo = await cognitoClient.send(command);
+    return userInfo;
+  }
+
+  public async signUp(data: SignUpInput): Promise<void> {
     const { email, password } = data;
 
     const params: SignUpCommandInput = {
@@ -47,7 +70,7 @@ export class AuthService {
     await cognitoClient.send(command);
   }
 
-  public static async resendConfirmCode(
+  public async resendConfirmCode(
     data: ResendConfirmCodeUpInput
   ): Promise<void> {
     const { email } = data;
@@ -62,7 +85,7 @@ export class AuthService {
     await cognitoClient.send(command);
   }
 
-  public static async confirmSignUp(data: ConfirmSignUpInput): Promise<void> {
+  public async confirmSignUp(data: ConfirmSignUpInput): Promise<void> {
     const { email, code } = data;
 
     const params: ConfirmSignUpCommandInput = {
@@ -85,10 +108,10 @@ export class AuthService {
       cognitoId: userInfo.Username
     });
 
-    await UserService.createUser(userData);
+    await this.userService.createUser(userData);
   }
 
-  public static async signIn(data: SignInInput): Promise<CognitoToken> {
+  public async signIn(data: SignInInput): Promise<CognitoToken> {
     const { email, password } = data;
 
     const params: InitiateAuthCommandInput = {
@@ -124,7 +147,7 @@ export class AuthService {
     return { idToken, accessToken, refreshToken, username };
   }
 
-  public static async googleLogin(): Promise<string> {
+  public async googleLogin(): Promise<string> {
     const state = crypto.randomBytes(16).toString("hex");
     const params = new URLSearchParams({
       response_type: "code",
@@ -142,7 +165,7 @@ export class AuthService {
     return cognitoOAuthURL;
   }
 
-  public static async googleCallback(
+  public async googleCallback(
     queryString: Record<string, any>
   ): Promise<CognitoToken> {
     const { code, error } = queryString;
@@ -191,16 +214,15 @@ export class AuthService {
     if (!email || !cognitoId || !username) {
       throw new AppError("Authentication failed.", 401);
     }
-
     try {
-      await UserService.getUserByCognitoId(cognitoId);
+      await this.userService.getUserByCognitoId(cognitoId);
     } catch (error) {
       if (error instanceof AppError && error.statusCode === 404) {
         const userData = CreateUserSchema.parse({
           email,
           cognitoId
         });
-        await UserService.createUser(userData);
+        await this.userService.createUser(userData);
       } else {
         throw error;
       }
@@ -214,7 +236,7 @@ export class AuthService {
     };
   }
 
-  public static async refreshAccessToken(
+  public async refreshAccessToken(
     username: string,
     oldRefreshToken: string
   ): Promise<CognitoToken> {
@@ -248,7 +270,7 @@ export class AuthService {
     };
   }
 
-  public static async forgotPassword(data: ForgotPasswordInput): Promise<void> {
+  public async forgotPassword(data: ForgotPasswordInput): Promise<void> {
     const { email } = data;
 
     const params = {
@@ -264,7 +286,7 @@ export class AuthService {
     }
   } // not yet
 
-  public static async resetPassword(data: ResetPasswordInput): Promise<void> {
+  public async resetPassword(data: ResetPasswordInput): Promise<void> {
     const { email, code, newPassword } = data;
 
     const params = {
@@ -278,32 +300,11 @@ export class AuthService {
     await cognitoClient.send(command);
   } // not yet
 
-  public static async signOut(accessToken: string): Promise<void> {
+  public async signOut(accessToken: string): Promise<void> {
     const params: GlobalSignOutCommandInput = {
       AccessToken: accessToken
     };
     const command = new GlobalSignOutCommand(params);
     await cognitoClient.send(command);
-  }
-
-  private static generateSecretHash(username: string): string {
-    const secret = config.awsCognitoClientSecret;
-    return crypto
-      .createHmac("SHA256", secret)
-      .update(username + config.awsCognitoClientId)
-      .digest("base64");
-  }
-
-  private static async getUserByUsername(
-    username: string
-  ): Promise<AdminGetUserResponse> {
-    const params = {
-      Username: username,
-      UserPoolId: config.awsCognitoUserPoolId
-    };
-
-    const command = new AdminGetUserCommand(params);
-    const userInfo = await cognitoClient.send(command);
-    return userInfo;
   }
 }

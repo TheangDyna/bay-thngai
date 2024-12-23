@@ -27,8 +27,8 @@ export const HealthGoalsSchema = z.enum([
 ]);
 
 export const UserSchema = z.object({
-  email: z.string().email(),
-  cognitoId: z.string(),
+  email: z.string().trim().email(),
+  cognitoId: z.string().trim(),
   role: UserRoleSchema.optional().default("user"),
   firstName: z.string().trim().optional(),
   lastName: z.string().trim().optional(),
@@ -39,7 +39,7 @@ export const UserSchema = z.object({
   activityLevel: ActivityLevelSchema.optional().default("moderately active"),
   dietaryPreferences: z.array(DietaryPreferencesSchema).optional().default([]),
   healthGoals: HealthGoalsSchema.optional().default("maintenance"),
-  allergies: z.array(z.string()).optional().default([]),
+  allergies: z.array(z.string().trim().min(1)).optional().default([]),
   dailyCalorieTarget: z.number().positive().optional().default(2000)
 });
 export const CreateUserSchema = UserSchema;

@@ -1,25 +1,27 @@
 import { Router } from "express";
-import { ProductController } from "../controllers/product.controller";
 import {
-  CreateProductSchema,
-  UpdateProductSchema
-} from "../validators/product.validators";
+  CreateCuisineSchema,
+  UpdateCuisineSchema
+} from "../validators/cuisine.validators";
 import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
+import { GenericController } from "../controllers/generic.controller";
+import { Cuisine } from "../models/cuisine.model";
 
 const router = Router();
+const cuisineController = new GenericController(Cuisine);
 
 router.use(protect, restrictTo("admin"));
 
 router
   .route("/")
-  .get(ProductController.getAllProducts)
-  .post(validate(CreateProductSchema), ProductController.createProduct);
+  .get(cuisineController.getAll)
+  .post(validate(CreateCuisineSchema), cuisineController.createOne);
 
 router
   .route("/:id")
-  .get(ProductController.getProduct)
-  .patch(validate(UpdateProductSchema), ProductController.updateProduct)
-  .delete(ProductController.deleteProduct);
+  .get(cuisineController.getOne)
+  .patch(validate(UpdateCuisineSchema), cuisineController.updateOne)
+  .delete(cuisineController.deleteOne);
 
 export const cuisineRoutes = router;

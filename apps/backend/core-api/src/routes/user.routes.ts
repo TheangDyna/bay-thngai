@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { UserController } from "../controllers/user.controller";
+import { GenericController } from "../controllers/generic.controller";
+import { User } from "../models/user.model";
 
 const router = Router();
+const userController = new GenericController(User);
 
 router.use(protect, restrictTo("admin"));
 
-router.route("/").get(UserController.getAllUsers).post();
+router.route("/").get(userController.getAll);
 
-router.route("/:id").get(UserController.getUser).patch().delete();
+router.route("/:id").get(userController.getOne);
 
 export const userRoutes = router;

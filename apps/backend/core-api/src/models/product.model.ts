@@ -7,18 +7,8 @@ const productSchema = new Schema<IProductDocument>(
     name: { type: String, unique: true },
     description: { type: String },
     price: { type: Number },
-    cuisines: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Category"
-      }
-    ],
-    dietaries: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Dietary"
-      }
-    ],
+    cuisines: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+    dietaries: [{ type: Schema.Types.ObjectId, ref: "Dietary" }],
     inStock: { type: Boolean },
     calories: { type: Number },
     protein: { type: Number },

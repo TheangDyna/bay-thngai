@@ -1,16 +1,16 @@
 import { z } from "zod";
-import { objectIdSchema } from "../utils/objectIdSchema";
+import { ObjectIdSchema } from "../utils/objectIdSchema";
 
 export const CartProductSchema = z
   .object({
-    productId: objectIdSchema,
+    productId: ObjectIdSchema,
     quantity: z.number().min(1)
   })
   .strict();
 
 export const CartSchema = z
   .object({
-    user: objectIdSchema,
+    user: ObjectIdSchema,
     products: z.array(CartProductSchema).min(1)
   })
   .strict();

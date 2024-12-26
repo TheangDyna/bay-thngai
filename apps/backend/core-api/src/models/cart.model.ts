@@ -4,23 +4,15 @@ import { defaultSchemaOptions } from "../utils/schemaOptions";
 
 export const cartProductSchema = new mongoose.Schema<ICartProduct>(
   {
-    productId: {
-      type: Schema.Types.ObjectId,
-      ref: "Product"
-    },
-    quantity: {
-      type: Number
-    }
+    productId: { type: Schema.Types.ObjectId, ref: "Product" },
+    quantity: { type: Number }
   },
   { _id: false }
 );
 
 const cartSchema = new mongoose.Schema<ICartDocument>(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User"
-    },
+    user: { type: Schema.Types.ObjectId, ref: "User" },
     products: [cartProductSchema]
   },
   defaultSchemaOptions

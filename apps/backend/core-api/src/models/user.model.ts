@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUserDocument } from "../types/user.types";
+import { defaultSchemaOptions } from "../utils/schemaOptions";
 
 const userSchema = new Schema<IUserDocument>(
   {
@@ -18,21 +19,7 @@ const userSchema = new Schema<IUserDocument>(
     allergies: [{ type: String }],
     dailyCalorieTarget: { type: Number }
   },
-  {
-    timestamps: true,
-    toObject: {
-      transform: (_doc, ret) => {
-        delete ret.__v;
-        return ret;
-      }
-    },
-    toJSON: {
-      transform: (_doc, ret) => {
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
+  defaultSchemaOptions
 );
 
 userSchema.index({ email: 1 });

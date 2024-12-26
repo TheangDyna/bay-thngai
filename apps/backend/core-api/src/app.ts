@@ -10,6 +10,7 @@ import helmet from "helmet";
 import cors from "cors";
 import { userRoutes } from "./routes/user.routes";
 import { cuisineRoutes } from "./routes/cuisine.routes";
+import { cartRoutes } from "./routes/carts.routes";
 
 const app = express();
 
@@ -31,6 +32,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/carts", cartRoutes);
+// app.use("/api/v1/orders", orderRoutes);
 
 // Error handling
 app.use(routeNotFound);

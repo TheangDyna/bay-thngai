@@ -26,21 +26,27 @@ export const HealthGoalsSchema = z.enum([
   "improved health"
 ]);
 
-export const UserSchema = z.object({
-  email: z.string().trim().email(),
-  cognitoId: z.string().trim(),
-  role: UserRoleSchema.optional().default("user"),
-  firstName: z.string().trim().optional(),
-  lastName: z.string().trim().optional(),
-  age: z.number().min(1).max(120).optional(),
-  gender: GenderSchema.optional(),
-  height: z.number().min(50).optional(),
-  weight: z.number().min(20).optional(),
-  activityLevel: ActivityLevelSchema.optional().default("moderately active"),
-  dietaryPreferences: z.array(DietaryPreferencesSchema).optional().default([]),
-  healthGoals: HealthGoalsSchema.optional().default("maintenance"),
-  allergies: z.array(z.string().trim().min(1)).optional().default([]),
-  dailyCalorieTarget: z.number().positive().optional().default(2000)
-});
+export const UserSchema = z
+  .object({
+    email: z.string().trim().email(),
+    cognitoId: z.string().trim(),
+    role: UserRoleSchema.optional().default("user"),
+    firstName: z.string().trim().optional(),
+    lastName: z.string().trim().optional(),
+    age: z.number().min(1).max(120).optional(),
+    gender: GenderSchema.optional(),
+    height: z.number().min(50).optional(),
+    weight: z.number().min(20).optional(),
+    activityLevel: ActivityLevelSchema.optional().default("moderately active"),
+    dietaryPreferences: z
+      .array(DietaryPreferencesSchema)
+      .optional()
+      .default([]),
+    healthGoals: HealthGoalsSchema.optional().default("maintenance"),
+    allergies: z.array(z.string().trim().min(1)).optional().default([]),
+    dailyCalorieTarget: z.number().positive().optional().default(2000)
+  })
+  .strict();
+
 export const CreateUserSchema = UserSchema;
 export const UpdateUserSchema = UserSchema.partial();

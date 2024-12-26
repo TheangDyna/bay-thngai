@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IProductDocument } from "../types/product.types";
+import { defaultSchemaOptions } from "../utils/schemaOptions";
 
 const productSchema = new Schema<IProductDocument>(
   {
@@ -25,21 +26,7 @@ const productSchema = new Schema<IProductDocument>(
     fats: { type: Number },
     ingredients: [{ type: String }]
   },
-  {
-    timestamps: true,
-    toObject: {
-      transform: (_doc, ret) => {
-        delete ret.__v;
-        return ret;
-      }
-    },
-    toJSON: {
-      transform: (_doc, ret) => {
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
+  defaultSchemaOptions
 );
 
 export const Product = mongoose.model<IProductDocument>(

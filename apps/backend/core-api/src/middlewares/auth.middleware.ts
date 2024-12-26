@@ -3,7 +3,7 @@ import { AppError } from "../utils/appError";
 import { config } from "../configs/config";
 import { UserService } from "../services/user.service";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-import { IUserDocument } from "../types/user.types";
+import { IUserDocument, UserRole } from "../types/user.types";
 import { AuthService } from "../services/auth.service";
 import { setCookie } from "../utils/cookie";
 
@@ -95,7 +95,7 @@ export const protect = async (
 };
 
 export const restrictTo =
-  (...roles: string[]) =>
+  (...roles: UserRole[]) =>
   (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
       throw new AppError(

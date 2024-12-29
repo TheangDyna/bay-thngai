@@ -7,9 +7,12 @@ import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { Product } from "../models/product.model";
 import { GenericController } from "../controllers/generic.controller";
+import { reviewRoutes } from "./review.routes";
 
 const router = Router();
 const productController = new GenericController(Product);
+
+router.use("/:productId/reviews", reviewRoutes);
 
 router.use(protect, restrictTo("admin"));
 

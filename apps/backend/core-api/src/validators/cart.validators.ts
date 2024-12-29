@@ -3,8 +3,8 @@ import { ObjectIdSchema } from "../utils/objectIdSchema";
 
 export const CartProductSchema = z
   .object({
-    productId: ObjectIdSchema,
-    quantity: z.number().min(1)
+    product: ObjectIdSchema,
+    quantity: z.number().int().min(1)
   })
   .strict();
 

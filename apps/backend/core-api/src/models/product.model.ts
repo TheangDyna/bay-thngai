@@ -19,6 +19,12 @@ const productSchema = new Schema<IProductDocument>(
   defaultSchemaOptions
 );
 
+productSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id"
+});
+
 export const Product = mongoose.model<IProductDocument>(
   "Product",
   productSchema

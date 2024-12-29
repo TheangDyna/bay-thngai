@@ -33,7 +33,7 @@ export const UserSchema = z
     role: UserRoleSchema.optional().default("user"),
     firstName: z.string().trim().optional(),
     lastName: z.string().trim().optional(),
-    age: z.number().min(1).max(120).optional(),
+    age: z.number().int().min(1).max(120).optional(),
     gender: GenderSchema.optional(),
     height: z.number().min(50).optional(),
     weight: z.number().min(20).optional(),

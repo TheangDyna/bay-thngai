@@ -7,9 +7,13 @@ import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { GenericController } from "../controllers/generic.controller";
 import { Cuisine } from "../models/cuisine.model";
+import { GenericRepository } from "../repositories/generic.repository";
+import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const cuisineController = new GenericController(Cuisine);
+const cuisineRepository = new GenericRepository(Cuisine);
+const cuisineService = new GenericService(cuisineRepository);
+const cuisineController = new GenericController(cuisineService);
 
 router.use(protect, restrictTo("admin"));
 

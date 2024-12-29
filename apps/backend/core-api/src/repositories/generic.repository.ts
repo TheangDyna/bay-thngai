@@ -28,7 +28,7 @@ export class GenericRepository<T extends Document> {
   public async getOne(id: string): Promise<T> {
     const document = await this.model.findById(id);
     if (!document) {
-      throw new AppError("Document not found.", 404);
+      throw new AppError(`${this.model.modelName} not found.`, 404);
     }
     return document;
   }
@@ -36,7 +36,7 @@ export class GenericRepository<T extends Document> {
   public async getBy(fieldObj: Record<string, any>): Promise<T> {
     const document = await this.model.findOne(fieldObj);
     if (!document) {
-      throw new AppError("Document not found.", 404);
+      throw new AppError(`${this.model.modelName} not found.`, 404);
     }
     return document;
   }
@@ -47,7 +47,7 @@ export class GenericRepository<T extends Document> {
       runValidators: true
     });
     if (!document) {
-      throw new AppError("Document not found.", 404);
+      throw new AppError(`${this.model.modelName} not found.`, 404);
     }
     return document;
   }
@@ -55,7 +55,7 @@ export class GenericRepository<T extends Document> {
   public async deleteOne(id: string): Promise<void> {
     const document = await this.model.findByIdAndDelete(id);
     if (!document) {
-      throw new AppError("Document not found.", 404);
+      throw new AppError(`${this.model.modelName} not found.`, 404);
     }
   }
 }

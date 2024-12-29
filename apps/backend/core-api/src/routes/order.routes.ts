@@ -7,9 +7,13 @@ import {
   CreateOrderSchema,
   UpdateOrderSchema
 } from "../validators/order.validators";
+import { GenericRepository } from "../repositories/generic.repository";
+import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const orderController = new GenericController(Order);
+const ordereRepository = new GenericRepository(Order);
+const ordereService = new GenericService(ordereRepository);
+const orderController = new GenericController(ordereService);
 
 router.use(protect, restrictTo("user", "admin"));
 

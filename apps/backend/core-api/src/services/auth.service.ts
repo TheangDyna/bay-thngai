@@ -108,7 +108,7 @@ export class AuthService {
       cognitoId: userInfo.Username
     });
 
-    await this.userService.createUser(userData);
+    await this.userService.createOne(userData);
   }
 
   public async signIn(data: SignInInput): Promise<CognitoToken> {
@@ -215,14 +215,14 @@ export class AuthService {
       throw new AppError("Authentication failed.", 401);
     }
     try {
-      await this.userService.getUserByCognitoId(cognitoId);
+      await this.userService.getBy({ cognitoId });
     } catch (error) {
       if (error instanceof AppError && error.statusCode === 404) {
         const userData = CreateUserSchema.parse({
           email,
           cognitoId
         });
-        await this.userService.createUser(userData);
+        await this.userService.createOne(userData);
       } else {
         throw error;
       }

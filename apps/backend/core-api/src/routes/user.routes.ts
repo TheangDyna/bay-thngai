@@ -2,9 +2,13 @@ import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { GenericController } from "../controllers/generic.controller";
 import { User } from "../models/user.model";
+import { GenericRepository } from "../repositories/generic.repository";
+import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const userController = new GenericController(User);
+const userRepository = new GenericRepository(User);
+const userService = new GenericService(userRepository);
+const userController = new GenericController(userService);
 
 router.use(protect, restrictTo("admin"));
 

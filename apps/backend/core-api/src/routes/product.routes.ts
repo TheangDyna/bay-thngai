@@ -8,9 +8,13 @@ import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { Product } from "../models/product.model";
 import { GenericController } from "../controllers/generic.controller";
 import { reviewRoutes } from "./review.routes";
+import { GenericRepository } from "../repositories/generic.repository";
+import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const productController = new GenericController(Product);
+const productRepository = new GenericRepository(Product);
+const productService = new GenericService(productRepository);
+const productController = new GenericController(productService);
 
 router.use("/:productId/reviews", reviewRoutes);
 

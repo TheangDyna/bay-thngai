@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
-import { Document, Model } from "mongoose";
+import { Document } from "mongoose";
 import { GenericService } from "../services/generic.service";
-import { GenericRepository } from "../repositories/generic.repository";
 
 export class GenericController<T extends Document> {
   private service: GenericService<T>;
 
-  constructor(model: Model<T>) {
-    const repository = new GenericRepository(model);
-    this.service = new GenericService(repository);
+  // constructor(model: Model<T>) {
+  //   const repository = new GenericRepository(model);
+  //   this.service = new GenericService(repository);
+  // }
+  constructor(service: GenericService<T>) {
+    this.service = service;
   }
 
   public createOne = catchAsync(

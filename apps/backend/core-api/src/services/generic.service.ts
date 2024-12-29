@@ -20,6 +20,10 @@ export class GenericService<T extends Document> {
     return await this.repository.getOne(id);
   }
 
+  public async getBy(fieldObj: Record<string, any>): Promise<T> {
+    return this.repository.getBy(fieldObj);
+  }
+
   public async updateOne(id: string, data: Partial<T>): Promise<T> {
     return await this.repository.updateOne(id, data);
   }

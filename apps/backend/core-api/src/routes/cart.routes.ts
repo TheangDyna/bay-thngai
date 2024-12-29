@@ -7,9 +7,13 @@ import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { GenericController } from "../controllers/generic.controller";
 import { Cart } from "../models/cart.model";
+import { GenericRepository } from "../repositories/generic.repository";
+import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const cartController = new GenericController(Cart);
+const cartRepository = new GenericRepository(Cart);
+const cartService = new GenericService(cartRepository);
+const cartController = new GenericController(cartService);
 
 router.use(protect, restrictTo("user", "admin"));
 

@@ -7,22 +7,25 @@ import { ProductService } from "./product.service";
 
 export class ReviewService extends GenericService<IReviewDocument> {
   private productService: ProductService;
+  private reviewRepository: GenericRepository<IReviewDocument>;
 
   constructor() {
     const reviewRepository = new GenericRepository(Review);
     super(reviewRepository);
     this.productService = new ProductService();
+    this.reviewRepository = new GenericRepository(Review);
   }
 
-  public async createOne(
-    data: Partial<IReviewDocument>
+  public async createReview(
+    data: Partial<IReviewDocument>,
+    userId: string,
+    productId: string
   ): Promise<IReviewDocument> {
-    await this.productService.getOne(data.product);
-
+    await this.productService.getOne(productId);
     try {
       const existingReview = await this.getBy({
-        product: data.product,
-        user: data.user
+        user: userId,
+        product: productId
       });
       if (existingReview) {
         throw new AppError("You have already reviewed this product.", 400);
@@ -32,34 +35,45 @@ export class ReviewService extends GenericService<IReviewDocument> {
         throw error;
       }
     }
-    return super.createOne(data);
+    return this.reviewRepository.createOne(data);
   }
 
-  // Get all reviews for a specific product
-  // public async getAllByProduct(productId: string): Promise<IReviewDocument[]> {
-  //   return Review.find({ product: productId });
-  // }
+  public async updateReview(
+    id: string,
+    data: Partial<IReviewDocument>,
+    userId: string,
+    productId: string
+  ): Promise<IReviewDocument> {
+    try {
+      const existingReview = await this.getBy({
+        user: userId,
+        product: productId
+      });
+      if (!existingReview) {
+        throw new AppError("You do not own this review.", 400);
+      }
+    } catch (error) {
+      throw error;
+    }
+    return this.reviewRepository.updateOne(id, data);
+  }
 
-  // Update a specific review
-  // public async updateOne(
-  //   reviewId: string,
-  //   data: Partial<IReviewDocument>
-  // ): Promise<IReviewDocument> {
-  //   const review = await this.updateOne(reviewId, data);
-
-  //   if (!review) {
-  //     throw new AppError("Review not found.", 404);
-  //   }
-
-  //   return review;
-  // }
-
-  // Delete a specific review
-  // public async deleteOne(reviewId: string): Promise<void> {
-  //   const review = await this.model.findByIdAndDelete(reviewId);
-
-  //   if (!review) {
-  //     throw new AppError("Review not found.", 404);
-  //   }
-  // }
+  public async deleteReview(
+    id: string,
+    userId: string,
+    productId: string
+  ): Promise<void> {
+    try {
+      const existingReview = await this.getBy({
+        user: userId,
+        product: productId
+      });
+      if (!existingReview) {
+        throw new AppError("You do not own this review.", 400);
+      }
+    } catch (error) {
+      throw error;
+    }
+    return this.reviewRepository.deleteOne(id);
+  }
 }

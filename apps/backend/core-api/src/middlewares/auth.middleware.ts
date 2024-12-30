@@ -27,7 +27,6 @@ export const protect = async (
     const refreshToken = req.cookies.refresh_token;
     const username = req.cookies.username;
 
-    // 1. Check if both tokens are missing
     if (!accessToken && !refreshToken) {
       throw new AppError(
         "You are not logged in. Please log in to access this route.",
@@ -37,7 +36,6 @@ export const protect = async (
 
     let payload;
 
-    // 2. Handle refresh token if access token is missing
     if (!accessToken && username && refreshToken) {
       try {
         const authService = new AuthService();

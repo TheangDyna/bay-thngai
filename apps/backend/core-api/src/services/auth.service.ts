@@ -217,16 +217,15 @@ export class AuthService {
     try {
       await this.userService.getBy({ cognitoId });
     } catch (error) {
-      if (error instanceof AppError && error.statusCode === 404) {
-        const userData = CreateUserSchema.parse({
-          email,
-          cognitoId
-        });
-        await this.userService.createOne(userData);
-      } else {
+      if (!(error instanceof AppError && error.statusCode === 404)) {
         throw error;
       }
     }
+    const userData = CreateUserSchema.parse({
+      email,
+      cognitoId
+    });
+    await this.userService.createOne(userData);
 
     return {
       idToken,

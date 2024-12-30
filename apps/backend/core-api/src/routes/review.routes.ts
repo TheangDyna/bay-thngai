@@ -1,26 +1,27 @@
 import { Router } from "express";
 import { protect } from "../middlewares/auth.middleware";
-import { setProductAndUserIds } from "../middlewares/populateBody.middleware";
+import { setProductAndUserRequest } from "../middlewares/populateRequest.middleware";
 import { validate } from "../middlewares/validation.middleware";
-import { CreateReviewSchema } from "../validators/review.validators";
-import { GenericController } from "../controllers/generic.controller";
-import { ReviewService } from "../services/review.service";
+import {
+  CreateReviewSchema,
+  UpdateReviewSchema
+} from "../validators/review.validators";
+import { ReviewController } from "../controllers/review.controller";
 
 const router = Router({ mergeParams: true });
-const reviewService = new ReviewService();
-const reviewController = new GenericController(reviewService);
+const reviewController = new ReviewController();
 
-router.use(protect);
+router.use(protect, setProductAndUserRequest);
 
 router
   .route("/")
   .get(reviewController.getAll)
-  .post(
-    setProductAndUserIds,
-    validate(CreateReviewSchema),
-    reviewController.createOne
-  );
+  .post(validate(CreateReviewSchema), reviewController.createOne);
 
-router.route("/:id").get().patch().delete();
+router
+  .route("/:id")
+  .get(reviewController.getOne)
+  .patch(validate(UpdateReviewSchema), reviewController.updateOne)
+  .delete(reviewController.deleteOne);
 
 export const reviewRoutes = router;

@@ -6,10 +6,6 @@ import { GenericService } from "../services/generic.service";
 export class GenericController<T extends Document> {
   private service: GenericService<T>;
 
-  // constructor(model: Model<T>) {
-  //   const repository = new GenericRepository(model);
-  //   this.service = new GenericService(repository);
-  // }
   constructor(service: GenericService<T>) {
     this.service = service;
   }

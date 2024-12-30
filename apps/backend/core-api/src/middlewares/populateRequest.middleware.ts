@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "./auth.middleware";
 
-export const setProductAndUserIds = (
+export const setProductAndUserRequest = (
   req: AuthenticatedRequest,
   _res: Response,
   next: NextFunction

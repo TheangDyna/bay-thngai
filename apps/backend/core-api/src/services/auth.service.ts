@@ -214,18 +214,17 @@ export class AuthService {
     if (!email || !cognitoId || !username) {
       throw new AppError("Authentication failed.", 401);
     }
-    try {
-      await this.userService.getBy({ cognitoId });
-    } catch (error) {
-      if (!(error instanceof AppError && error.statusCode === 404)) {
-        throw error;
+
+    await this.userService.getBy({ cognitoId }).catch((error) => {
+      if (error instanceof AppError && error.statusCode === 404) {
+        const userData = CreateUserSchema.parse({
+          email,
+          cognitoId
+        });
+        this.userService.createOne(userData);
       }
-    }
-    const userData = CreateUserSchema.parse({
-      email,
-      cognitoId
+      throw error;
     });
-    await this.userService.createOne(userData);
 
     return {
       idToken,

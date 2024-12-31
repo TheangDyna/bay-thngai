@@ -18,17 +18,19 @@ const productController = new GenericController(productService);
 
 router.use("/:productId/reviews", reviewRoutes);
 
+router.route("/").get(productController.getAll);
+
+router.route("/:id").get(productController.getOne);
+
 router.use(protect, restrictTo("admin"));
 
 router
   .route("/")
-  .get(productController.getAll)
   .post(validate(CreateProductSchema), productController.createOne);
 
 router
   .route("/:id")
-  .get(productController.getOne)
   .patch(validate(UpdateProductSchema), productController.updateOne)
-  .delete(productController.deleteOne);
+  .delete(protect, restrictTo("admin"), productController.deleteOne);
 
 export const productRoutes = router;

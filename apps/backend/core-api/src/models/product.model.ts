@@ -14,7 +14,9 @@ const productSchema = new Schema<IProductDocument>(
     protein: { type: Number },
     carbs: { type: Number },
     fats: { type: Number },
-    ingredients: [{ type: String }]
+    ingredients: [{ type: String }],
+    ratingsAverage: { type: Number },
+    ratingsQuantity: { type: Number }
   },
   defaultSchemaOptions
 );

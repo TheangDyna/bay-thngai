@@ -15,16 +15,18 @@ const cuisineRepository = new GenericRepository(Cuisine);
 const cuisineService = new GenericService(cuisineRepository);
 const cuisineController = new GenericController(cuisineService);
 
+router.route("/").get(cuisineController.getAll);
+
+router.route("/:id").get(cuisineController.getOne);
+
 router.use(protect, restrictTo("admin"));
 
 router
   .route("/")
-  .get(cuisineController.getAll)
   .post(validate(CreateCuisineSchema), cuisineController.createOne);
 
 router
   .route("/:id")
-  .get(cuisineController.getOne)
   .patch(validate(UpdateCuisineSchema), cuisineController.updateOne)
   .delete(cuisineController.deleteOne);
 

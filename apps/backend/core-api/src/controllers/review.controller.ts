@@ -49,7 +49,7 @@ export class ReviewController extends GenericController<IReviewDocument> {
         userId,
         productId
       );
-      res.status(201).json({
+      res.status(200).json({
         status: "success",
         data: document
       });

@@ -8,12 +8,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { menuItems } from "@/libs/constants";
+import { menuItems } from "@/utils/constants";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
+  // navigate("/dashboard");
   return (
     <Sidebar>
       <ScrollArea>
@@ -29,10 +30,10 @@ export const AppSidebar: React.FC = () => {
                       return (
                         <SidebarMenuItem key={index}>
                           <SidebarMenuButton asChild isActive={isActive}>
-                            <a href={subItem.url}>
+                            <Link to={subItem.url}>
                               <subItem.icon />
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       );

@@ -13,13 +13,14 @@ import { cuisineRoutes } from "./routes/cuisine.routes";
 import { cartRoutes } from "./routes/cart.routes";
 import { orderRoutes } from "./routes/order.routes";
 import { reviewRoutes } from "./routes/review.routes";
+import { config } from "./configs/config";
 
 const app = express();
 
 // Security middleware
 app.use("/api", rateLimiter);
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: config.adminUrl, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 

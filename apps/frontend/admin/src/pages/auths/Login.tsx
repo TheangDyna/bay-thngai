@@ -1,18 +1,62 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useNavigate } from "react-router-dom";
+
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle, Soup } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { toast } from "@/hooks/use-toast";
+import { useLoginMutation } from "@/api/auth.api";
+
+const loginSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email address is required")
+    .email("Invalid email address"),
+  password: z.string().trim().min(1, "Password is required")
+});
+
+type LoginFormInputs = z.infer<typeof loginSchema>;
 
 const LoginPage: React.FC = () => {
-  const [isLoading, setIsloading] = useState(false);
+  const navigate = useNavigate();
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Hey, I'm here you guy!!!");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<LoginFormInputs>({
+    resolver: zodResolver(loginSchema)
+  });
+
+  const { mutate, isPending } = useLoginMutation();
+
+  const onSubmit = (data: LoginFormInputs) => {
+    mutate(data, {
+      onSuccess: (response) => {
+        toast({
+          description: response.message,
+          variant: "default"
+        });
+
+        reset();
+        navigate("/dashboard");
+      },
+      onError: (error: any) => {
+        toast({
+          description: error.response?.data?.message || "An error occurred",
+          variant: "destructive"
+        });
+      }
+    });
   };
+
   return (
     <div className="w-full relative min-h-screen flex-col items-center justify-center grid lg:max-w-none grid-cols-1 lg:grid-cols-2 px-4 lg:px-0">
       <CardSpotlight className="relative hidden h-full flex-col bg-zinc-800 p-10 text-white lg:flex rounded-none border-0 dark:border-r overflow-clip inset-0">
@@ -38,7 +82,7 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
           <div className="grid gap-6">
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid gap-2">
                 <div className="grid gap-1">
                   <Label htmlFor="email">Email</Label>
@@ -49,8 +93,14 @@ const LoginPage: React.FC = () => {
                     autoCapitalize="none"
                     autoComplete="email"
                     autoCorrect="off"
-                    disabled={isLoading}
+                    disabled={isPending}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
@@ -58,13 +108,19 @@ const LoginPage: React.FC = () => {
                     id="password"
                     type="password"
                     autoCapitalize="none"
-                    autoComplete="email"
+                    autoComplete="current-password"
                     autoCorrect="off"
-                    disabled={isLoading}
+                    disabled={isPending}
+                    {...register("password")}
                   />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
-                <Button disabled={isLoading}>
-                  {isLoading && (
+                <Button type="submit" disabled={isPending}>
+                  {isPending && (
                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Sign In with Email
@@ -81,8 +137,8 @@ const LoginPage: React.FC = () => {
                 </span>
               </div>
             </div>
-            <Button variant="outline" type="button" disabled={isLoading}>
-              {isLoading ? (
+            <Button variant="outline" type="button" disabled={isPending}>
+              {isPending ? (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Icons.google className="mr-2 h-4 w-4" />

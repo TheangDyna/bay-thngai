@@ -10,6 +10,7 @@ interface Config {
   awsRedirectUri: string;
   awsAccessKeyId: string;
   awsSecretAccessKey: string;
+  adminUrl: string;
 }
 
 const envMapping: Record<keyof Config, string> = {
@@ -23,7 +24,8 @@ const envMapping: Record<keyof Config, string> = {
   awsCognitoClientSecret: "AWS_COGNITO_CLIENT_SECRET",
   awsRedirectUri: "AWS_REDIRECT_URI",
   awsAccessKeyId: "AWS_ACCESS_KEY_ID",
-  awsSecretAccessKey: "AWS_SECRET_ACCESS_KEY"
+  awsSecretAccessKey: "AWS_SECRET_ACCESS_KEY",
+  adminUrl: "ADMIN_URL"
 };
 
 const ensureEnv = (envMapping: Record<keyof Config, string>): Config => {

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,11 +17,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 import { MultiSelect } from "@/components/MultiSelect";
-
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";
-import { useState } from "react";
 
 const frameworksList = [
   { value: "react", label: "React", icon: Turtle },

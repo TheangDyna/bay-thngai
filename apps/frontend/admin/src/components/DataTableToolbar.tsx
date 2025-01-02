@@ -4,7 +4,7 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { priorities, statuses } from "@/libs/constants";
+import { priorities, statuses } from "@/utils/constants";
 import { DataTableViewOptions } from "@/components/DataTableViewOptions";
 import { DataTableFacetedFilter } from "@/components/DataTableFacetedFilter";
 

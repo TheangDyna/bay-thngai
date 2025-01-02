@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 import { MultiSelect } from "@/components/MultiSelect";
 
 import { Cat, Dog, Fish, Rabbit, Turtle } from "lucide-react";

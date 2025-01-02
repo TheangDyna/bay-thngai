@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import { labels, priorities, statuses } from "@/libs/constants";
+import { labels, priorities, statuses } from "@/utils/constants";
 import { Badge } from "@/components/ui/badge";
 import { DataTableRowActions, Task } from "@/components/DataTableRowActions";
 

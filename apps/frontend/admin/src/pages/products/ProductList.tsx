@@ -15,8 +15,7 @@ const ProductListPage: React.FC = () => {
         const tasks = await response.json();
         const validatedTasks = z.array(taskSchema).parse(tasks);
         setTasks(validatedTasks || []);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
         setError("Failed to load tasks");
       }
     }

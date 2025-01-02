@@ -19,7 +19,7 @@ import {
   CommandList,
   CommandSeparator
 } from "@/components/ui/command";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 
 /**
  * Variants for the multi-select component to handle different styles.

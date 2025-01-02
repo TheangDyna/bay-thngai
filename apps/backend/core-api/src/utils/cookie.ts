@@ -1,5 +1,6 @@
 import { CookieOptions, Response } from "express";
 import { config } from "../configs/config";
+import { CognitoToken } from "../types/auth.types";
 
 const setCookie = (
   res: Response,
@@ -17,6 +18,17 @@ const setCookie = (
   res.cookie(name, value, { ...defaultOptions, ...options });
 };
 
+export const setAuthCookies = (res: Response, cognitoToken: CognitoToken) => {
+  setCookie(res, "id_token", cognitoToken.idToken);
+  setCookie(res, "access_token", cognitoToken.accessToken);
+  setCookie(res, "refresh_token", cognitoToken.refreshToken, {
+    maxAge: 30 * 24 * 3600 * 1000 // 30 days
+  });
+  setCookie(res, "username", cognitoToken.username, {
+    maxAge: 30 * 24 * 3600 * 1000 // 30 days
+  });
+};
+
 const clearCookie = (res: Response, name: string) => {
   res.cookie(name, "", {
     expires: new Date(0),
@@ -24,4 +36,11 @@ const clearCookie = (res: Response, name: string) => {
   });
 };
 
-export { setCookie, clearCookie };
+export const clearAllCookies = (
+  res: Response,
+  cookies: Record<string, string>
+): void => {
+  Object.keys(cookies).forEach((cookie) => {
+    clearCookie(res, cookie);
+  });
+};

@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import { labels } from "@/libs/constants";
+import { labels } from "@/utils/constants";
 import { z } from "zod";
 
 interface DataTableRowActionsProps<TData> {

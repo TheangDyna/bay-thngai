@@ -7,8 +7,7 @@ import {
 } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
-import { AuthProvider } from "@/contexts/auth/AuthContext";
-import ProtectedRoute from "@/contexts/auth/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "@/pages/auths/Login";
 import NotFound from "@/pages/NotFound";
 import Dashboard from "@/pages/Dashboard";
@@ -16,11 +15,13 @@ import ProductList from "@/pages/products/ProductList";
 import ProductCreate from "@/pages/products/ProductCreate";
 import { Toaster } from "@/components/ui/toaster";
 import CategoryCreate from "@/pages/categories/CategoryCreate";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 
 const AppRoutes: React.FC = () => {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
@@ -65,15 +66,14 @@ const AppRoutes: React.FC = () => {
                   element={<div>Category Edit</div>}
                 />
               </Route>
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
             </Route>
-
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-      <Toaster />
-    </ThemeProvider>
+        <Toaster />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 

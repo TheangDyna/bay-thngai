@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { catchAsync } from "../utils/catchAsync";
-import { clearCookie, setCookie } from "../utils/cookie";
+import { setAuthCookies, clearAllCookies } from "../utils/cookie";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 
 export class AuthController {
@@ -13,7 +13,8 @@ export class AuthController {
 
       res.status(201).json({
         status: "success",
-        message: "User signed up successfully. Please confirm your email."
+        message:
+          "You have signed up successfully! Please check your email to confirm your account."
       });
     }
   );
@@ -21,9 +22,11 @@ export class AuthController {
   public resendConfirmCode = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       await this.authService.resendConfirmCode(req.body);
+
       res.status(200).json({
         status: "success",
-        message: "Resend code successfully. Please confirm your email."
+        message:
+          "A new confirmation code has been sent! Please check your email."
       });
     }
   );
@@ -31,9 +34,10 @@ export class AuthController {
   public confirmSignUp = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       await this.authService.confirmSignUp(req.body);
+
       res.status(200).json({
         status: "success",
-        message: "User confirmed successfully."
+        message: "Your account has been successfully confirmed!"
       });
     }
   );
@@ -41,23 +45,17 @@ export class AuthController {
   public signIn = catchAsync(async (req: Request, res: Response) => {
     const cognitoToken = await this.authService.signIn(req.body);
 
-    setCookie(res, "id_token", cognitoToken.idToken);
-    setCookie(res, "access_token", cognitoToken.accessToken);
-    setCookie(res, "refresh_token", cognitoToken.refreshToken, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
-    setCookie(res, "username", cognitoToken.username, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
+    setAuthCookies(res, cognitoToken);
 
     res.status(200).json({
       status: "success",
-      message: "User signed in successfully."
+      message: "You have successfully signed in!"
     });
   });
 
   public googleLogin = catchAsync(async (_req: Request, res: Response) => {
     const cognitoOAuthURL = await this.authService.googleLogin();
+
     res.status(200).json({
       status: "success",
       data: cognitoOAuthURL
@@ -67,18 +65,11 @@ export class AuthController {
   public googleCallback = catchAsync(async (req: Request, res: Response) => {
     const cognitoToken = await this.authService.googleCallback(req.query);
 
-    setCookie(res, "id_token", cognitoToken.idToken);
-    setCookie(res, "access_token", cognitoToken.accessToken);
-    setCookie(res, "refresh_token", cognitoToken.refreshToken, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
-    setCookie(res, "username", cognitoToken.username, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
+    setAuthCookies(res, cognitoToken);
 
     res.status(200).json({
       status: "success",
-      message: "User signed in successfully."
+      message: "You have successfully signed in via Google!"
     });
   });
 
@@ -88,13 +79,11 @@ export class AuthController {
 
     await this.authService.signOut(accessToken);
 
-    for (const token in tokens) {
-      clearCookie(res, token);
-    }
+    clearAllCookies(res, req.cookies);
 
     res.status(200).json({
       status: "success",
-      message: "User signed out successfully."
+      message: "You have successfully signed out!"
     });
   });
 

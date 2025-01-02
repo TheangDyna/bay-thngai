@@ -5,7 +5,7 @@ interface QueryString {
   sort?: string;
   limit?: string;
   select?: string;
-  [key: string]: any; // Allow other query parameters
+  [key: string]: any;
 }
 
 export class APIFeatures<T> {
@@ -17,12 +17,11 @@ export class APIFeatures<T> {
     this.queryString = queryString;
   }
 
-  filter(): this {
+  public filter(): this {
     const queryObj = { ...this.queryString };
     const excludedFields = ["page", "sort", "limit", "select"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    // Advanced filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
@@ -31,7 +30,7 @@ export class APIFeatures<T> {
     return this;
   }
 
-  sort(): this {
+  public sort(): this {
     if (this.queryString.sort) {
       const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
@@ -42,7 +41,7 @@ export class APIFeatures<T> {
     return this;
   }
 
-  select(): this {
+  public select(): this {
     if (this.queryString.select) {
       const select = this.queryString.select.split(",").join(" ");
       this.query = this.query.select(select);
@@ -53,7 +52,7 @@ export class APIFeatures<T> {
     return this;
   }
 
-  paginate(): this {
+  public paginate(): this {
     const page = parseInt(this.queryString.page || "1", 10);
     const limit = parseInt(this.queryString.limit || "10", 10);
     const skip = (page - 1) * limit;
@@ -63,7 +62,7 @@ export class APIFeatures<T> {
     return this;
   }
 
-  getQuery(): Query<T[], T> {
+  public getQuery(): Query<T[], T> {
     return this.query;
   }
 }

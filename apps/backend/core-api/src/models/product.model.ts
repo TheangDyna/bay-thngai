@@ -1,24 +1,31 @@
 import mongoose, { Schema } from "mongoose";
 import { IProductDocument } from "../types/product.types";
+import { defaultSchemaOptions } from "../utils/schemaOptions";
 
 const productSchema = new Schema<IProductDocument>(
   {
-    name: { type: String, required: true, trim: true, unique: true },
-    description: { type: String, required: true, trim: true },
-    price: { type: Number, required: true, min: 0 },
-    category: { type: String, required: true, trim: true },
-    inStock: { type: Boolean, default: true }
+    name: { type: String, unique: true },
+    description: { type: String },
+    price: { type: Number },
+    cuisines: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+    dietaries: [{ type: Schema.Types.ObjectId, ref: "Dietary" }],
+    inStock: { type: Boolean },
+    calories: { type: Number },
+    protein: { type: Number },
+    carbs: { type: Number },
+    fats: { type: Number },
+    ingredients: [{ type: String }],
+    ratingsAverage: { type: Number },
+    ratingsQuantity: { type: Number }
   },
-  {
-    timestamps: true,
-    toJSON: {
-      transform: (_doc, ret) => {
-        delete ret.__v;
-        return ret;
-      }
-    }
-  }
+  defaultSchemaOptions
 );
+
+productSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id"
+});
 
 export const Product = mongoose.model<IProductDocument>(
   "Product",

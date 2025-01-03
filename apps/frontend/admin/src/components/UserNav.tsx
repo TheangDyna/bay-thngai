@@ -26,7 +26,7 @@ export const UserNav: React.FC = () => {
           description: response.message,
           variant: "default"
         });
-        navigate("/login");
+        navigate("/login", { replace: true });
       },
       onError: (error: any) => {
         toast({

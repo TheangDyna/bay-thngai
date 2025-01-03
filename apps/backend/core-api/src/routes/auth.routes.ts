@@ -2,29 +2,29 @@ import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
 import { validate } from "../middlewares/validation.middleware";
 import {
-  ConfirmSignUpSchema,
+  ConfirmRegisterSchema,
   ResendConfirmCodeSchema,
-  SignInSchema,
-  SignUpSchema
+  LogInSchema,
+  RegisterSchema
 } from "../validators/auth.validators";
 import { protect } from "../middlewares/auth.middleware";
 
 const router = Router();
 const authController = new AuthController();
 
-router.post("/signup", validate(SignUpSchema), authController.signUp);
+router.post("/register", validate(RegisterSchema), authController.register);
 router.post(
   "/resend-confirm-code",
   validate(ResendConfirmCodeSchema),
   authController.resendConfirmCode
 );
 router.post(
-  "/confirm-signup",
-  validate(ConfirmSignUpSchema),
-  authController.confirmSignUp
+  "/confirm-register",
+  validate(ConfirmRegisterSchema),
+  authController.confirmRegister
 );
 
-router.post("/signin", validate(SignInSchema), authController.signIn);
+router.post("/login", validate(LogInSchema), authController.logIn);
 
 router.get("/google", authController.googleLogin);
 router.get("/google/callback", authController.googleCallback);
@@ -37,6 +37,6 @@ router.patch("/update-my-password"); // not yet
 router.patch("/update-me"); // not yet
 router.delete("/delete-me"); // not yet
 
-router.post("/signout", authController.signOut);
+router.post("/logout", authController.logOut);
 
 export const authRoutes = router;

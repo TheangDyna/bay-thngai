@@ -7,11 +7,11 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { data, isPending, isError } = useGetMeQuery();
+  const getMeQuery = useGetMeQuery();
 
-  if (isPending) return <div>Loading...</div>;
+  if (getMeQuery.isPending) return <div>Loading...</div>;
 
-  if (isError || !data) {
+  if (getMeQuery.isError || !getMeQuery.data) {
     return <Navigate to="/login" replace />;
   }
 

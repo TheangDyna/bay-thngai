@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SignUpSchema = z
+export const RegisterSchema = z
   .object({
     email: z.string().email().trim(),
     password: z.string().min(6).trim()
@@ -13,14 +13,14 @@ export const ResendConfirmCodeSchema = z
   })
   .strict();
 
-export const ConfirmSignUpSchema = z
+export const ConfirmRegisterSchema = z
   .object({
     email: z.string().trim().email(),
     code: z.string().trim().length(6)
   })
   .strict();
 
-export const SignInSchema = z
+export const LogInSchema = z
   .object({
     email: z.string().trim(),
     password: z.string().trim()

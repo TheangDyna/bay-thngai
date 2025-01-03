@@ -40,7 +40,15 @@ export const clearAllCookies = (
   res: Response,
   cookies: Record<string, string>
 ): void => {
-  Object.keys(cookies).forEach((cookie) => {
-    clearCookie(res, cookie);
+  const clearCookies = [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "username"
+  ];
+  clearCookies.forEach((cookie) => {
+    if (cookies[cookie]) {
+      clearCookie(res, cookie);
+    }
   });
 };

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle, Soup } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useLoginMutation } from "@/api/auth.api";
+import { useGoogleLoginMutation, useLoginMutation } from "@/api/auth.api";
 
 const loginSchema = z.object({
   email: z
@@ -35,10 +35,11 @@ const LoginPage: React.FC = () => {
     resolver: zodResolver(loginSchema)
   });
 
-  const { mutate, isPending } = useLoginMutation();
+  const loginMutation = useLoginMutation();
+  const googleLoginMutation = useGoogleLoginMutation();
 
   const onSubmit = (data: LoginFormInputs) => {
-    mutate(data, {
+    loginMutation.mutate(data, {
       onSuccess: (response) => {
         toast({
           description: response.message,
@@ -46,9 +47,23 @@ const LoginPage: React.FC = () => {
         });
 
         reset();
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       },
       onError: (error: any) => {
+        toast({
+          description: error.response?.data?.message || "An error occurred",
+          variant: "destructive"
+        });
+      }
+    });
+  };
+
+  const handleGoogleLogin = () => {
+    googleLoginMutation.mutate(undefined, {
+      onSuccess: (response) => {
+        window.location.href = response.data;
+      },
+      onError: (error) => {
         toast({
           description: error.response?.data?.message || "An error occurred",
           variant: "destructive"
@@ -76,7 +91,7 @@ const LoginPage: React.FC = () => {
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 max-w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Log In</h1>
             <p className="text-sm text-muted-foreground">
               Log in to your account to continue.
             </p>
@@ -93,7 +108,9 @@ const LoginPage: React.FC = () => {
                     autoCapitalize="none"
                     autoComplete="email"
                     autoCorrect="off"
-                    disabled={isPending}
+                    disabled={
+                      loginMutation.isPending || googleLoginMutation.isPending
+                    }
                     {...register("email")}
                   />
                   {errors.email && (
@@ -110,7 +127,9 @@ const LoginPage: React.FC = () => {
                     autoCapitalize="none"
                     autoComplete="current-password"
                     autoCorrect="off"
-                    disabled={isPending}
+                    disabled={
+                      loginMutation.isPending || googleLoginMutation.isPending
+                    }
                     {...register("password")}
                   />
                   {errors.password && (
@@ -119,11 +138,17 @@ const LoginPage: React.FC = () => {
                     </p>
                   )}
                 </div>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && (
+                <Button
+                  type="submit"
+                  disabled={
+                    loginMutation.isPending || googleLoginMutation.isPending
+                  }
+                >
+                  {(loginMutation.isPending ||
+                    googleLoginMutation.isPending) && (
                     <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Sign In with Email
+                  Log In with Email
                 </Button>
               </div>
             </form>
@@ -137,8 +162,15 @@ const LoginPage: React.FC = () => {
                 </span>
               </div>
             </div>
-            <Button variant="outline" type="button" disabled={isPending}>
-              {isPending ? (
+            <Button
+              variant="outline"
+              type="button"
+              disabled={
+                loginMutation.isPending || googleLoginMutation.isPending
+              }
+              onClick={handleGoogleLogin}
+            >
+              {loginMutation.isPending || googleLoginMutation.isPending ? (
                 <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Icons.google className="mr-2 h-4 w-4" />

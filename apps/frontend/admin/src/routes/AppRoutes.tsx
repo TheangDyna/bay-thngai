@@ -16,6 +16,7 @@ import ProductCreate from "@/pages/products/ProductCreate";
 import { Toaster } from "@/components/ui/toaster";
 import CategoryCreate from "@/pages/categories/CategoryCreate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const queryClient = new QueryClient();
 
 const AppRoutes: React.FC = () => {
@@ -26,7 +27,6 @@ const AppRoutes: React.FC = () => {
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate replace to="/dashboard" />} />
 
             {/* Protected Routes */}
             <Route
@@ -39,6 +39,8 @@ const AppRoutes: React.FC = () => {
                 </ProtectedRoute>
               }
             >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+
               {/* Dashboard */}
               <Route path="dashboard" element={<Dashboard />} />
 
@@ -73,6 +75,7 @@ const AppRoutes: React.FC = () => {
         </BrowserRouter>
         <Toaster />
       </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 };

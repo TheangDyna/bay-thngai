@@ -4,7 +4,7 @@ import {
   ForgotPasswordSchema,
   ResendConfirmCodeSchema,
   ResetPasswordSchema,
-  LogInSchema,
+  LoginSchema,
   RegisterSchema
 } from "../validators/auth.validators";
 
@@ -32,6 +32,6 @@ export interface UserInfoFromIdToken {
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type ResendConfirmCodeUpInput = z.infer<typeof ResendConfirmCodeSchema>;
 export type ConfirmRegisterInput = z.infer<typeof ConfirmRegisterSchema>;
-export type LogInInput = z.infer<typeof LogInSchema>;
+export type LoginInput = z.infer<typeof LoginSchema>;
 export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;

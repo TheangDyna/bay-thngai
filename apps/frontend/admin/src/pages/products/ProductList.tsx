@@ -1,35 +1,17 @@
-import { columns } from "@/components/columns";
-import { DataTable } from "@/components/DataTable";
-import { Task, taskSchema } from "@/components/DataTableRowActions";
-import { useEffect, useState } from "react";
-import { z } from "zod";
+import { useProductsQuery } from "@/api/product.api";
 
 const ProductListPage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const productsQuery = useProductsQuery();
 
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const response = await fetch("/task.json");
-        const tasks = await response.json();
-        const validatedTasks = z.array(taskSchema).parse(tasks);
-        setTasks(validatedTasks || []);
-      } catch (error) {
-        setError("Failed to load tasks");
-      }
-    }
-    fetchTasks();
-  }, []);
+  if (productsQuery.isLoading) return <p>Loading...</p>;
+  if (productsQuery.isError) return <p>Error loading products</p>;
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  console.log(productsQuery.data);
 
   return (
     <div>
       List - Product page!
-      <DataTable data={tasks} columns={columns} />
+      {/* <DataTable data={tasks} columns={columns} /> */}
     </div>
   );
 };

@@ -20,7 +20,7 @@ export const ConfirmRegisterSchema = z
   })
   .strict();
 
-export const LogInSchema = z
+export const LoginSchema = z
   .object({
     email: z.string().trim(),
     password: z.string().trim()

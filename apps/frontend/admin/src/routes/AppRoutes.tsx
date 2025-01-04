@@ -10,11 +10,11 @@ import { ThemeProvider } from "@/contexts/theme/ThemeContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Login from "@/pages/auths/Login";
 import NotFound from "@/pages/NotFound";
-import Dashboard from "@/pages/Dashboard";
+import Dashboard from "@/pages/dashboards/Dashboard";
 import ProductList from "@/pages/products/ProductList";
 import ProductCreate from "@/pages/products/ProductCreate";
 import { Toaster } from "@/components/ui/toaster";
-import CategoryCreate from "@/pages/categories/CategoryCreate";
+import CuisineCreate from "@/pages/cuisines/CuisineCreate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const queryClient = new QueryClient();
@@ -55,17 +55,14 @@ const AppRoutes: React.FC = () => {
                 />
               </Route>
 
-              {/* Categories Route */}
-              <Route path="categories" element={<Outlet />}>
-                <Route index element={<div>Category List</div>} />
+              {/* Cuisines Route */}
+              <Route path="cuisines" element={<Outlet />}>
+                <Route index element={<div>Cuisine List</div>} />
+                <Route path=":cuisineId" element={<div>Cuisine Detail</div>} />
+                <Route path="new" element={<CuisineCreate />} />
                 <Route
-                  path=":categoryId"
-                  element={<div>Category Detail</div>}
-                />
-                <Route path="new" element={<CategoryCreate />} />
-                <Route
-                  path=":categoryId/edit"
-                  element={<div>Category Edit</div>}
+                  path=":cuisineId/edit"
+                  element={<div>Cuisine Edit</div>}
                 />
               </Route>
               {/* 404 Route */}

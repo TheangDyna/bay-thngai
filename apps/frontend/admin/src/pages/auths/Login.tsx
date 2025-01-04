@@ -1,57 +1,54 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { LoaderCircle, Soup } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useGoogleLoginMutation, useLoginMutation } from "@/api/auth.api";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+import { LoginInput } from "@/types/auth.types";
+import { LoginSchema } from "@/validators/auth.validators";
 
-const loginSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, "Email address is required")
-    .email("Invalid email address"),
-  password: z.string().trim().min(1, "Password is required")
-});
-
-type LoginFormInputs = z.infer<typeof loginSchema>;
+const defaultValues: Partial<LoginInput> = {
+  email: "",
+  password: ""
+};
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm<LoginFormInputs>({
-    resolver: zodResolver(loginSchema)
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues
   });
 
   const loginMutation = useLoginMutation();
   const googleLoginMutation = useGoogleLoginMutation();
 
-  const onSubmit = (data: LoginFormInputs) => {
+  const onSubmit = (data: LoginInput) => {
     loginMutation.mutate(data, {
       onSuccess: (response) => {
         toast({
-          description: response.message,
-          variant: "default"
+          description: response.message
         });
-
-        reset();
+        form.reset();
         navigate("/dashboard", { replace: true });
       },
       onError: (error: any) => {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Something went wrong. Please try again.";
         toast({
-          description: error.response?.data?.message || "An error occurred",
+          description: errorMessage,
           variant: "destructive"
         });
       }
@@ -97,61 +94,72 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
           <div className="grid gap-6">
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-2">
-                <div className="grid gap-1">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    placeholder="name@example.com"
-                    type="email"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
-                    disabled={
-                      loginMutation.isPending || googleLoginMutation.isPending
-                    }
-                    {...register("email")}
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    autoCapitalize="none"
-                    autoComplete="current-password"
-                    autoCorrect="off"
+                  <div className="grid gap-1">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              autoComplete="email"
+                              placeholder="name@example.com"
+                              disabled={
+                                loginMutation.isPending ||
+                                googleLoginMutation.isPending
+                              }
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              autoComplete="current-password"
+                              disabled={
+                                loginMutation.isPending ||
+                                googleLoginMutation.isPending
+                              }
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
                     disabled={
                       loginMutation.isPending || googleLoginMutation.isPending
                     }
-                    {...register("password")}
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
-                  )}
+                  >
+                    {(loginMutation.isPending ||
+                      googleLoginMutation.isPending) && (
+                      <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Log In with Email
+                  </Button>
                 </div>
-                <Button
-                  type="submit"
-                  disabled={
-                    loginMutation.isPending || googleLoginMutation.isPending
-                  }
-                >
-                  {(loginMutation.isPending ||
-                    googleLoginMutation.isPending) && (
-                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Log In with Email
-                </Button>
-              </div>
-            </form>
+              </form>
+            </Form>
+
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />

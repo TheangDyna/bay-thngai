@@ -43,8 +43,8 @@ export class AuthController {
     }
   );
 
-  public logIn = catchAsync(async (req: Request, res: Response) => {
-    const cognitoToken = await this.authService.logIn(req.body);
+  public login = catchAsync(async (req: Request, res: Response) => {
+    const cognitoToken = await this.authService.login(req.body);
 
     setAuthCookies(res, cognitoToken);
 

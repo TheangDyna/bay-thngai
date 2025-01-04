@@ -1,8 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery
+} from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 
-export const useLoginMutation = () => {
-  return useMutation<any, any, any>({
+export const useLoginMutation = (): UseMutationResult<any, any, any> => {
+  return useMutation({
     mutationFn: async (data) => {
       const response = await axiosInstance.post("/auth/login", data);
       return response.data;
@@ -10,8 +14,8 @@ export const useLoginMutation = () => {
   });
 };
 
-export const useGoogleLoginMutation = () => {
-  return useMutation<any, any, any>({
+export const useGoogleLoginMutation = (): UseMutationResult<any, any, any> => {
+  return useMutation({
     mutationFn: async () => {
       const response = await axiosInstance.get("/auth/google");
       return response.data;
@@ -20,7 +24,7 @@ export const useGoogleLoginMutation = () => {
 };
 
 export const useGetMeQuery = () => {
-  return useQuery({
+  return useQuery<any, any>({
     queryKey: ["me"],
     queryFn: async () => {
       const response = await axiosInstance.get("/auth/me");
@@ -30,7 +34,7 @@ export const useGetMeQuery = () => {
   });
 };
 
-export const useLogoutMutation = () =>
+export const useLogoutMutation = (): UseMutationResult<any, any, any> =>
   useMutation({
     mutationFn: async () => {
       const response = await axiosInstance.post("/auth/logout");

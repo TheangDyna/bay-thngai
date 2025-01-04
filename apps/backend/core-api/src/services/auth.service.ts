@@ -22,7 +22,7 @@ import {
   ForgotPasswordInput,
   ResendConfirmCodeUpInput,
   ResetPasswordInput,
-  LogInInput,
+  LoginInput,
   RegisterInput
 } from "../types/auth.types";
 import { UserService } from "./user.service";
@@ -111,7 +111,7 @@ export class AuthService {
     await this.userService.createOne(userData);
   }
 
-  public async logIn(data: LogInInput): Promise<CognitoToken> {
+  public async login(data: LoginInput): Promise<CognitoToken> {
     const { email, password } = data;
 
     const params: InitiateAuthCommandInput = {

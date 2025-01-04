@@ -4,7 +4,7 @@ import { validate } from "../middlewares/validation.middleware";
 import {
   ConfirmRegisterSchema,
   ResendConfirmCodeSchema,
-  LogInSchema,
+  LoginSchema,
   RegisterSchema
 } from "../validators/auth.validators";
 import { protect } from "../middlewares/auth.middleware";
@@ -24,7 +24,7 @@ router.post(
   authController.confirmRegister
 );
 
-router.post("/login", validate(LogInSchema), authController.logIn);
+router.post("/login", validate(LoginSchema), authController.login);
 
 router.get("/google", authController.googleLogin);
 router.get("/google/callback", authController.googleCallback);

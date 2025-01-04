@@ -64,17 +64,17 @@ export const menuItems: MenuSection[] = [
     ]
   },
   {
-    title: "Categories",
+    title: "Cuisines",
     subItems: [
       {
-        title: "Categories",
+        title: "Cuisines",
         icon: Boxes,
         url: "#"
       },
       {
-        title: "Create Category",
+        title: "Create Cuisine",
         icon: Boxes,
-        url: "/categories/new"
+        url: "/cuisines/new"
       },
       {
         title: "Inventory",

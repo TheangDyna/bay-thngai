@@ -11,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (getMeQuery.isPending) return <div>Loading...</div>;
 
-  if (getMeQuery.isError || !getMeQuery.data) {
+  if (getMeQuery.isError || !getMeQuery.data.data) {
     return <Navigate to="/login" replace />;
   }
 

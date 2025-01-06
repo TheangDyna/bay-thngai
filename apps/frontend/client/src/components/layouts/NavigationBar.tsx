@@ -1,0 +1,144 @@
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from "@radix-ui/react-navigation-menu";
+import { ShoppingCart, User } from "lucide-react";
+
+const NavigationBar = () => {
+  return (
+    <div>
+      <nav className="bg-white shadow-sm h-[10vh] w-full flex justify-between items-center px-8">
+        {/* Left Section */}
+        <div className="flex items-center space-x-8">
+          <img
+            src="/bay-thangai-logo.svg"
+            alt="logo"
+            className="w-[110px] h-[110px]"
+          />
+
+          {/* Categories Dropdown */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
+                  Categories
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="absolute mt-2 bg-white shadow-md rounded-[16px] w-56 p-4">
+                  <ul className="space-y-2">
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Fresh Vegetable
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Diet Nutrition
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Healthy Food
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Organic Food
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+
+          {/* Dietary Dropdown */}
+          <NavigationMenu>
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
+                  Dietary
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="absolute mt-2 bg-white shadow-md rounded-[16px] w-56 p-4">
+                  <ul className="space-y-2">
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Vegan
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Gluten-Free
+                      </NavigationMenuLink>
+                    </li>
+                    <li>
+                      <NavigationMenuLink
+                        className="block text-gray-700 hover:bg-gray-100 p-2 rounded-[12px]"
+                        href="#"
+                      >
+                        Keto
+                      </NavigationMenuLink>
+                    </li>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex items-center space-x-10">
+          {/* Language */}
+          <div className="flex items-center space-x-2 cursor-pointer text-gray-800 hover:text-black">
+            <img
+              src="https://flagcdn.com/us.svg" // Replace with your flag icon
+              alt="US Flag"
+              className="w-5 h-5"
+            />
+            <span>English - EN</span>
+          </div>
+
+          {/* Cart */}
+          <div className="relative flex items-center space-x-2 cursor-pointer text-gray-800 hover:text-black">
+            <ShoppingCart className="w-6 h-6" />
+            <span>Cart</span>
+            <span className="absolute -top-1 right-8 -mt-1 -mr-2 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-semibold">
+              1
+            </span>
+          </div>
+
+          {/* Sign In */}
+          <div className="flex items-center space-x-1 cursor-pointer text-gray-800 hover:text-black">
+            <User className="w-6 h-6" />
+            <span className="text-gray-800 hover:text-black cursor-pointer">
+              Sign In
+            </span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  );
+};
+
+export default NavigationBar;

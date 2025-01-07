@@ -2,6 +2,7 @@ import { Query } from "mongoose";
 
 interface QueryString {
   page?: string;
+  search?: string;
   sort?: string;
   limit?: string;
   select?: string;
@@ -19,13 +20,28 @@ export class APIFeatures<T> {
 
   public filter(): this {
     const queryObj = { ...this.queryString };
-    const excludedFields = ["page", "sort", "limit", "select"];
+    const excludedFields = ["page", "sort", "limit", "select", "search"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
+
+    return this;
+  }
+
+  public search(fields: string[]): this {
+    const searchQuery = this.queryString.search;
+
+    if (searchQuery) {
+      const searchRegex = new RegExp(searchQuery, "i");
+      const searchConditions = fields.map((field) => ({
+        [field]: { $regex: searchRegex }
+      }));
+
+      this.query = this.query.find({ $or: searchConditions });
+    }
 
     return this;
   }

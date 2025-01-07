@@ -18,15 +18,46 @@ export const useCreateProductMutation = (): UseMutationResult<
   });
 };
 
-export const useProductsQuery = () => {
+export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
   return useQuery<any, any>({
-    queryKey: ["products"],
+    queryKey: ["products", { pagination, sorting, columnFilters }],
     queryFn: async () => {
-      const response = await axiosInstance.get("/products");
+      const params = {
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+        sort: sorting[0]
+          ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
+          : undefined,
+        ...columnFilters.reduce((acc, filter) => {
+          acc[filter.id] = filter.value;
+          console.log(acc);
+          return acc;
+        }, {})
+      };
+
+      const response = await axiosInstance.get("/products", { params });
       return response.data;
     }
   });
 };
+
+// queryKey: ["products", { pagination, sorting, columnFilters }],
+// queryFn: async () => {
+//   const params = {
+//     page: pagination.pageIndex + 1, // Backend expects 1-based index
+//     limit: pagination.pageSize,
+//     sort: sorting[0]
+//       ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
+//       : undefined, // Sorting
+//     ...columnFilters.reduce((acc, filter) => {
+//       acc[filter.id] = filter.value;
+//       return acc;
+//     }, {})
+//   };
+
+//   const response = await axiosInstance.get("/products", { params });
+//   return response.data;
+// }
 
 export const useProductQuery = (id: string) => {
   return useQuery<any, any>({

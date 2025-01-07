@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { DataTableViewOptions } from "@/components/DataTableViewOptions";
-import { DataTableFacetedFilter } from "@/components/DataTableFacetedFilter";
+import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -21,20 +21,21 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter tasks..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          value={table.getState().globalFilter ?? ""}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {/* {table.getColumn("status") && (
+        {table.getColumn("inStock") && (
           <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
+            column={table.getColumn("inStock")}
+            title="inStock"
+            options={[
+              { label: "Yes", value: "true" },
+              { label: "No", value: "false" }
+            ]}
           />
         )}
-        {table.getColumn("priority") && (
+        {/* {table.getColumn("priority") && (
           <DataTableFacetedFilter
             column={table.getColumn("priority")}
             title="Priority"

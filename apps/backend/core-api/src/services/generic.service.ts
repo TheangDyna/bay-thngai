@@ -12,7 +12,9 @@ export class GenericService<T extends Document> {
     return await this.repository.createOne(data);
   }
 
-  public async getAll(queryString: Record<string, any>): Promise<T[]> {
+  public async getAll(
+    queryString: Record<string, any>
+  ): Promise<{ total: number; documents: T[] }> {
     return await this.repository.getAll(queryString);
   }
 

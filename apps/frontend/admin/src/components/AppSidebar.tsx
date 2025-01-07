@@ -14,7 +14,6 @@ import { useLocation, Link } from "react-router-dom";
 
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
-  // navigate("/dashboard");
   return (
     <Sidebar>
       <ScrollArea>

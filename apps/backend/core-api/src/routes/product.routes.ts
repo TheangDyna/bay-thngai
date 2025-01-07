@@ -12,7 +12,8 @@ import { GenericRepository } from "../repositories/generic.repository";
 import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const productRepository = new GenericRepository(Product);
+const searchFields = ["name", "description"];
+const productRepository = new GenericRepository(Product, searchFields);
 const productService = new GenericService(productRepository);
 const productController = new GenericController(productService);
 

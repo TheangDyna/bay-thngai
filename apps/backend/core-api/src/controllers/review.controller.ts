@@ -31,9 +31,10 @@ export class ReviewController extends GenericController<IReviewDocument> {
   public getAll = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       req.query.product = req.body.product;
-      const documents = await this.reviewService.getAll(req.query);
+      const { total, documents } = await this.reviewService.getAll(req.query);
       res.status(200).json({
         status: "success",
+        total,
         results: documents.length,
         data: documents
       });

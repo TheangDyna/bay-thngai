@@ -3,23 +3,23 @@ import { Facebook, PhoneCall, Twitter, Youtube } from "lucide-react";
 const Footer = () => {
   return (
     <>
-      <footer className="relative z-10 bg-white shadow-xl overflow-hidden  w-full pb-10 pt-20 px-10  lg:pb-20 lg:pt-[120px]">
-        <div className="container">
-          <div className="-mx-4 flex flex-wrap">
+      <footer className="relative z-10 bg-white shadow-xl overflow-hidden w-full pb-10 pt-20 px-10 lg:pb-20 lg:pt-[120px] flex justify-center items-center">
+        <div className="container text-center">
+          <div className="flex flex-wrap justify-center">
             <div className="w-full px-4 sm:w-2/3 lg:w-3/12">
-              <div className="mb-10 w-full">
+              <div className="mb-10 w-full text-left">
                 <a href="/#" className="mb-6 inline-block max-w-[160px]">
                   <img
-                    src="/bay-thangai-logo.svg"
+                    src="/bay-thngai-logo.svg"
                     alt="logo"
-                    className="w-[100px] h-[100px] "
+                    className="w-[150px] h-[150px] mx-auto"
                   />
                 </a>
                 <p className="mb-7 text-base text-body-color">
                   Sed ut perspiciatis undmnis is iste natus error sit amet
                   voluptatem totam rem aperiam.
                 </p>
-                <p className="flex items-center text-sm font-medium text-dark ">
+                <p className="flex items-center justify-start text-sm font-medium text-dark">
                   <span className="mr-3 text-primary">
                     <PhoneCall className="w-4 h-4" />
                   </span>
@@ -49,10 +49,10 @@ const Footer = () => {
 
             <div className="w-full px-4 sm:w-1/2 lg:w-3/12">
               <div className="mb-10 w-full">
-                <h4 className="mb-9 text-lg font-semibold text-dark ">
+                <h4 className="mb-9 text-lg font-semibold text-dark">
                   Follow Us On
                 </h4>
-                <div className="mb-6 flex items-center space-x-4">
+                <div className="mb-6 flex items-center justify-center space-x-4">
                   <Youtube className="w-6 h-6" />
                   <Facebook className="w-6 h-6" />
                   <Twitter className="w-6 h-6" />
@@ -141,8 +141,8 @@ const LinkGroup: React.FC<ILinkGroupProps> = ({ children, header }) => {
   return (
     <>
       <div className="w-full px-4 sm:w-1/2 lg:w-2/12">
-        <div className="mb-10 w-full">
-          <h4 className="mb-9 text-lg font-semibold text-dark ">{header}</h4>
+        <div className="mb-10 w-full text-left">
+          <h4 className="mb-9 text-lg font-semibold text-dark">{header}</h4>
           <ul className="space-y-3">{children}</ul>
         </div>
       </div>
@@ -155,7 +155,7 @@ const NavLink: React.FC<INavLinkProps> = ({ link, label }) => {
     <li>
       <a
         href={link}
-        className="inline-block text-base leading-loose text-body-color hover:text-primary dark:text-dark-6"
+        className="inline-block text-base leading-loose text-body-color hover:text-primary"
       >
         {label}
       </a>

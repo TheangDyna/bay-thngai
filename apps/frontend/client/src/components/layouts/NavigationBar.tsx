@@ -11,13 +11,13 @@ import { ShoppingCart, User } from "lucide-react";
 const NavigationBar = () => {
   return (
     <div>
-      <nav className="bg-white shadow-sm h-[10vh] w-full flex justify-between items-center px-8">
+      <nav className="flex items-center justify-between w-full h-full mx-auto max-w-[1920px] px-4 md:px-6 lg:px-8 2xl:px-10 bg-white">
         {/* Left Section */}
         <div className="flex items-center space-x-8">
           <img
-            src="/bay-thangai-logo.svg"
+            src="/bay-thngai-logo.svg"
             alt="logo"
-            className="w-[110px] h-[110px]"
+            className="w-[100px] h-[100px]"
           />
 
           {/* Categories Dropdown */}
@@ -27,7 +27,7 @@ const NavigationBar = () => {
                 <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
                   Categories
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="absolute mt-2 bg-white shadow-md rounded-[16px] w-56 p-4">
+                <NavigationMenuContent className="absolute mt-2 z-50 bg-white shadow-md rounded-[16px] w-56 p-4">
                   <ul className="space-y-2">
                     <li>
                       <NavigationMenuLink
@@ -74,7 +74,7 @@ const NavigationBar = () => {
                 <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
                   Dietary
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="absolute mt-2 bg-white shadow-md rounded-[16px] w-56 p-4">
+                <NavigationMenuContent className="absolute mt-2 z-50 bg-white shadow-md rounded-[16px] w-56 p-4">
                   <ul className="space-y-2">
                     <li>
                       <NavigationMenuLink

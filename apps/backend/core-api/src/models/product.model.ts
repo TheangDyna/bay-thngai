@@ -32,11 +32,11 @@ productSchema.pre(
   }
 );
 
-productSchema.virtual("reviews", {
-  ref: "Review",
-  foreignField: "product",
-  localField: "_id"
-});
+// productSchema.virtual("reviews", {
+//   ref: "Review",
+//   foreignField: "product",
+//   localField: "_id"
+// });
 
 export const Product = mongoose.model<IProductDocument>(
   "Product",

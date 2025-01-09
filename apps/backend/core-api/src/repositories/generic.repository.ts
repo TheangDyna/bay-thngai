@@ -20,19 +20,31 @@ export class GenericRepository<T extends Document> {
     queryString: Record<string, any>
   ): Promise<{ documents: T[]; total: number }> {
     const features = new APIFeatures<T>(this.model.find(), queryString)
-      .filter() // Supports filtering (e.g., name=computer, price[gte]=100)
-      .search(this.searchFields) // Supports filtering (e.g., search=laptop)
-      .sort() // Supports sorting (e.g., sort=-name, sort=price)
-      .select() // Supports field selection (e.g., select=name,price)
-      .paginate(); // Supports pagination (e.g., page=1&limit=10)
+      .filter() // e.g., name=Chicken, price[gte]=5
+      .search(this.searchFields); // e.g., search=Chicken
 
-    const featuresCount = new APIFeatures<T>(this.model.find(), queryString)
-      .filter()
-      .search(this.searchFields);
+    const total = await this.model.countDocuments(
+      features.getQuery().getFilter()
+    );
+
+    features
+      .sort() // e.g., sort=-name, sort=price
+      .select() // e.g., select=name,price
+      .paginate(); // e.g., page=1&limit=10
+
+    // return await features.execute();
 
     const documents = await features.getQuery();
-    const total = await featuresCount.getQuery().countDocuments();
     return { total, documents };
+    // const features = new APIFeatures<T>(this.model, queryString)
+
+    //   .filter() // Supports filtering (e.g., name=computer, price[gte]=100)
+    //   .search(this.searchFields) // Supports filtering (e.g., search=laptop)
+    //   .sort() // Supports sorting (e.g., sort=-name, sort=price)
+    //   .select() // Supports field selection (e.g., select=name,price)
+    //   .paginate(); // Supports pagination (e.g., page=1&limit=10)
+
+    // return await features.execute();
   }
 
   public async getOne(id: string): Promise<T> {

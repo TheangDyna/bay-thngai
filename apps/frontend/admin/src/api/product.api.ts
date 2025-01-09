@@ -41,24 +41,6 @@ export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
   });
 };
 
-// queryKey: ["products", { pagination, sorting, columnFilters }],
-// queryFn: async () => {
-//   const params = {
-//     page: pagination.pageIndex + 1, // Backend expects 1-based index
-//     limit: pagination.pageSize,
-//     sort: sorting[0]
-//       ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
-//       : undefined, // Sorting
-//     ...columnFilters.reduce((acc, filter) => {
-//       acc[filter.id] = filter.value;
-//       return acc;
-//     }, {})
-//   };
-
-//   const response = await axiosInstance.get("/products", { params });
-//   return response.data;
-// }
-
 export const useProductQuery = (id: string) => {
   return useQuery<any, any>({
     queryKey: ["products", id],

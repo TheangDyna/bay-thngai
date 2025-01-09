@@ -22,7 +22,7 @@ export class GenericController<T extends Document> {
 
   public getAll = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      const { documents, total } = await this.service.getAll(req.query);
+      const { total, documents } = await this.service.getAll(req.query);
       res.status(200).json({
         status: "success",
         total,

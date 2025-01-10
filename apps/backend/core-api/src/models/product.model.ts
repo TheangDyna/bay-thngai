@@ -16,7 +16,9 @@ const productSchema = new Schema<IProductDocument>(
     fats: { type: Number },
     ingredients: [{ type: String }],
     ratingsAverage: { type: Number },
-    ratingsQuantity: { type: Number }
+    ratingsQuantity: { type: Number },
+    thumbnail: { type: String },
+    images: [{ type: String }]
   },
   defaultSchemaOptions
 );

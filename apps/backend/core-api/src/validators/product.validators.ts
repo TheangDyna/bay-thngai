@@ -15,7 +15,9 @@ export const ProductSchema = z
     fats: z.number().positive().optional(),
     ingredients: z.array(z.string().trim().min(1)).optional().default([]),
     ratingsAverage: z.number().positive().optional(),
-    ratingsQuantity: z.number().int().positive().optional()
+    ratingsQuantity: z.number().int().positive().optional(),
+    thumbnail: z.string().url().optional(),
+    images: z.array(z.string().url().min(1).optional()).optional()
   })
   .strict();
 

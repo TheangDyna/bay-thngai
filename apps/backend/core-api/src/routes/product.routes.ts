@@ -10,6 +10,7 @@ import { GenericController } from "../controllers/generic.controller";
 import { reviewRoutes } from "./review.routes";
 import { GenericRepository } from "../repositories/generic.repository";
 import { GenericService } from "../services/generic.service";
+import { processImagesAndThumbnail } from "../middlewares/upload.middleware";
 
 const router = Router();
 const searchFields = ["name", "description"];
@@ -27,7 +28,11 @@ router.use(protect, restrictTo("admin"));
 
 router
   .route("/")
-  .post(validate(CreateProductSchema), productController.createOne);
+  .post(
+    processImagesAndThumbnail,
+    validate(CreateProductSchema),
+    productController.createOne
+  );
 
 router
   .route("/:id")

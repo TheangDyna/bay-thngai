@@ -1,3 +1,4 @@
+import SignIn from "@/pages/auth/SignIn";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -6,7 +7,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from "@radix-ui/react-navigation-menu";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 const NavigationBar = () => {
   return (
@@ -131,12 +132,7 @@ const NavigationBar = () => {
           </div>
 
           {/* Sign In */}
-          <div className="flex items-center space-x-1 cursor-pointer text-gray-800 hover:text-black">
-            <User className="w-6 h-6" />
-            <span className="text-gray-800 hover:text-black cursor-pointer">
-              Sign In
-            </span>
-          </div>
+          <SignIn />
         </div>
       </nav>
     </div>

@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import NextButton from "../../NextButton";
 import PrevButton from "../../PrevButton";
-import CardCategory from "./CardCategory";
+import CardCategory from "../card/CardCategory";
 import { Navigation, Pagination } from "swiper/modules";
+import BannerHeader from "../../BannerHeader";
 import { Swiper as SwiperClass } from "swiper"; // Import Swiper class for typing
 
 import "swiper/css";
@@ -30,14 +31,10 @@ const CategorySection = () => {
 
   return (
     <div>
-      <div className="mt-10 mb-5 xl:mb-6 text-center pb-2 lg:pb-3 xl:pb-4 3xl:pb-7">
-        <h2 className="text-brand-dark text-lg lg:text-xl xl:text-[22px] xl:leading-8 font-bold font-manrope 3xl:text-[25px] 3xl:leading-9">
-          What food you love to order
-        </h2>
-        <p className="text-brand-muted text-sm leading-7 lg:text-15px xl:text-base pb-0.5 mt-1.5 lg:mt-2.5 xl:mt-3">
-          Here order your favorite foods from different categories
-        </p>
-      </div>
+      <BannerHeader
+        title="What food you love to order"
+        subTitle="Here order your favorite foods from different categories"
+      />
 
       <div className="relative px-10">
         {/* Navigation Buttons */}

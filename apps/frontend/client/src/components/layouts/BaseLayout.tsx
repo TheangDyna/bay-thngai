@@ -16,7 +16,6 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main Content */}
       <main className="flex-grow">{children}</main>
 
-      <div className="bg-transparent py-10 w-full" />
       {/* Footer */}
       <footer>
         <Footer />

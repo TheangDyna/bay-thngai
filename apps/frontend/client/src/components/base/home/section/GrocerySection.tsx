@@ -1,5 +1,6 @@
 import React from "react";
-import CardGrocery from "./CardGrocery";
+import CardProduct from "../../CardProduct";
+import BannerHeader from "../../BannerHeader";
 
 const products = [
   {
@@ -90,17 +91,13 @@ const GrocerySection: React.FC = () => {
 
   return (
     <div className="px-10">
-      <div className="mt-10  mb-5 xl:mb-6 text-center pb-2 lg:pb-3 xl:pb-4 3xl:pb-7">
-        <h2 className="text-brand-dark text-lg lg:text-xl xl:text-[22px] xl:leading-8 font-bold font-manrope 3xl:text-[25px] 3xl:leading-9">
-          Best seller grocery near you
-        </h2>
-        <p className="text-brand-muted text-sm leading-7 lg:text-15px xl:text-base pb-0.5 mt-1.5 lg:mt-2.5 xl:mt-3">
-          We provide best quality &amp; fresh grocery items near your location
-        </p>
-      </div>
+      <BannerHeader
+        title="Best seller grocery near you"
+        subTitle="We provide best quality &amp; fresh grocery items near your location"
+      />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 3xl:grid-cols-7 md:gap-4 2xl:gap-5">
         {products.map((product, index) => (
-          <CardGrocery
+          <CardProduct
             key={index}
             image={product.image}
             title={product.title}

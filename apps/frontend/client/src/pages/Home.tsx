@@ -1,8 +1,11 @@
 import Banner from "@/components/base/home/Banner";
-import CategorySection from "@/components/base/home/category/CategorySection";
-import GrocerySection from "@/components/base/home/grocery/GrocerySection";
+import CategorySection from "@/components/base/home/section/CategorySection";
+import GrocerySection from "@/components/base/home/section/GrocerySection";
+import ProductSection from "@/components/base/home/section/ProductSection";
 import Promotion from "@/components/base/home/Promotion";
-import CardPackageSwiper from "@/components/base/home/swipper/CardPackageSwiper";
+import CardPackageSwiper from "@/components/base/home/card/CardPackageSwiper";
+import CollectionSection from "@/components/base/home/section/CollectionSection";
+import BannerPromotion from "@/components/base/home/BannerPromotion";
 
 const Home = () => {
   return (
@@ -12,6 +15,9 @@ const Home = () => {
       <CategorySection />
       <GrocerySection />
       <Promotion />
+      <ProductSection />
+      <CollectionSection />
+      <BannerPromotion />
     </div>
   );
 };

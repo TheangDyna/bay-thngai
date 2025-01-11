@@ -14,11 +14,13 @@ const NavigationBar = () => {
       <nav className="flex items-center justify-between w-full h-full mx-auto max-w-[1920px] px-4 md:px-6 lg:px-8 2xl:px-10 bg-white">
         {/* Left Section */}
         <div className="flex items-center space-x-8">
-          <img
-            src="/bay-thngai-logo.svg"
-            alt="logo"
-            className="w-[100px] h-[100px]"
-          />
+          <a href="/">
+            <img
+              src="/bay-thngai-logo.svg"
+              alt="logo"
+              className="w-[100px] h-[100px]"
+            />
+          </a>
 
           {/* Categories Dropdown */}
           <NavigationMenu>

@@ -47,7 +47,6 @@ class ErrorHandler {
 
   private handleZodError(error: z.ZodError): AppError {
     const errorMessage = formatZodErrors(error.errors);
-    logger.error(errorMessage);
     return new AppError(`Validation error: ${errorMessage}`, 400);
   }
 

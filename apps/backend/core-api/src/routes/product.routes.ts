@@ -10,7 +10,11 @@ import { GenericController } from "../controllers/generic.controller";
 import { reviewRoutes } from "./review.routes";
 import { GenericRepository } from "../repositories/generic.repository";
 import { GenericService } from "../services/generic.service";
-import { processImagesAndThumbnail } from "../middlewares/upload.middleware";
+import {
+  processImagesAndThumbnail,
+  upload
+} from "../middlewares/upload.middleware";
+import { sanitizeProductInput } from "../middlewares/sanitizeInput.middleware";
 
 const router = Router();
 const searchFields = ["name", "description"];
@@ -26,13 +30,16 @@ router.route("/:id").get(productController.getOne);
 
 router.use(protect, restrictTo("admin"));
 
-router
-  .route("/")
-  .post(
-    processImagesAndThumbnail,
-    validate(CreateProductSchema),
-    productController.createOne
-  );
+router.route("/").post(
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 10 }
+  ]) as any,
+  processImagesAndThumbnail,
+  sanitizeProductInput,
+  validate(CreateProductSchema),
+  productController.createOne
+);
 
 router
   .route("/:id")

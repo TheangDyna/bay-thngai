@@ -1,8 +1,7 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../configs/s3.config";
 import { Readable } from "stream";
-
-const bucketName = "your-s3-bucket-name";
+import { config } from "../configs/config";
 
 export const uploadToS3 = async (
   fileBuffer: Buffer | Readable,
@@ -10,14 +9,13 @@ export const uploadToS3 = async (
   contentType: string
 ): Promise<string> => {
   const command = new PutObjectCommand({
-    Bucket: bucketName,
+    Bucket: config.awsS3BucketName,
     Key: key,
     Body: fileBuffer,
-    ContentType: contentType,
-    ACL: "public-read"
+    ContentType: contentType
   });
 
   await s3Client.send(command);
 
-  return `https://${bucketName}.s3.${s3Client.config.region}.amazonaws.com/${key}`;
+  return `https://${config.awsS3BucketName}.s3.${config.awsRegion}.amazonaws.com/${key}`;
 };

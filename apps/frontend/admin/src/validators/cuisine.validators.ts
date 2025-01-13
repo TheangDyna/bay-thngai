@@ -6,3 +6,8 @@ export const CuisineSchema = z
     description: z.string().trim().min(1, "Description is required")
   })
   .strict();
+
+export const cuisineDefaultValues = {
+  name: "",
+  description: ""
+};

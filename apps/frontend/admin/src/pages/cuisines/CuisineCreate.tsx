@@ -13,18 +13,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CuisineInput } from "@/types/cuisine.types";
-import { CuisineSchema } from "@/validators/cuisine.validators";
+import {
+  cuisineDefaultValues,
+  CuisineSchema
+} from "@/validators/cuisine.validators";
 import { useCreateCuisineMutation } from "@/api/cuisine.api";
-
-const defaultValues: Partial<CuisineInput> = {
-  name: "",
-  description: ""
-};
 
 const CuisineCreate: React.FC = () => {
   const form = useForm<CuisineInput>({
     resolver: zodResolver(CuisineSchema),
-    defaultValues
+    defaultValues: cuisineDefaultValues
   });
 
   const createCuisineMutation = useCreateCuisineMutation();

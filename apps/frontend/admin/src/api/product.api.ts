@@ -4,18 +4,35 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
+import { useState } from "react";
 
-export const useCreateProductMutation = (): UseMutationResult<
-  any,
-  any,
-  any
-> => {
-  return useMutation({
+export const useCreateProductMutation = (): {
+  mutation: UseMutationResult<any, any, any>;
+  progress: number;
+} => {
+  const [progress, setProgress] = useState<number>(0);
+
+  const mutation = useMutation({
     mutationFn: async (data) => {
-      const response = await axiosInstance.post("/products", data);
+      const response = await axiosInstance.post("/products", data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentage = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1)
+          );
+          setProgress(percentage);
+        }
+      });
       return response.data;
+    },
+    onSettled: () => {
+      setProgress(0);
     }
   });
+
+  return { mutation, progress };
 };
 
 export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
@@ -30,7 +47,6 @@ export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
           : undefined,
         ...columnFilters.reduce((acc, filter) => {
           acc[filter.id] = filter.value;
-          console.log(acc);
           return acc;
         }, {})
       };

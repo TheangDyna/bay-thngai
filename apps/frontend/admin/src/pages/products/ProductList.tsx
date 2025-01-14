@@ -51,8 +51,14 @@ export function ProductListPage() {
       pagination
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: (newGlobalFilter) => {
+      setGlobalFilter(newGlobalFilter);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    },
+    onColumnFiltersChange: (newColumnFilters) => {
+      setColumnFilters(newColumnFilters);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    },
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),

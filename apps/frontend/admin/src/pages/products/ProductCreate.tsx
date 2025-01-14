@@ -31,13 +31,10 @@ const ProductCreate: React.FC = () => {
     useCreateProductMutation();
   const cuisinesQuery = useCuisinesQuery();
 
-  console.log("progress", progress);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle");
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const form = useForm<ProductInput>({
     resolver: zodResolver(ProductSchema),
@@ -45,6 +42,9 @@ const ProductCreate: React.FC = () => {
   });
 
   const onSubmit = (data: ProductInput) => {
+    setIsDialogOpen(true);
+    setUploadStatus("uploading");
+
     const formData = new FormData();
 
     // Append basic fields with explicit type conversion
@@ -63,7 +63,7 @@ const ProductCreate: React.FC = () => {
     );
 
     // Append files
-    data?.thumbnail && formData.append("thumbnail", data.thumbnail);
+    data.thumbnail && formData.append("thumbnail", data.thumbnail);
     data.images?.forEach((image) => formData.append("images", image));
 
     createProductMutation.mutate(formData, {
@@ -72,9 +72,11 @@ const ProductCreate: React.FC = () => {
           title: "Success",
           description: `Product created successfully: ${response.data.name}`
         });
+        setUploadStatus("success");
         form.reset();
       },
       onError: (error: any) => {
+        setUploadStatus("error");
         toast({
           title: "Error",
           description:
@@ -196,6 +198,7 @@ const ProductCreate: React.FC = () => {
                           onValueChange={(value) => field.onChange(value)}
                           value={field.value}
                           placeholder="Select Cuisine"
+                          variant="secondary"
                         />
                       )}
                     </FormControl>
@@ -217,6 +220,7 @@ const ProductCreate: React.FC = () => {
                         onValueChange={(value) => field.onChange(value)}
                         value={field.value}
                         placeholder="Select Dietary"
+                        variant="secondary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -255,7 +259,7 @@ const ProductCreate: React.FC = () => {
       <UploadDialog
         isOpen={isDialogOpen}
         status={uploadStatus}
-        progress={uploadProgress}
+        progress={progress}
         message={
           uploadStatus === "uploading"
             ? "Creating product and uploading images..."
@@ -268,7 +272,6 @@ const ProductCreate: React.FC = () => {
         onClose={() => {
           setIsDialogOpen(false);
           setUploadStatus("idle");
-          setUploadProgress(0);
         }}
       />
     </>

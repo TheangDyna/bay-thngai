@@ -11,7 +11,7 @@ import { reviewRoutes } from "./review.routes";
 import { GenericRepository } from "../repositories/generic.repository";
 import { GenericService } from "../services/generic.service";
 import {
-  processImagesAndThumbnail,
+  processThumbnailAndImages,
   upload
 } from "../middlewares/upload.middleware";
 import { sanitizeProductInput } from "../middlewares/sanitizeInput.middleware";
@@ -33,9 +33,9 @@ router.use(protect, restrictTo("admin"));
 router.route("/").post(
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
-    { name: "images", maxCount: 10 }
-  ]) as any,
-  processImagesAndThumbnail,
+    { name: "images", maxCount: 5 }
+  ]) as unknown as any,
+  processThumbnailAndImages as unknown as any,
   sanitizeProductInput,
   validate(CreateProductSchema),
   productController.createOne

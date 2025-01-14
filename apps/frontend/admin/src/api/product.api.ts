@@ -18,6 +18,7 @@ export const useCreateProductMutation = (): {
         headers: {
           "Content-Type": "multipart/form-data"
         },
+        timeout: 60000,
         onUploadProgress: (progressEvent) => {
           const percentage = Math.round(
             (progressEvent.loaded * 100) / (progressEvent.total || 1)

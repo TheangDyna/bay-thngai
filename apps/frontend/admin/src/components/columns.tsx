@@ -6,6 +6,7 @@ import { Badge } from "./ui/badge";
 
 export const productSchema = z.object({
   name: z.string(),
+  thumbnail: z.string(),
   price: z.number(),
   cuisines: z.array(z.object({ name: z.string() })),
   inStock: z.boolean()
@@ -16,17 +17,9 @@ export type Product = z.infer<typeof productSchema>;
 export const columns: ColumnDef<Product>[] = [
   {
     id: "index",
-    header: () => (
-      <div className="flex space-x-2">
-        <span className="max-w-[500px] truncate font-medium">N.o</span>
-      </div>
-    ),
+    header: () => <span className="max-w-[100px] truncate">N.o</span>,
     cell: ({ row }) => (
-      <div className="flex space-x-2">
-        <span className="max-w-[500px] truncate font-medium">
-          {row.index + 1}
-        </span>
-      </div>
+      <span className="max-w-[100px] truncate">{row.index + 1}</span>
     ),
     enableSorting: false,
     enableHiding: false
@@ -38,10 +31,13 @@ export const columns: ColumnDef<Product>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("name")}
-          </span>
+        <div className="flex items-center space-x-2">
+          <img
+            src={row.original.thumbnail || "/logo.png"}
+            alt={row.original.name}
+            className="w-8 h-8 rounded-md"
+          />
+          <span className="max-w-[500px] truncate">{row.original.name}</span>
         </div>
       );
     }
@@ -53,11 +49,9 @@ export const columns: ColumnDef<Product>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("price")}
-          </span>
-        </div>
+        <span className="max-w-[500px] truncate">
+          {row.original.price.toFixed(2)}
+        </span>
       );
     }
   },
@@ -67,15 +61,20 @@ export const columns: ColumnDef<Product>[] = [
       <DataTableColumnHeader column={column} title="Cuisines" />
     ),
     cell: ({ row }) => {
+      const cuisines = row.original.cuisines || [];
+      const maxCount = 1;
       return (
         <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("cuisines")?.map((cuisine, index) => (
-              <Badge variant="outline" key={index}>
-                {cuisine.name}
-              </Badge>
-            ))}
-          </span>
+          {cuisines.slice(0, maxCount).map((cuisine, index) => (
+            <Badge key={index} variant="secondary" className="max-w-[120px]">
+              <span className="text-nowrap truncate">{cuisine.name}</span>
+            </Badge>
+          ))}
+          {cuisines.length > maxCount && (
+            <Badge variant="secondary">
+              <span className="text-nowrap">{`+ ${cuisines.length - maxCount}`}</span>
+            </Badge>
+          )}
         </div>
       );
     }
@@ -88,20 +87,16 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("inStock") ? (
-              <Badge
-                variant="outline"
-                className="text-green-400 border-green-400"
-              >
-                Yes
-              </Badge>
-            ) : (
-              <Badge variant="outline" className="text-red-400 border-red-400">
-                No
-              </Badge>
-            )}
-          </span>
+          <Badge
+            variant="outline"
+            className={
+              row.original.inStock
+                ? "text-green-400 border-green-400"
+                : "text-red-400 border-red-400"
+            }
+          >
+            {row.original.inStock ? "Yes" : "No"}
+          </Badge>
         </div>
       );
     },

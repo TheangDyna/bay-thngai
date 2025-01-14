@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog";
+import { Button } from "./ui/button";
 
 export type UploadStatus = "idle" | "uploading" | "success" | "error";
 
@@ -47,7 +48,7 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
 
         <div className="flex flex-col items-center gap-4 py-4">
           {/* Message */}
-          <p className="text-gray-700 text-center font-medium">{message}</p>
+          <p className="text-center font-medium">{message}</p>
 
           {/* Progress Bar */}
           {status === "uploading" && (
@@ -58,7 +59,9 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <p className="text-sm text-gray-500">{progress}% Complete</p>
+              <p className="text-sm text-muted-foreground">
+                {progress}% Complete
+              </p>
             </>
           )}
         </div>
@@ -66,12 +69,11 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
         {/* Footer with close button for success/error states */}
         {(status === "success" || status === "error") && (
           <DialogFooter className="sm:justify-center">
-            <button
-              onClick={onClose}
-              className="inline-flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium transition-colors"
-            >
+            {/* className="inline-flex items-center justify-center px-4 py-2
+            rounded-md text-sm font-medium transition-colors" */}
+            <Button onClick={onClose} variant="secondary">
               Close
-            </button>
+            </Button>
           </DialogFooter>
         )}
       </DialogContent>

@@ -12,7 +12,7 @@ export const ProductSchema = z.object({
   carbs: z.number().positive().optional(),
   fats: z.number().positive().optional(),
   ingredients: z.array(z.string().min(1)).optional(),
-  thumbnail: z.instanceof(File).optional(),
+  thumbnail: z.instanceof(File),
   images: z.array(z.instanceof(File)).optional()
 });
 

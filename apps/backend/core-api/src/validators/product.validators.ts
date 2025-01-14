@@ -6,6 +6,7 @@ export const ProductSchema = z
     name: z.string().trim().min(1),
     description: z.string().trim().min(1),
     price: z.number().min(1),
+    thumbnail: z.string().url().min(1),
     cuisines: z.array(ObjectIdSchema).min(1),
     dietaries: z.array(ObjectIdSchema).optional().default([]),
     inStock: z.boolean().optional().default(true),
@@ -16,7 +17,6 @@ export const ProductSchema = z
     ingredients: z.array(z.string().trim().min(1)).optional().default([]),
     ratingsAverage: z.number().positive().optional(),
     ratingsQuantity: z.number().int().positive().optional(),
-    thumbnail: z.string().url().optional(),
     images: z.array(z.string().url().min(1).optional()).optional()
   })
   .strict();

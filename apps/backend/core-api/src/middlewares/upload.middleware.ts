@@ -1,46 +1,64 @@
 import multer from "multer";
-import sharp from "sharp";
 import { uploadToS3 } from "../utils/uploadToS3";
 import { NextFunction, Request, Response } from "express";
+import { generateFileUniqueName } from "../utils/generateFileUniqueName";
+import { processImage } from "../utils/processImage";
+
+interface MulterRequest extends Request {
+  files?: {
+    thumbnail?: Express.Multer.File[];
+    images?: Express.Multer.File[];
+  };
+}
 
 export const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-export const processImagesAndThumbnail = async (
-  req: Request,
+export const processThumbnailAndImages = async (
+  req: MulterRequest,
   _res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!(req.files as any).thumbnail || !(req.files as any).images) {
-      return next();
+    if (req.files?.thumbnail && req.files.thumbnail.length > 0) {
+      const thumbnailFile = req.files.thumbnail[0];
+      const thumbnailKey = `thumbnails/${generateFileUniqueName(thumbnailFile.originalname)}.webp`;
+      const thumbnailBuffer = await processImage(
+        thumbnailFile.buffer,
+        300,
+        300,
+        "webp",
+        80
+      );
+      const thumbnailUrl = await uploadToS3(
+        thumbnailBuffer,
+        thumbnailKey,
+        "image/webp"
+      );
+
+      req.body.thumbnail = thumbnailUrl;
     }
 
-    // Handle thumbnail
-    const thumbnailFile = (req.files as any).thumbnail[0];
-    const thumbnailKey = `thumbnails/${Date.now()}-${thumbnailFile.originalname}`;
-    const thumbnailBuffer = await sharp(thumbnailFile.buffer)
-      .resize(150, 150)
-      .toBuffer();
-    const thumbnailUrl = await uploadToS3(
-      thumbnailBuffer,
-      thumbnailKey,
-      thumbnailFile.mimetype
-    );
+    if (req.files?.images && req.files.images.length > 0) {
+      const images = req.files.images;
+      const imageUploads = await Promise.all(
+        images.map(async (image: Express.Multer.File) => {
+          const imageKey = `images/${generateFileUniqueName(image.originalname)}.webp`;
+          const imageBuffer = await processImage(
+            image.buffer,
+            800,
+            800,
+            "webp",
+            80
+          );
+          return uploadToS3(imageBuffer, imageKey, "image/webp");
+        })
+      );
 
-    // Handle images (multiple uploads)
-    const images = (req.files as any).images;
-    const imageUploads = await Promise.all(
-      images.map(async (image: Express.Multer.File) => {
-        const imageKey = `images/${Date.now()}-${image.originalname}`;
-        return await uploadToS3(image.buffer, imageKey, image.mimetype);
-      })
-    );
-
-    req.body.thumbnail = thumbnailUrl;
-    req.body.images = imageUploads;
+      req.body.images = imageUploads;
+    }
 
     next();
   } catch (error) {

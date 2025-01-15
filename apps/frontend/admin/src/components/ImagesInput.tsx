@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
 import { Control, FieldValues, Path, useController } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 interface ImagesPreview {
   url: string;
-  file: File;
+  file?: File;
 }
 
 interface ImagesInputProps<T extends FieldValues> {
@@ -43,6 +43,23 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
     });
 
     const [previews, setPreviews] = useState<ImagesPreview[]>([]);
+
+    // Sync previews with initial value (supports File and URL)
+    useEffect(() => {
+      const initialPreviews = (value as (File | string)[]).map((item) =>
+        item instanceof File
+          ? { url: URL.createObjectURL(item), file: item }
+          : { url: item }
+      );
+      setPreviews(initialPreviews);
+
+      // Cleanup URLs for File previews
+      return () => {
+        initialPreviews
+          .filter((preview) => preview.file)
+          .forEach((preview) => URL.revokeObjectURL(preview.url));
+      };
+    }, [value]);
 
     const validateFile = (file: File): boolean => {
       if (file.size > maxSize * 1024 * 1024) {
@@ -82,7 +99,7 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
       const files = e.target.files;
       if (!files?.length) return;
       handleFiles(Array.from(files));
-      e.target.value = "";
+      e.target.value = ""; // Reset input
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -106,7 +123,9 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
     const removeImage = (index: number) => {
       setPreviews((prev) => {
         const newPreviews = [...prev];
-        URL.revokeObjectURL(newPreviews[index].url);
+        if (newPreviews[index].file) {
+          URL.revokeObjectURL(newPreviews[index].url);
+        }
         newPreviews.splice(index, 1);
         return newPreviews;
       });
@@ -132,7 +151,7 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {previews.map((preview, index) => (
-              <div key={preview.url} className="relative group b aspect-square">
+              <div key={preview.url} className="relative group aspect-square">
                 <img
                   src={preview.url}
                   alt={`Preview ${index + 1}`}
@@ -153,7 +172,7 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
 
             {showUploadButton && (
               <label
-                htmlFor="images-upload"
+                htmlFor="images"
                 className={cn(
                   "border-2 border-dashed rounded-md aspect-square",
                   "text-muted-foreground text-sm leading-loose",
@@ -169,7 +188,7 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
                   accept={accept}
                   multiple={true}
                   className="hidden"
-                  id="images-upload"
+                  id="images"
                   onChange={handleFileChange}
                   ref={ref || fileInputRef}
                 />

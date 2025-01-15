@@ -10,14 +10,14 @@ export const ProductSchema = z
     cuisines: z.array(ObjectIdSchema).min(1),
     dietaries: z.array(ObjectIdSchema).optional().default([]),
     inStock: z.boolean().optional().default(true),
-    calories: z.number().positive().optional(),
-    protein: z.number().positive().optional(),
-    carbs: z.number().positive().optional(),
-    fats: z.number().positive().optional(),
+    calories: z.number().min(0).optional(),
+    protein: z.number().min(0).optional(),
+    carbs: z.number().min(0).optional(),
+    fats: z.number().min(0).optional(),
     ingredients: z.array(z.string().trim().min(1)).optional().default([]),
     ratingsAverage: z.number().positive().optional(),
     ratingsQuantity: z.number().int().positive().optional(),
-    images: z.array(z.string().url().min(1).optional()).optional()
+    images: z.array(z.string().url().min(1)).optional().default([])
   })
   .strict();
 

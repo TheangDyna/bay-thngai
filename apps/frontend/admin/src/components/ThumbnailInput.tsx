@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
 import { Control, FieldValues, Path, useController } from "react-hook-form";
 import { toast } from "@/hooks/use-toast";
@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 interface FilePreview {
   url: string;
-  file: File;
+  file?: File; // Optional because it can be a URL string
 }
 
 interface ThumbnailInputProps<T extends FieldValues> {
@@ -16,6 +16,7 @@ interface ThumbnailInputProps<T extends FieldValues> {
   maxSize?: number;
   accept?: string;
   className?: string;
+  value?: File | string | null; // Allow both File and URL as the initial value
 }
 
 export const ThumbnailInput = forwardRef<
@@ -23,20 +24,50 @@ export const ThumbnailInput = forwardRef<
   ThumbnailInputProps<any>
 >(
   (
-    { name, control, maxSize = 5, accept = "image/*", className, ...props },
+    {
+      name,
+      control,
+      maxSize = 5,
+      accept = "image/*",
+      className,
+      value,
+      ...props
+    },
     ref
   ) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const {
-      field: { onChange },
-      fieldState: { error }
+      field: { onChange, value: fieldValue }
     } = useController({
       name,
       control
     });
 
     const [preview, setPreview] = useState<FilePreview | null>(null);
+
+    useEffect(() => {
+      // Handle both File and URL types
+      const handleValue = value || fieldValue;
+      if (handleValue instanceof File) {
+        const newPreview = {
+          url: URL.createObjectURL(handleValue),
+          file: handleValue
+        };
+        setPreview(newPreview);
+      } else if (typeof handleValue === "string") {
+        setPreview({ url: handleValue });
+      } else {
+        setPreview(null);
+      }
+
+      // Cleanup object URLs when component is unmounted or value changes
+      return () => {
+        if (preview?.file && preview.url.startsWith("blob:")) {
+          URL.revokeObjectURL(preview.url);
+        }
+      };
+    }, [value, fieldValue]); // Re-run when value or fieldValue changes
 
     const validateFile = (file: File): boolean => {
       if (file.size > maxSize * 1024 * 1024) {
@@ -50,13 +81,7 @@ export const ThumbnailInput = forwardRef<
     };
 
     const handleFile = (file: File) => {
-      if (!file) return;
-
-      if (!validateFile(file)) return;
-
-      if (preview?.url) {
-        URL.revokeObjectURL(preview.url);
-      }
+      if (!file || !validateFile(file)) return;
 
       const newPreview = {
         url: URL.createObjectURL(file),
@@ -64,14 +89,14 @@ export const ThumbnailInput = forwardRef<
       };
 
       setPreview(newPreview);
-      onChange(file);
+      onChange(file); // Update `react-hook-form` state
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
       handleFile(file);
-      e.target.value = "";
+      e.target.value = ""; // Clear input value
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -93,11 +118,8 @@ export const ThumbnailInput = forwardRef<
     };
 
     const removeFile = () => {
-      if (preview?.url) {
-        URL.revokeObjectURL(preview.url);
-      }
       setPreview(null);
-      onChange(null);
+      onChange(null); // Reset the field value in `react-hook-form`
     };
 
     return (
@@ -116,7 +138,7 @@ export const ThumbnailInput = forwardRef<
             <div className="relative group aspect-square">
               <img
                 src={preview.url}
-                alt="Preview Thubmail"
+                alt="Preview Thumbnail"
                 className="w-full h-full object-cover rounded-md shadow-sm"
               />
               <div className="absolute inset-0 transition-all rounded-md">
@@ -132,7 +154,7 @@ export const ThumbnailInput = forwardRef<
             </div>
           ) : (
             <label
-              htmlFor="thubmail-upload"
+              htmlFor="thumbnail"
               className={cn(
                 "border-2 border-dashed rounded-md",
                 "text-muted-foreground text-sm leading-loose",
@@ -146,7 +168,7 @@ export const ThumbnailInput = forwardRef<
                 type="file"
                 accept={accept}
                 className="hidden"
-                id="thubmail-upload"
+                id="thumbnail"
                 onChange={handleFileChange}
                 ref={ref || fileInputRef}
               />

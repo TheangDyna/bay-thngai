@@ -15,6 +15,7 @@ import {
   upload
 } from "../middlewares/upload.middleware";
 import { sanitizeProductInput } from "../middlewares/sanitizeInput.middleware";
+import { cleanupUploadOnError } from "../middlewares/cleanupUploadOnError.middleware";
 
 const router = Router();
 const searchFields = ["name", "description"];
@@ -38,7 +39,8 @@ router.route("/").post(
   processThumbnailAndImages as unknown as any,
   sanitizeProductInput,
   validate(CreateProductSchema),
-  productController.createOne
+  productController.createOne,
+  cleanupUploadOnError as unknown as any
 );
 
 router

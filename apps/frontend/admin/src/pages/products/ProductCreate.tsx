@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,37 +22,34 @@ import {
   ProductSchema
 } from "@/validators/product.validators";
 import { ProductInput } from "@/types/product.types";
-import { UploadDialog } from "@/components/UploadDialog";
-import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useUploadDialog } from "@/hooks/useUploadDialog";
 
 const ProductCreate: React.FC = () => {
   const { mutation: createProductMutation, progress } =
     useCreateProductMutation();
   const cuisinesQuery = useCuisinesQuery();
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<
-    "idle" | "uploading" | "success" | "error"
-  >("idle");
+  const uploadDialog = useUploadDialog();
 
   const form = useForm<ProductInput>({
     resolver: zodResolver(ProductSchema),
     defaultValues: ProductDefaultValue
   });
 
+  // Handle form submission
   const onSubmit = (data: ProductInput) => {
-    setIsDialogOpen(true);
-    setUploadStatus("uploading");
+    uploadDialog.openDialog({
+      status: "uploading",
+      message: "Creating product..."
+    });
 
     const formData = new FormData();
 
-    // Append basic fields with explicit type conversion
+    // Append fields
     formData.append("name", data.name);
     formData.append("price", data.price.toString());
     formData.append("inStock", data.inStock.toString());
     formData.append("description", data.description);
-
-    // Append cuisines, dietaries, ingredients
     data.cuisines.forEach((cuisine) => formData.append("cuisines[]", cuisine));
     data.dietaries?.forEach((dietary) =>
       formData.append("dietaries[]", dietary)
@@ -61,31 +57,70 @@ const ProductCreate: React.FC = () => {
     data.ingredients?.forEach((ingredient) =>
       formData.append("ingredients[]", ingredient)
     );
-
-    // Append files
     data.thumbnail && formData.append("thumbnail", data.thumbnail);
     data.images?.forEach((image) => formData.append("images", image));
 
+    // Mutation
     createProductMutation.mutate(formData, {
-      onSuccess: (response) => {
-        toast({
-          title: "Success",
-          description: `Product created successfully: ${response.data.name}`
+      onSuccess: () => {
+        uploadDialog.openDialog({
+          status: "success",
+          message: "Product created successfully!"
         });
-        setUploadStatus("success");
         form.reset();
+        setTimeout(uploadDialog.closeDialog, 3000);
       },
       onError: (error: any) => {
-        setUploadStatus("error");
-        toast({
-          title: "Error",
-          description:
-            error.response?.data?.message || "Failed to create product.",
-          variant: "destructive"
+        uploadDialog.openDialog({
+          status: "error",
+          message:
+            "There was an issue creating the product. Please check the form for errors."
         });
+
+        const serverMessage = error.response?.data?.message || "";
+        if (serverMessage.includes("Duplicate value")) {
+          const match = serverMessage.match(/Duplicate value "(.*?)"/);
+          const duplicateValue = match ? match[1] : "value";
+          const fieldMatch = serverMessage.match(/field "(.*?)"/);
+          const fieldName = fieldMatch ? fieldMatch[1] : "field";
+
+          if (fieldName) {
+            form.setError(fieldName as keyof ProductInput, {
+              type: "server",
+              message: `The ${fieldName} "${duplicateValue}" is already in use. Please choose a different ${fieldName}.`
+            });
+          }
+        }
+        setTimeout(uploadDialog.closeDialog, 5000);
       }
     });
   };
+
+  // Show skeletons while cuisines are loading
+  if (cuisinesQuery.isLoading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
+        <div className="lg:col-span-3 space-y-5">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-40 w-full" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+        <div className="lg:col-span-2 space-y-5">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  const cuisinesOptions =
+    cuisinesQuery.data?.data.map((cuisine) => ({
+      value: cuisine._id,
+      label: cuisine.name
+    })) || [];
 
   return (
     <>
@@ -93,7 +128,7 @@ const ProductCreate: React.FC = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
             <div className="lg:col-span-3 space-y-3">
-              {/* Product Name */}
+              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -101,13 +136,16 @@ const ProductCreate: React.FC = () => {
                   <FormItem>
                     <FormLabel>Product Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Product Name" {...field} />
+                      <Input
+                        placeholder="Product Name"
+                        autoComplete="product"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {/* Price */}
               <FormField
                 control={form.control}
@@ -121,13 +159,13 @@ const ProductCreate: React.FC = () => {
                         type="number"
                         {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               {/* Description */}
               <FormField
                 control={form.control}
@@ -142,14 +180,13 @@ const ProductCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
-
               {/* Thumbnail */}
               <FormField
                 control={form.control}
                 name="thumbnail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Thumbnail</FormLabel>
+                    <FormLabel htmlFor={field.name}>Thumbnail</FormLabel>
                     <FormControl>
                       <ThumbnailInput
                         control={form.control}
@@ -160,14 +197,13 @@ const ProductCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
-
               {/* Images */}
               <FormField
                 control={form.control}
                 name="images"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Product Images</FormLabel>
+                    <FormLabel htmlFor={field.name}>Product Images</FormLabel>
                     <FormControl>
                       <ImagesInput control={form.control} name={field.name} />
                     </FormControl>
@@ -185,41 +221,12 @@ const ProductCreate: React.FC = () => {
                   <FormItem>
                     <FormLabel>Cuisines</FormLabel>
                     <FormControl>
-                      {cuisinesQuery.isLoading ? (
-                        <p>Loading cuisines...</p>
-                      ) : (
-                        <MultiSelect
-                          options={cuisinesQuery.data.data?.map(
-                            (cuisine: any) => ({
-                              value: cuisine._id,
-                              label: cuisine.name
-                            })
-                          )}
-                          onValueChange={(value) => field.onChange(value)}
-                          value={field.value}
-                          placeholder="Select Cuisine"
-                          variant="secondary"
-                        />
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Dietaries */}
-              <FormField
-                control={form.control}
-                name="dietaries"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Dietaries</FormLabel>
-                    <FormControl>
                       <MultiSelect
-                        options={[]}
-                        onValueChange={(value) => field.onChange(value)}
+                        options={cuisinesOptions}
+                        name={field.name}
+                        control={form.control}
                         value={field.value}
-                        placeholder="Select Dietary"
+                        placeholder="Select Cuisine"
                         variant="secondary"
                       />
                     </FormControl>
@@ -227,7 +234,6 @@ const ProductCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
-
               {/* In Stock */}
               <FormField
                 control={form.control}
@@ -242,6 +248,7 @@ const ProductCreate: React.FC = () => {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          name={field.name}
                         />
                       </FormControl>
                     </div>
@@ -251,29 +258,11 @@ const ProductCreate: React.FC = () => {
               />
             </div>
           </div>
-
-          {/* Submit Button */}
+          {/* Submit */}
           <Button type="submit">Create Product</Button>
         </form>
       </Form>
-      <UploadDialog
-        isOpen={isDialogOpen}
-        status={uploadStatus}
-        progress={progress}
-        message={
-          uploadStatus === "uploading"
-            ? "Creating product and uploading images..."
-            : uploadStatus === "success"
-              ? "Product created successfully!"
-              : uploadStatus === "error"
-                ? "An error occurred while creating the product"
-                : ""
-        }
-        onClose={() => {
-          setIsDialogOpen(false);
-          setUploadStatus("idle");
-        }}
-      />
+      {uploadDialog.DialogComponent({ progress })}
     </>
   );
 };

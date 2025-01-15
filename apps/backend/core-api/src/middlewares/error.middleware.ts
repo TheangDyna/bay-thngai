@@ -66,7 +66,7 @@ class ErrorHandler {
       const field = Object.keys(error.keyValue)[0] || "unknown";
       const value = error.keyValue?.[field] || "unknown";
       return new AppError(
-        `Duplicate value "${value}" for field "${field}". Please provide a unique value.`,
+        `Duplicate value "${value}" for field "${field}".`,
         409
       );
     }

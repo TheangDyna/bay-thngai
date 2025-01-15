@@ -1,12 +1,15 @@
-import { Loader2, Upload, CheckCircle, XCircle } from "lucide-react";
+import React from "react";
+import ReactDOM from "react-dom";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogDescription
+} from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 
 export type UploadStatus = "idle" | "uploading" | "success" | "error";
 
@@ -25,37 +28,34 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
   message = "Processing your request...",
   onClose
 }) => {
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex flex-col items-center gap-4">
-            {/* Status Icons */}
+  if (!isOpen) return null;
+
+  return ReactDOM.createPortal(
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex flex-col items-center gap-4">
             {status === "uploading" && (
-              <div className="relative">
-                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
-                <Upload className="w-6 h-6 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-              </div>
+              <Loader2 className="w-12 h-12 text-primary animate-spin" />
             )}
             {status === "success" && (
-              <CheckCircle className="w-12 h-12 text-green-500" />
+              <CheckCircle className="w-12 h-12 text-green-400" />
             )}
             {status === "error" && (
-              <XCircle className="w-12 h-12 text-red-500" />
+              <XCircle className="w-12 h-12 text-red-400" />
             )}
-          </DialogTitle>
-        </DialogHeader>
-
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This dialog provides details about the current upload status.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <div className="flex flex-col items-center gap-4 py-4">
-          {/* Message */}
           <p className="text-center font-medium">{message}</p>
-
-          {/* Progress Bar */}
           {status === "uploading" && (
             <>
-              <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div className="w-full bg-input rounded-full h-2.5">
                 <div
-                  className="bg-blue-500 h-2.5 rounded-full transition-all duration-300"
+                  className="bg-primary h-2.5 rounded-full transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -65,18 +65,15 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
             </>
           )}
         </div>
-
-        {/* Footer with close button for success/error states */}
         {(status === "success" || status === "error") && (
-          <DialogFooter className="sm:justify-center">
-            {/* className="inline-flex items-center justify-center px-4 py-2
-            rounded-md text-sm font-medium transition-colors" */}
+          <AlertDialogFooter className="sm:justify-center">
             <Button onClick={onClose} variant="secondary">
               Close
             </Button>
-          </DialogFooter>
+          </AlertDialogFooter>
         )}
-      </DialogContent>
-    </Dialog>
+      </AlertDialogContent>
+    </AlertDialog>,
+    document.body
   );
 };

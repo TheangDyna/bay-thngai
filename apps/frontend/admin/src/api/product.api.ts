@@ -1,18 +1,25 @@
 import {
   useMutation,
   UseMutationResult,
-  useQuery
+  useQuery,
+  UseQueryResult
 } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { useState } from "react";
+import { AxiosError } from "axios";
+import { Product, ProductInput } from "@/types/product.types";
+import { Pagination } from "@/types/pagination.types";
+import { Sorting } from "@/types/sort.types";
+import { ColumnFilter } from "@tanstack/react-table";
 
+// Mutation to Create Product
 export const useCreateProductMutation = (): {
-  mutation: UseMutationResult<any, any, any>;
+  mutation: UseMutationResult<ProductInput, AxiosError, FormData>;
   progress: number;
 } => {
   const [progress, setProgress] = useState<number>(0);
 
-  const mutation = useMutation({
+  const mutation = useMutation<ProductInput, AxiosError, FormData>({
     mutationFn: async (data) => {
       const response = await axiosInstance.post("/products", data, {
         headers: {
@@ -36,8 +43,17 @@ export const useCreateProductMutation = (): {
   return { mutation, progress };
 };
 
-export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
-  return useQuery<any, any>({
+// Query to Fetch Products with Filters
+export const useProductsQuery = ({
+  pagination,
+  sorting,
+  columnFilters
+}: {
+  pagination: Pagination;
+  sorting: Sorting[];
+  columnFilters: ColumnFilter[];
+}): UseQueryResult<{ data: Product[]; total: number }, AxiosError> => {
+  return useQuery({
     queryKey: ["products", { pagination, sorting, columnFilters }],
     queryFn: async () => {
       const params = {
@@ -47,7 +63,7 @@ export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
           ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
           : undefined,
         ...columnFilters.reduce((acc, filter) => {
-          acc[filter.id] = filter.value;
+          (acc as any)[filter.id] = filter.value;
           return acc;
         }, {})
       };
@@ -58,8 +74,11 @@ export const useProductsQuery = ({ pagination, sorting, columnFilters }) => {
   });
 };
 
-export const useProductQuery = (id: string) => {
-  return useQuery<any, any>({
+// Query to Fetch a Single Product
+export const useProductQuery = (
+  id: string
+): UseQueryResult<Product, AxiosError> => {
+  return useQuery({
     queryKey: ["products", id],
     queryFn: async () => {
       const response = await axiosInstance.get(`/products/${id}`);
@@ -69,9 +88,10 @@ export const useProductQuery = (id: string) => {
   });
 };
 
+// Mutation to Update Product
 export const useUpdateProductMutation = (
   id: string
-): UseMutationResult<any, any, any> => {
+): UseMutationResult<Product, AxiosError, Partial<ProductInput>> => {
   return useMutation({
     mutationFn: async (data) => {
       const response = await axiosInstance.patch(`/products/${id}`, data);
@@ -80,9 +100,10 @@ export const useUpdateProductMutation = (
   });
 };
 
+// Mutation to Delete Product
 export const useDeleteProductMutation = (
   id: string
-): UseMutationResult<void, any> => {
+): UseMutationResult<void, AxiosError> => {
   return useMutation({
     mutationFn: async () => {
       await axiosInstance.delete(`/products/${id}`);

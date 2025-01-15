@@ -1,25 +1,46 @@
 import {
   useMutation,
   UseMutationResult,
-  useQuery
+  useQuery,
+  UseQueryResult
 } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
+import { Cuisine, CuisineInput } from "@/types/cuisine.types";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
-export const useCreateCuisineMutation = (): UseMutationResult<
-  any,
-  any,
-  any
-> => {
-  return useMutation({
+// Create Cuisine Mutation
+export const useCreateCuisineMutation = (): {
+  mutation: UseMutationResult<Cuisine, AxiosError, CuisineInput>;
+  progress: number;
+} => {
+  const [progress, setProgress] = useState<number>(0);
+
+  const mutation = useMutation<Cuisine, AxiosError, CuisineInput>({
     mutationFn: async (data) => {
-      const response = await axiosInstance.post("/cuisines", data);
+      const response = await axiosInstance.post("/cuisines", data, {
+        onUploadProgress: (progressEvent) => {
+          const percentage = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1)
+          );
+          setProgress(percentage);
+        }
+      });
       return response.data;
+    },
+    onSettled: () => {
+      setProgress(0);
     }
   });
+  return { mutation, progress };
 };
 
-export const useCuisinesQuery = () => {
-  return useQuery<any, any>({
+// Get All Cuisines Query
+export const useCuisinesQuery = (): UseQueryResult<
+  { data: Cuisine[]; total: number },
+  AxiosError
+> => {
+  return useQuery({
     queryKey: ["cuisines"],
     queryFn: async () => {
       const response = await axiosInstance.get("/cuisines");
@@ -28,8 +49,11 @@ export const useCuisinesQuery = () => {
   });
 };
 
-export const useCuisineQuery = (id: string) => {
-  return useQuery<any, any>({
+// Get Single Cuisine Query
+export const useCuisineQuery = (
+  id: string
+): UseQueryResult<Cuisine, AxiosError> => {
+  return useQuery({
     queryKey: ["cuisines", id],
     queryFn: async () => {
       const response = await axiosInstance.get(`/cuisines/${id}`);
@@ -39,9 +63,10 @@ export const useCuisineQuery = (id: string) => {
   });
 };
 
+// Update Cuisine Mutation
 export const useUpdateCuisineMutation = (
   id: string
-): UseMutationResult<any, any, any> => {
+): UseMutationResult<Cuisine, AxiosError, Partial<CuisineInput>> => {
   return useMutation({
     mutationFn: async (data) => {
       const response = await axiosInstance.patch(`/cuisines/${id}`, data);
@@ -50,9 +75,10 @@ export const useUpdateCuisineMutation = (
   });
 };
 
+// Delete Cuisine Mutation
 export const useDeleteCuisineMutation = (
   id: string
-): UseMutationResult<void, any> => {
+): UseMutationResult<void, AxiosError> => {
   return useMutation({
     mutationFn: async () => {
       await axiosInstance.delete(`/cuisines/${id}`);

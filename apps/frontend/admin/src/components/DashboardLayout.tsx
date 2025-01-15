@@ -2,7 +2,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/ModeToggle";
 import React from "react";
-import { Search } from "@/components/Search";
+// import { Search } from "@/components/Search";
 import { UserNav } from "@/components/UserNav";
 import { ScrollArea } from "./ui/scroll-area";
 

@@ -30,10 +30,15 @@ export function ProductListPage() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
+  const searchFilter =
+    globalFilter.length == 0
+      ? { id: "", value: null }
+      : { id: "search", value: globalFilter };
+
   const productsQuery = useProductsQuery({
     pagination,
     sorting,
-    columnFilters: [{ id: "search", value: globalFilter }, ...columnFilters]
+    columnFilters: [searchFilter, ...columnFilters]
   });
 
   const pageCount = Math.ceil(

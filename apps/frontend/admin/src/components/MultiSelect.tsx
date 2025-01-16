@@ -21,7 +21,6 @@ import {
   CommandSeparator
 } from "@/components/ui/command";
 import { cn } from "@/utils/cn";
-import { ScrollArea } from "./ui/scroll-area";
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -270,6 +269,7 @@ export const MultiSelect = React.forwardRef<
             />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
+
               <CommandGroup>
                 <CommandItem
                   key="all"
@@ -288,6 +288,7 @@ export const MultiSelect = React.forwardRef<
                   </div>
                   <span>(Select All)</span>
                 </CommandItem>
+
                 {options.map((option) => {
                   const isSelected = value.includes(option.value);
                   return (

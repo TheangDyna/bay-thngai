@@ -1,17 +1,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/DataTableRowActions";
-import { z } from "zod";
 import { Badge } from "./ui/badge";
 import { Product } from "@/types/product.types";
-
-export const productSchema = z.object({
-  name: z.string(),
-  thumbnail: z.string(),
-  price: z.number(),
-  cuisines: z.array(z.object({ name: z.string() })),
-  inStock: z.boolean()
-});
 
 export const columns: ColumnDef<Product>[] = [
   {

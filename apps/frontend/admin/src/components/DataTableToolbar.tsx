@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 
 import { DataTableViewOptions } from "@/components/DataTableViewOptions";
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
+import { useCuisinesQuery } from "@/api/cuisine.api";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -15,6 +16,15 @@ export function DataTableToolbar<TData>({
   table
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+  const cuisinesQuery = useCuisinesQuery();
+
+  const cuisineOptions =
+    cuisinesQuery.data?.data.map((el) => {
+      return {
+        label: el.name,
+        value: el._id
+      };
+    }) || [];
 
   return (
     <div className="flex items-center justify-between">
@@ -29,20 +39,20 @@ export function DataTableToolbar<TData>({
         {table.getColumn("inStock") && (
           <DataTableFacetedFilter
             column={table.getColumn("inStock")}
-            title="inStock"
+            title="In Stock"
             options={[
               { label: "Yes", value: "true" },
               { label: "No", value: "false" }
             ]}
           />
         )}
-        {/* {table.getColumn("priority") && (
+        {table.getColumn("cuisines") && (
           <DataTableFacetedFilter
-            column={table.getColumn("priority")}
-            title="Priority"
-            options={priorities}
+            column={table.getColumn("cuisines")}
+            title="Cuisines"
+            options={cuisineOptions}
           />
-        )} */}
+        )}
         {isFiltered && (
           <Button
             variant="ghost"

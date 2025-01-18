@@ -235,27 +235,6 @@ const ProductCreate: React.FC = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="a"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cuisines</FormLabel>
-                    <FormControl>
-                      <MultiSelect
-                        options={[]}
-                        name={field.name}
-                        control={form.control}
-                        value={field.value}
-                        placeholder="Select Cuisine"
-                        variant="secondary"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* In Stock */}
               <FormField
                 control={form.control}

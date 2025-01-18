@@ -17,15 +17,15 @@ import {
   User
 } from "lucide-react";
 
-type MenuItem = {
-  title: string;
-  icon: React.ComponentType;
-  url: string;
-};
-
 type MenuSection = {
   title: string;
   subItems: MenuItem[];
+};
+
+type MenuItem = {
+  title: string;
+  path: string;
+  disabled?: boolean;
 };
 
 export const menuItems: MenuSection[] = [
@@ -34,13 +34,11 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Overview",
-        icon: Gauge,
-        url: "/dashboard"
+        path: "/dashboard"
       },
       {
         title: "Analytics",
-        icon: ChartPie,
-        url: "/analytics"
+        path: "/analytics"
       }
     ]
   },
@@ -49,13 +47,21 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Products List",
-        icon: Box,
-        url: "/products"
+        path: "/products"
       },
       {
-        title: "Create Products",
-        icon: Box,
-        url: "/products/new"
+        title: "Create Product",
+        path: "/products/new"
+      },
+      {
+        title: "Detail Product",
+        path: "/products/:id",
+        disabled: true
+      },
+      {
+        title: "Edit Product",
+        path: "/products/:id/edit",
+        disabled: true
       }
     ]
   },
@@ -63,19 +69,12 @@ export const menuItems: MenuSection[] = [
     title: "Cuisines",
     subItems: [
       {
-        title: "Cuisines",
-        icon: Boxes,
-        url: "#"
+        title: "Cuisines List",
+        path: "#"
       },
       {
         title: "Create Cuisine",
-        icon: Boxes,
-        url: "/cuisines/new"
-      },
-      {
-        title: "Inventory",
-        icon: Inbox,
-        url: "#"
+        path: "/cuisines/new"
       }
     ]
   },
@@ -84,8 +83,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Inventory",
-        icon: Inbox,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -94,13 +92,11 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "All Orders",
-        icon: ArrowRightLeft,
-        url: "#"
+        path: "#"
       },
       {
         title: "Returns",
-        icon: Undo2,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -109,13 +105,11 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "All Customers",
-        icon: User,
-        url: "#"
+        path: "#"
       },
       {
         title: "Segments",
-        icon: History,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -124,13 +118,11 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Discounts",
-        icon: Percent,
-        url: "#"
+        path: "#"
       },
       {
         title: "Coupons",
-        icon: Puzzle,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -139,18 +131,16 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Store Settings",
-        icon: Settings2,
-        url: "#"
+
+        path: "#"
       },
       {
         title: "User Management",
-        icon: Users,
-        url: "#"
+        path: "#"
       },
       {
         title: "Notifications",
-        icon: Bell,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -159,8 +149,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Reports",
-        icon: MessageSquareWarning,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -169,8 +158,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Logout",
-        icon: LogOut,
-        url: "#"
+        path: "#"
       }
     ]
   }

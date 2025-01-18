@@ -23,7 +23,7 @@ import { useProductsQuery } from "@/api/product.api";
 import { DataTableSkeleton } from "@/components/DataTableSkeleton";
 import { columns } from "@/components/columns";
 
-export function ProductListPage() {
+const ProductList: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<ColumnFiltersState>([]);
@@ -130,6 +130,6 @@ export function ProductListPage() {
       <DataTablePagination table={table} />
     </div>
   );
-}
+};
 
-export default ProductListPage;
+export default ProductList;

@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -7,73 +8,84 @@ import {
 } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
-import { AuthProvider } from "@/contexts/auth/AuthContext";
-import ProtectedRoute from "@/contexts/auth/ProtectedRoute";
-import Login from "@/pages/auths/Login";
-import NotFound from "@/pages/NotFound";
-import Dashboard from "@/pages/Dashboard";
-import ProductList from "@/pages/products/ProductList";
-import ProductCreate from "@/pages/products/ProductCreate";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
-import CategoryCreate from "@/pages/categories/CategoryCreate";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Loading from "@/pages/Loading";
+
+// Lazy-loaded components
+const Login = lazy(() => import("@/pages/auths/Login"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const Dashboard = lazy(() => import("@/pages/dashboards/Dashboard"));
+const ProductList = lazy(() => import("@/pages/products/ProductList"));
+const ProductCreate = lazy(() => import("@/pages/products/ProductCreate"));
+const CuisineCreate = lazy(() => import("@/pages/cuisines/CuisineCreate"));
+
+const queryClient = new QueryClient();
 
 const AppRoutes: React.FC = () => {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate replace to="/dashboard" />} />
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              {/* Public Routes */}
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="/login" element={<Login />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout>
-                    <Outlet />
-                  </DashboardLayout>
-                </ProtectedRoute>
-              }
-            >
-              {/* Dashboard */}
-              <Route path="dashboard" element={<Dashboard />} />
+              {/* Protected Routes */}
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <Outlet />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              >
+                {/* Dashboard */}
+                <Route path="dashboard" element={<Dashboard />} />
 
-              {/* Products Route */}
-              <Route path="products" element={<Outlet />}>
-                <Route index element={<ProductList />} />
-                <Route path=":productId" element={<div>Product Detail</div>} />
-                <Route path="new" element={<ProductCreate />} />
-                <Route
-                  path=":productId/edit"
-                  element={<div>Product Edit</div>}
-                />
+                {/* Products Route */}
+                <Route path="products" element={<Outlet />}>
+                  <Route index element={<ProductList />} />
+                  <Route
+                    path=":productId"
+                    element={<div>Product Detail</div>}
+                  />
+                  <Route path="new" element={<ProductCreate />} />
+                  <Route
+                    path=":productId/edit"
+                    element={<div>Product Edit</div>}
+                  />
+                </Route>
+
+                {/* Cuisines Route */}
+                <Route path="cuisines" element={<Outlet />}>
+                  <Route index element={<div>Cuisine List</div>} />
+                  <Route
+                    path=":cuisineId"
+                    element={<div>Cuisine Detail</div>}
+                  />
+                  <Route path="new" element={<CuisineCreate />} />
+                  <Route
+                    path=":cuisineId/edit"
+                    element={<div>Cuisine Edit</div>}
+                  />
+                </Route>
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
               </Route>
-
-              {/* Categories Route */}
-              <Route path="categories" element={<Outlet />}>
-                <Route index element={<div>Category List</div>} />
-                <Route
-                  path=":categoryId"
-                  element={<div>Category Detail</div>}
-                />
-                <Route path="new" element={<CategoryCreate />} />
-                <Route
-                  path=":categoryId/edit"
-                  element={<div>Category Edit</div>}
-                />
-              </Route>
-            </Route>
-
-            {/* 404 Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            </Routes>
+          </Suspense>
         </BrowserRouter>
-      </AuthProvider>
-      <Toaster />
-    </ThemeProvider>
+        <Toaster />
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

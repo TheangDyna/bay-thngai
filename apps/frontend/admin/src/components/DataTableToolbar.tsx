@@ -4,9 +4,9 @@ import { Table } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { priorities, statuses } from "@/libs/constants";
 import { DataTableViewOptions } from "@/components/DataTableViewOptions";
-import { DataTableFacetedFilter } from "@/components/DataTableFacetedFilter";
+import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
+import { useCuisinesQuery } from "@/api/cuisine.api";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -16,30 +16,41 @@ export function DataTableToolbar<TData>({
   table
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+  const cuisinesQuery = useCuisinesQuery();
+
+  const cuisineOptions =
+    cuisinesQuery.data?.data.map((el) => {
+      return {
+        label: el.name,
+        value: el._id
+      };
+    }) || [];
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
-          }
+          id="search-product"
+          placeholder="Search products..."
+          value={table.getState().globalFilter ?? ""}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("status") && (
+        {table.getColumn("inStock") && (
           <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
-            options={statuses}
+            column={table.getColumn("inStock")}
+            title="In Stock"
+            options={[
+              { label: "Yes", value: "true" },
+              { label: "No", value: "false" }
+            ]}
           />
         )}
-        {table.getColumn("priority") && (
+        {table.getColumn("cuisines") && (
           <DataTableFacetedFilter
-            column={table.getColumn("priority")}
-            title="Priority"
-            options={priorities}
+            column={table.getColumn("cuisines")}
+            title="Cuisines"
+            options={cuisineOptions}
           />
         )}
         {isFiltered && (

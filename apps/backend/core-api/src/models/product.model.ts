@@ -7,7 +7,7 @@ const productSchema = new Schema<IProductDocument>(
     name: { type: String, unique: true },
     description: { type: String },
     price: { type: Number },
-    cuisines: [{ type: Schema.Types.ObjectId, ref: "Category" }],
+    cuisines: [{ type: Schema.Types.ObjectId, ref: "Cuisine" }],
     dietaries: [{ type: Schema.Types.ObjectId, ref: "Dietary" }],
     inStock: { type: Boolean },
     calories: { type: Number },
@@ -16,16 +16,29 @@ const productSchema = new Schema<IProductDocument>(
     fats: { type: Number },
     ingredients: [{ type: String }],
     ratingsAverage: { type: Number },
-    ratingsQuantity: { type: Number }
+    ratingsQuantity: { type: Number },
+    thumbnail: { type: String },
+    images: [{ type: String }]
   },
   defaultSchemaOptions
 );
 
-productSchema.virtual("reviews", {
-  ref: "Review",
-  foreignField: "tour",
-  localField: "_id"
-});
+productSchema.pre(
+  /^find/,
+  function (this: mongoose.Query<any, IProductDocument>, next) {
+    this.populate({
+      path: "cuisines",
+      select: "name -_id"
+    });
+    next();
+  }
+);
+
+// productSchema.virtual("reviews", {
+//   ref: "Review",
+//   foreignField: "product",
+//   localField: "_id"
+// });
 
 export const Product = mongoose.model<IProductDocument>(
   "Product",

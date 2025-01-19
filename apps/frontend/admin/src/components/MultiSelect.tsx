@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useController, Control } from "react-hook-form";
 import { cva, type VariantProps } from "class-variance-authority";
 import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react";
 
@@ -19,31 +20,26 @@ import {
   CommandList,
   CommandSeparator
 } from "@/components/ui/command";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 
 /**
  * Variants for the multi-select component to handle different styles.
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted"
-      }
-    },
-    defaultVariants: {
-      variant: "default"
+const multiSelectVariants = cva("m-1", {
+  variants: {
+    variant: {
+      default: "border-foreground/10 text-foreground bg-card hover:bg-card/80",
+      secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+      destructive:
+        "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+      inverted: "inverted"
     }
+  },
+  defaultVariants: {
+    variant: "default"
   }
-);
+});
 
 /**
  * Props for MultiSelect component
@@ -64,11 +60,11 @@ interface MultiSelectProps
     icon?: React.ComponentType<{ className?: string }>;
   }[];
 
-  /**
-   * Callback function triggered when the selected values change.
-   * Receives an array of the new selected values.
-   */
-  onValueChange: (value: string[]) => void;
+  /** Field name used for `react-hook-form`. */
+  name: string;
+
+  /** The control object from `react-hook-form`. */
+  control: Control<any>;
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[];
@@ -112,7 +108,8 @@ export const MultiSelect = React.forwardRef<
   (
     {
       options,
-      onValueChange,
+      name,
+      control,
       variant,
       defaultValue = [],
       placeholder = "Select options",
@@ -124,8 +121,10 @@ export const MultiSelect = React.forwardRef<
     },
     ref
   ) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue);
+    const {
+      field: { value = [], onChange }
+    } = useController<{ [key: string]: string[] }>({ name, control });
+
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
 
     const handleInputKeyDown = (
@@ -134,24 +133,24 @@ export const MultiSelect = React.forwardRef<
       if (event.key === "Enter") {
         setIsPopoverOpen(true);
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
-        const newSelectedValues = [...selectedValues];
+        const newSelectedValues = [...value];
         newSelectedValues.pop();
-        setSelectedValues(newSelectedValues);
-        onValueChange(newSelectedValues);
+        // setSelectedValues(newSelectedValues);
+        onChange(newSelectedValues);
       }
     };
 
     const toggleOption = (option: string) => {
-      const newSelectedValues = selectedValues.includes(option)
-        ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option];
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      const newSelectedValues = value.includes(option)
+        ? value.filter((value) => value !== option)
+        : [...value, option];
+      // setSelectedValues(newSelectedValues);
+      onChange(newSelectedValues);
     };
 
     const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
+      // setSelectedValues([]);
+      onChange([]);
     };
 
     const handleTogglePopover = () => {
@@ -159,18 +158,18 @@ export const MultiSelect = React.forwardRef<
     };
 
     const clearExtraOptions = () => {
-      const newSelectedValues = selectedValues.slice(0, maxCount);
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
+      const newSelectedValues = value.slice(0, maxCount);
+      // setSelectedValues(newSelectedValues);
+      onChange(newSelectedValues);
     };
 
     const toggleAll = () => {
-      if (selectedValues.length === options.length) {
+      if (value.length === options.length) {
         handleClear();
       } else {
         const allValues = options.map((option) => option.value);
-        setSelectedValues(allValues);
-        onValueChange(allValues);
+        // setSelectedValues(allValues);
+        onChange(allValues);
       }
     };
 
@@ -190,10 +189,10 @@ export const MultiSelect = React.forwardRef<
               className
             )}
           >
-            {selectedValues.length > 0 ? (
+            {value.length > 0 ? (
               <div className="flex justify-between items-center w-full">
                 <div className="flex flex-wrap items-center">
-                  {selectedValues.slice(0, maxCount).map((value) => {
+                  {value.slice(0, maxCount).map((value) => {
                     const option = options.find((o) => o.value === value);
                     const IconComponent = option?.icon;
                     return (
@@ -215,14 +214,14 @@ export const MultiSelect = React.forwardRef<
                       </Badge>
                     );
                   })}
-                  {selectedValues.length > maxCount && (
+                  {value.length > maxCount && (
                     <Badge
                       className={cn(
                         "bg-transparent text-foreground border-foreground/1 hover:bg-transparent",
                         multiSelectVariants({ variant })
                       )}
                     >
-                      {`+ ${selectedValues.length - maxCount} more`}
+                      {`+ ${value.length - maxCount} more`}
                       <XCircle
                         className="ml-2 h-4 w-4 cursor-pointer"
                         onClick={(event) => {
@@ -270,6 +269,7 @@ export const MultiSelect = React.forwardRef<
             />
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
+
               <CommandGroup>
                 <CommandItem
                   key="all"
@@ -279,7 +279,7 @@ export const MultiSelect = React.forwardRef<
                   <div
                     className={cn(
                       "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length === options.length
+                      value.length === options.length
                         ? "bg-primary text-primary-foreground"
                         : "opacity-50 [&_svg]:invisible"
                     )}
@@ -288,8 +288,9 @@ export const MultiSelect = React.forwardRef<
                   </div>
                   <span>(Select All)</span>
                 </CommandItem>
+
                 {options.map((option) => {
-                  const isSelected = selectedValues.includes(option.value);
+                  const isSelected = value.includes(option.value);
                   return (
                     <CommandItem
                       key={option.value}
@@ -317,7 +318,7 @@ export const MultiSelect = React.forwardRef<
               <CommandSeparator />
               <CommandGroup>
                 <div className="flex items-center justify-between">
-                  {selectedValues.length > 0 && (
+                  {value.length > 0 && (
                     <>
                       <CommandItem
                         onSelect={handleClear}

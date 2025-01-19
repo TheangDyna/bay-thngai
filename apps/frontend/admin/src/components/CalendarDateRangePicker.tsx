@@ -1,6 +1,6 @@
 import { addDays, format } from "date-fns";
 import { DateRange } from "react-day-picker";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {

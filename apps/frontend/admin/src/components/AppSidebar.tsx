@@ -8,12 +8,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { menuItems } from "@/libs/constants";
+import { menuItems } from "@/utils/constants";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link, matchPath } from "react-router-dom";
 
 export const AppSidebar: React.FC = () => {
   const location = useLocation();
+  const isActivePath = (subItemPath: string, currentPath: string) => {
+    if (currentPath.includes("/new") && subItemPath.includes(":")) {
+      return false;
+    }
+    return !!matchPath(subItemPath, currentPath);
+  };
+
   return (
     <Sidebar>
       <ScrollArea>
@@ -25,14 +32,29 @@ export const AppSidebar: React.FC = () => {
                 <SidebarGroupContent>
                   <SidebarMenu>
                     {item.subItems.map((subItem, index) => {
-                      const isActive = location.pathname === subItem.url;
+                      const isActive = isActivePath(
+                        subItem.path,
+                        location.pathname
+                      );
                       return (
                         <SidebarMenuItem key={index}>
                           <SidebarMenuButton asChild isActive={isActive}>
-                            <a href={subItem.url}>
-                              <subItem.icon />
-                              <span>{subItem.title}</span>
-                            </a>
+                            {!isActive && subItem.disabled ? (
+                              <span className="opacity-50" aria-disabled="true">
+                                {subItem.title}
+                              </span>
+                            ) : (
+                              <Link
+                                to={subItem.path}
+                                className={
+                                  isActive
+                                    ? "pointer-events-none"
+                                    : "pointer-events-auto"
+                                }
+                              >
+                                <span>{subItem.title}</span>
+                              </Link>
+                            )}
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       );

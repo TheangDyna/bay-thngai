@@ -6,6 +6,8 @@ export const decodeIdToken = (token: string): UserInfoFromIdToken => {
     const decodedToken = jwtDecode<UserInfoFromIdToken>(token);
     return decodedToken;
   } catch (error) {
-    throw new Error("Failed to decode ID token. Invalid token.");
+    throw new Error(
+      "Unable to decode the ID token. Please ensure the token is valid."
+    );
   }
 };

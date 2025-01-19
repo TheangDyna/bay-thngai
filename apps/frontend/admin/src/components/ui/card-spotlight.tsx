@@ -3,7 +3,7 @@
 import { useMotionValue, motion, useMotionTemplate } from "framer-motion";
 import React, { MouseEvent as ReactMouseEvent, useState } from "react";
 import { CanvasRevealEffect } from "@/components/ui/canvas-reveal-effect";
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 
 export const CardSpotlight = ({
   children,
@@ -21,7 +21,7 @@ export const CardSpotlight = ({
   function handleMouseMove({
     currentTarget,
     clientX,
-    clientY,
+    clientY
   }: ReactMouseEvent<HTMLDivElement>) {
     let { left, top } = currentTarget.getBoundingClientRect();
 
@@ -53,7 +53,7 @@ export const CardSpotlight = ({
               white,
               transparent 80%
             )
-          `,
+          `
         }}
       >
         {isHovering && (
@@ -62,7 +62,7 @@ export const CardSpotlight = ({
             containerClassName="bg-transparent absolute inset-0 pointer-events-none"
             colors={[
               [59, 130, 246],
-              [139, 92, 246],
+              [139, 92, 246]
             ]}
             dotSize={3}
           />

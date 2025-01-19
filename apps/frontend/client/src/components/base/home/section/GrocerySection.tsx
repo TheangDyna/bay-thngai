@@ -1,84 +1,8 @@
 import React from "react";
 import CardProduct from "../../CardProduct";
 import BannerHeader from "../../BannerHeader";
+import { products } from "@/data/constants/data";
 
-const products = [
-  {
-    image: "/grocery/lettuce.png",
-    title: "Fresh Green Leaf Lettuce",
-    price: "2.64",
-    originalPrice: "2.74",
-    unit: "1 each",
-    isOnSale: true
-  },
-  {
-    image: "/grocery/fresh-carrots.png",
-    title: "Fresh Carrots",
-    price: "$3.50 - $5.00",
-    unit: "1 lb",
-    isOnSale: false
-  },
-  {
-    image: "/grocery/orange.png",
-    title: "Fresh Green Leaf Lettuce",
-    price: "2.64",
-    originalPrice: "2.74",
-    unit: "1 each",
-    isOnSale: true
-  },
-  {
-    image: "/grocery/fresh-carrots.png",
-    title: "Fresh Carrots",
-    price: "$3.50 - $5.00",
-    unit: "1 lb",
-    isOnSale: false
-  },
-  {
-    image: "/grocery/lettuce.png",
-    title: "Fresh Green Leaf Lettuce",
-    price: "2.64",
-    originalPrice: "2.74",
-    unit: "1 each",
-    isOnSale: true
-  },
-  {
-    image: "/grocery/fresh-carrots.png",
-    title: "Fresh Carrots",
-    price: "$3.50 - $5.00",
-    unit: "1 lb",
-    isOnSale: false
-  },
-  {
-    image: "/grocery/lettuce.png",
-    title: "Fresh Green Leaf Lettuce",
-    price: "2.64",
-    originalPrice: "2.74",
-    unit: "1 each",
-    isOnSale: true
-  },
-  {
-    image: "/grocery/fresh-carrots.png",
-    title: "Fresh Carrots",
-    price: "$3.50 - $5.00",
-    unit: "1 lb",
-    isOnSale: false
-  },
-  {
-    image: "/grocery/lettuce.png",
-    title: "Fresh Green Leaf Lettuce",
-    price: "2.64",
-    originalPrice: "2.74",
-    unit: "1 each",
-    isOnSale: true
-  },
-  {
-    image: "/grocery/fresh-carrots.png",
-    title: "Fresh Carrots",
-    price: "$3.50 - $5.00",
-    unit: "1 lb",
-    isOnSale: false
-  }
-];
 
 const GrocerySection: React.FC = () => {
   const handleAddToCart = (title: string) => {

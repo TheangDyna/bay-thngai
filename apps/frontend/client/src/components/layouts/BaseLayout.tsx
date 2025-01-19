@@ -7,14 +7,14 @@ interface LayoutProps {
 
 const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Navigation Bar */}
-      <header>
+      <header className="sticky top-0 z-50">
         <NavigationBar />
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow relative">{children}</main>
 
       {/* Footer */}
       <footer>

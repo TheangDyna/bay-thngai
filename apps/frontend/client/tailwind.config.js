@@ -63,14 +63,14 @@ module.exports = {
           5: "#DC3545"
         },
         sidebar: {
-          DEFAULT: "#343A40",
-          foreground: "#FFFFFF",
-          primary: "#1E90FF",
-          "primary-foreground": "#FFFFFF",
-          accent: "#6F42C1",
-          "accent-foreground": "#FFFFFF",
-          border: "#DEE2E6",
-          ring: "#B8DAFF"
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))"
         }
       }
     }

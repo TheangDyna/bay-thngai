@@ -4,7 +4,7 @@ import { Eye, ShoppingCart } from "lucide-react";
 interface ProductCardProps {
   image: string;
   title: string;
-  price: string; // Price range "from-to" or single price
+  price: string;
   originalPrice?: string;
   unit: string;
   isOnSale?: boolean;

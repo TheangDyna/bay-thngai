@@ -83,5 +83,22 @@ export const products = [
         price: "$3.50 - $5.00",
         unit: "1 lb",
         isOnSale: false
+    },
+    {
+        id: 11,
+        image: "/grocery/lettuce.png",
+        title: "Fresh Green Leaf Lettuce",
+        price: "2.64",
+        originalPrice: "2.74",
+        unit: "1 each",
+        isOnSale: true
+    },
+    {
+        id: 12,
+        image: "/grocery/fresh-carrots.png",
+        title: "Fresh Carrots",
+        price: "$3.50 - $5.00",
+        unit: "1 lb",
+        isOnSale: false
     }
 ];

@@ -7,7 +7,6 @@ const AppRoutes: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Protected Routes */}
         <Route
           path="/"
           element={
@@ -18,7 +17,6 @@ const AppRoutes: React.FC = () => {
         >
           <Route path="/" element={<Home />} />
         </Route>
-
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

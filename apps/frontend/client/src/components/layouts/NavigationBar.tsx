@@ -107,6 +107,13 @@ const NavigationBar = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+
+        <span className="text-gray-800 hover:underline cursor-pointer  hover:underline-offset-8 hover:text-primary">
+          Search
+        </span>
+        <span className="text-gray-800 hover:underline cursor-pointer  hover:underline-offset-8 hover:text-primary">
+          Shop
+        </span>
       </div>
 
       {/* Right Section */}

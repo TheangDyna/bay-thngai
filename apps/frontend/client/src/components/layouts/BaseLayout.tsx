@@ -1,5 +1,6 @@
 import NavigationBar from "./NavigationBar";
 import Footer from "./Footer";
+import { Toaster } from "../ui/toaster";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,7 +15,10 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow relative">{children}</main>
+      <main className="flex-grow relative">
+        {children}
+        <Toaster />
+      </main>
 
       {/* Footer */}
       <footer>

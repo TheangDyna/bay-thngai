@@ -145,7 +145,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               {/* Product Title and Pricing */}
               <div className="pb-5">
                 <div className="mb-2 md:mb-2.5 block -mt-1.5" role="button">
-                  <h2 className="text-lg font-medium transition-colors duration-300 text-secondary md:text-xl xl:text-2xl hover:text-primary">
+                  <h2 className="text-lg font-medium transition-colors duration-300  md:text-xl xl:text-2xl hover:text-primary">
                     Leafy Romaine Mixed Lettuce
                   </h2>
                 </div>
@@ -153,7 +153,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   1 each
                 </div>
                 <div className="flex items-center mt-5 space-x-4">
-                  <div className="text-secondary font-bold text-lg md:text-xl xl:text-[22px]">
+                  <div className=" font-bold text-lg md:text-xl xl:text-[22px]">
                     $2.50
                   </div>
                   <del className="text-lg text-opacity-50 md:text-15px ltr:pl-3 rtl:pr-3 text-muted">
@@ -177,17 +177,17 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <Button
                   onClick={decrement}
                   variant="link"
-                  className="flex items-center justify-center shrink-0 h-full transition-all duration-300 focus:outline-none w-10 rounded-full text-secondary hover:bg-gray-200"
+                  className="flex items-center justify-center shrink-0 h-full transition-all duration-300 focus:outline-none w-10 rounded-full  hover:bg-gray-200"
                 >
                   <Minus size={20} />
                 </Button>
-                <span className="font-semibold text-secondary flex items-center justify-center h-full transition-colors duration-250 ease-in-out text-base md:text-[17px] w-12">
+                <span className="font-semibold  flex items-center justify-center h-full transition-colors duration-250 ease-in-out text-base md:text-[17px] w-12">
                   {quantity}
                 </span>
                 <Button
                   onClick={increment}
                   variant="link"
-                  className="flex items-center justify-center shrink-0 transition-all duration-300 focus:outline-none w-10 h-10 rounded-full text-secondary hover:bg-gray-200"
+                  className="flex items-center justify-center shrink-0 transition-all duration-300 focus:outline-none w-10 h-10 rounded-full  hover:bg-gray-200"
                 >
                   <Plus size={20} />
                 </Button>
@@ -200,13 +200,13 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </button>
 
               <div className="grid grid-cols-2 gap-2.5">
-                <button className="group text-[13px] space-x-2 flex items-center md:text-sm lg:text-15px leading-4  cursor-pointer transition ease-in-out duration-300 font-body font-semibold text-center justify-center  rounded placeholder-white focus-visible:outline-none focus:outline-none h-12 md:h-14 bg-brand-light text-secondary-dark border border-border-four tracking-widest px-5 md:px-6 lg:px-8 py-4 md:py-3.5 lg:py-4 group hover:text-primary">
+                <button className="group text-[13px] space-x-2 flex items-center md:text-sm lg:text-15px leading-4  cursor-pointer transition ease-in-out duration-300 font-body font-semibold text-center justify-center  rounded placeholder-white focus-visible:outline-none focus:outline-none h-12 md:h-14 bg-brand-light -dark border border-border-four tracking-widest px-5 md:px-6 lg:px-8 py-4 md:py-3.5 lg:py-4 group hover:text-primary">
                   <Heart size={24} />
                   <span>Wishlist</span>
                 </button>
                 <button
                   onClick={() => setIsOpenShareLink(true)}
-                  className="group text-[13px] space-x-2 flex items-center md:text-sm lg:text-15px leading-4  cursor-pointer transition ease-in-out duration-300 font-body font-semibold text-center justify-center  rounded placeholder-white focus-visible:outline-none focus:outline-none h-12 md:h-14 bg-brand-light text-secondary-dark border border-border-four tracking-widest px-5 md:px-6 lg:px-8 py-4 md:py-3.5 lg:py-4 group hover:text-primary"
+                  className="group text-[13px] space-x-2 flex items-center md:text-sm lg:text-15px leading-4  cursor-pointer transition ease-in-out duration-300 font-body font-semibold text-center justify-center  rounded placeholder-white focus-visible:outline-none focus:outline-none h-12 md:h-14 bg-brand-light -dark border border-border-four tracking-widest px-5 md:px-6 lg:px-8 py-4 md:py-3.5 lg:py-4 group hover:text-primary"
                 >
                   <Share size={24} />
                   <span>Share</span>
@@ -220,7 +220,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {/* Tags */}
               <div className="mt-5 flex items-center gap-4">
-                <div className="text-md font-medium text-secondary flex items-center gap-2">
+                <div className="text-md font-medium  flex items-center gap-2">
                   <Tag size={20} />
                   <span>Tags:</span>
                 </div>

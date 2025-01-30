@@ -99,18 +99,27 @@ const ProductCreate: React.FC = () => {
   // Show skeletons while cuisines are loading
   if (cuisinesQuery.isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
-        <div className="lg:col-span-3 space-y-5">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-40 w-full" />
-          <Skeleton className="h-40 w-full" />
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <Skeleton className="h-8 w-[200px]" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-24" />
+          </div>
         </div>
-        <div className="lg:col-span-2 space-y-5">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
+          <div className="lg:col-span-3 space-y-5">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-12 w-full" />
+
+            <Skeleton className="h-40 w-full" />
+          </div>
+          <div className="lg:col-span-2 space-y-5">
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
         </div>
       </div>
     );
@@ -125,7 +134,7 @@ const ProductCreate: React.FC = () => {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -198,17 +207,21 @@ const ProductCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
-              {/* Thumbnail */}
+              {/* Cuisines */}
               <FormField
                 control={form.control}
-                name="thumbnail"
+                name="cuisines"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor={field.name}>Thumbnail</FormLabel>
+                    <FormLabel>Cuisines</FormLabel>
                     <FormControl>
-                      <ThumbnailInput
-                        control={form.control}
+                      <MultiSelect
+                        options={cuisinesOptions}
                         name={field.name}
+                        control={form.control}
+                        value={field.value}
+                        placeholder="Select Cuisine"
+                        variant="secondary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -231,21 +244,17 @@ const ProductCreate: React.FC = () => {
               />
             </div>
             <div className="lg:col-span-2 space-y-3">
-              {/* Cuisines */}
+              {/* Thumbnail */}
               <FormField
                 control={form.control}
-                name="cuisines"
+                name="thumbnail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cuisines</FormLabel>
+                    <FormLabel htmlFor={field.name}>Thumbnail</FormLabel>
                     <FormControl>
-                      <MultiSelect
-                        options={cuisinesOptions}
-                        name={field.name}
+                      <ThumbnailInput
                         control={form.control}
-                        value={field.value}
-                        placeholder="Select Cuisine"
-                        variant="secondary"
+                        name={field.name}
                       />
                     </FormControl>
                     <FormMessage />

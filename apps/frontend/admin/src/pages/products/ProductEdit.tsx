@@ -25,6 +25,7 @@ import { ProductInput } from "@/types/product.types";
 import { useUploadDialog } from "@/hooks/useUploadDialog";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -118,22 +119,25 @@ export const ProductEdit: React.FC = () => {
 
   if (productQuery.isLoading || cuisinesQuery.isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
-        <div className="lg:col-span-3 space-y-5">
-          {[...Array(5)].map((_, index) => (
-            <div
-              key={index}
-              className="h-12 w-full bg-muted animate-pulse rounded"
-            />
-          ))}
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <Skeleton className="h-8 w-[200px]" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-24" />
+          </div>
         </div>
-        <div className="lg:col-span-2 space-y-5">
-          {[...Array(3)].map((_, index) => (
-            <div
-              key={index}
-              className="h-12 w-full bg-muted animate-pulse rounded"
-            />
-          ))}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
+          <div className="lg:col-span-3 space-y-5">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-40 w-full" />
+          </div>
+          <div className="lg:col-span-2 space-y-5">
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
         </div>
       </div>
     );
@@ -142,7 +146,7 @@ export const ProductEdit: React.FC = () => {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -177,6 +181,7 @@ export const ProductEdit: React.FC = () => {
                   </FormItem>
                 )}
               />
+              {/* Price */}
               <FormField
                 control={form.control}
                 name="price"
@@ -199,6 +204,7 @@ export const ProductEdit: React.FC = () => {
                   </FormItem>
                 )}
               />
+              {/* Description */}
               <FormField
                 control={form.control}
                 name="description"
@@ -212,37 +218,7 @@ export const ProductEdit: React.FC = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="thumbnail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor={field.name}>Thumbnail</FormLabel>
-                    <FormControl>
-                      <ThumbnailInput
-                        control={form.control}
-                        name={field.name}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor={field.name}>Product Images</FormLabel>
-                    <FormControl>
-                      <ImagesInput control={form.control} name={field.name} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="lg:col-span-2 space-y-3">
+              {/* Cuisines */}
               <FormField
                 control={form.control}
                 name="cuisines"
@@ -263,6 +239,40 @@ export const ProductEdit: React.FC = () => {
                   </FormItem>
                 )}
               />
+              {/* Images */}
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor={field.name}>Product Images</FormLabel>
+                    <FormControl>
+                      <ImagesInput control={form.control} name={field.name} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="lg:col-span-2 space-y-3">
+              {/* Thumbnail */}
+              <FormField
+                control={form.control}
+                name="thumbnail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor={field.name}>Thumbnail</FormLabel>
+                    <FormControl>
+                      <ThumbnailInput
+                        control={form.control}
+                        name={field.name}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {/* In Stock */}
               <FormField
                 control={form.control}
                 name="inStock"

@@ -159,7 +159,7 @@ export const ThumbnailInput = forwardRef<
                 "border-2 border-dashed rounded-md",
                 "text-muted-foreground text-sm leading-loose",
                 "flex flex-col items-center justify-center cursor-pointer",
-                "transition-colors hover:bg-accent/50 aspect-[3/1]",
+                "transition-colors hover:bg-accent/50 aspect-square",
                 "bg-accent/20"
               )}
             >

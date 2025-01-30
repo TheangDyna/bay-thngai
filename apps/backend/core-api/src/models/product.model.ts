@@ -28,7 +28,7 @@ productSchema.pre(
   function (this: mongoose.Query<any, IProductDocument>, next) {
     this.populate({
       path: "cuisines",
-      select: "name -_id"
+      select: "name"
     });
     next();
   }

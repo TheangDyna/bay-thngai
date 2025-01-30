@@ -1,5 +1,3 @@
-"use client";
-
 import { EllipsisVertical } from "lucide-react";
 import { Row } from "@tanstack/react-table";
 

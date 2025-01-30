@@ -64,7 +64,6 @@ export const processThumbnailAndImages = async (
 
       req.body.images = imageUploads;
     }
-
     next();
   } catch (error) {
     next(error);

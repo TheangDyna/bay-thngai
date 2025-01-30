@@ -76,8 +76,9 @@ export const useProductsQuery = ({
 
 // Query to Fetch a Single Product
 export const useProductQuery = (
-  id: string
+  id?: string
 ): UseQueryResult<Product, AxiosError> => {
+  // {data: Product}
   return useQuery({
     queryKey: ["products", id],
     queryFn: async () => {
@@ -91,13 +92,33 @@ export const useProductQuery = (
 // Mutation to Update Product
 export const useUpdateProductMutation = (
   id: string
-): UseMutationResult<Product, AxiosError, Partial<ProductInput>> => {
-  return useMutation({
+): {
+  mutation: UseMutationResult<ProductInput, AxiosError, FormData>;
+  progress: number;
+} => {
+  const [progress, setProgress] = useState<number>(0);
+  const mutation = useMutation<ProductInput, AxiosError, FormData>({
     mutationFn: async (data) => {
-      const response = await axiosInstance.patch(`/products/${id}`, data);
+      const response = await axiosInstance.patch(`/products/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        timeout: 60000,
+        onUploadProgress: (progressEvent) => {
+          const percentage = Math.round(
+            (progressEvent.loaded * 100) / (progressEvent.total || 1)
+          );
+          setProgress(percentage);
+        }
+      });
       return response.data;
+    },
+    onSettled: () => {
+      setProgress(0);
     }
   });
+
+  return { mutation, progress };
 };
 
 // Mutation to Delete Product

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useController, Control } from "react-hook-form";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react";
+import { CheckIcon, X, ChevronDown, XIcon } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -113,7 +113,7 @@ export const MultiSelect = React.forwardRef<
       variant,
       defaultValue = [],
       placeholder = "Select options",
-      maxCount = 3,
+      maxCount = 5,
       modalPopover = false,
       asChild = false,
       className,
@@ -204,7 +204,7 @@ export const MultiSelect = React.forwardRef<
                           <IconComponent className="h-4 w-4 mr-2" />
                         )}
                         {option?.label}
-                        <XCircle
+                        <X
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
                             event.stopPropagation();
@@ -222,7 +222,7 @@ export const MultiSelect = React.forwardRef<
                       )}
                     >
                       {`+ ${value.length - maxCount} more`}
-                      <XCircle
+                      <X
                         className="ml-2 h-4 w-4 cursor-pointer"
                         onClick={(event) => {
                           event.stopPropagation();

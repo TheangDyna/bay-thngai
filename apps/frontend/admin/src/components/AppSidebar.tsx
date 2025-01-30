@@ -41,6 +41,7 @@ export const AppSidebar: React.FC = () => {
                           <SidebarMenuButton asChild isActive={isActive}>
                             {!isActive && subItem.disabled ? (
                               <span className="opacity-50" aria-disabled="true">
+                                <subItem.icon />
                                 {subItem.title}
                               </span>
                             ) : (
@@ -52,6 +53,7 @@ export const AppSidebar: React.FC = () => {
                                     : "pointer-events-auto"
                                 }
                               >
+                                <subItem.icon />
                                 <span>{subItem.title}</span>
                               </Link>
                             )}

@@ -18,13 +18,12 @@ import {
 
 import { useState } from "react";
 import { DataTablePagination } from "@/components/DataTablePagination";
-import { DataTableToolbar } from "@/pages/products/DataTableToolbar";
-import { useProductsQuery } from "@/api/product.api";
 import { DataTableSkeleton } from "@/components/DataTableSkeleton";
-import { columns } from "@/pages/products/columns";
-import { useNavigate } from "react-router-dom";
+import { useCuisinesQuery } from "@/api/cuisine.api";
+import { DataTableToolbar } from "@/pages/cuisines/DataTableToolbar";
+import { columns } from "@/pages/cuisines/columns";
 
-const ProductList: React.FC = () => {
+const CuisineList: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<ColumnFiltersState>([]);
@@ -36,18 +35,18 @@ const ProductList: React.FC = () => {
       ? { id: "", value: null }
       : { id: "search", value: globalFilter };
 
-  const productsQuery = useProductsQuery({
+  const cuisinesQuery = useCuisinesQuery({
     pagination,
     sorting,
     columnFilters: [searchFilter, ...columnFilters]
   });
 
   const pageCount = Math.ceil(
-    (productsQuery.data?.total || 0) / pagination.pageSize
+    (cuisinesQuery.data?.total || 0) / pagination.pageSize
   );
 
   const table = useReactTable({
-    data: productsQuery.data?.data || [],
+    data: cuisinesQuery.data?.data || [],
     columns: columns(pagination.pageIndex, pagination.pageSize),
     state: {
       sorting,
@@ -74,11 +73,6 @@ const ProductList: React.FC = () => {
     pageCount: pageCount
   });
 
-  const navigate = useNavigate();
-  const handleRowClick = (productId: string) => {
-    navigate(`/products/${productId}`);
-  };
-
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
@@ -103,15 +97,11 @@ const ProductList: React.FC = () => {
             ))}
           </TableHeader>
           <TableBody>
-            {productsQuery.isPending ? (
+            {cuisinesQuery.isPending ? (
               <DataTableSkeleton columns={columns.length} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="cursor-pointer"
-                  onClick={() => handleRowClick(row.original._id)}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -128,7 +118,7 @@ const ProductList: React.FC = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {productsQuery.isError
+                  {cuisinesQuery.isError
                     ? "Error fetching data"
                     : "No results."}
                 </TableCell>
@@ -142,4 +132,4 @@ const ProductList: React.FC = () => {
   );
 };
 
-export default ProductList;
+export default CuisineList;

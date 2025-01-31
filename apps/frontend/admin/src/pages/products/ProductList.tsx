@@ -75,9 +75,19 @@ const ProductList: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const handleRowClick = (productId: string) => {
-    navigate(`/products/${productId}`);
+  const handleRowClick = (productId: string, event: React.MouseEvent) => {
+    // Check if the click was on an interactive element (e.g., button, dropdown)
+    const isInteractiveElement = (event.target as HTMLElement).closest(
+      "button, a, [role='button'], [role='menuitem']"
+    );
+
+    // Only navigate if the click was not on an interactive element
+    if (!isInteractiveElement) {
+      navigate(`/products/${productId}`);
+    }
   };
+
+  const columnsArray = table.getAllColumns();
 
   return (
     <div className="space-y-4">
@@ -104,13 +114,13 @@ const ProductList: React.FC = () => {
           </TableHeader>
           <TableBody>
             {productsQuery.isPending ? (
-              <DataTableSkeleton columns={columns.length} />
+              <DataTableSkeleton columns={columnsArray.length} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   className="cursor-pointer"
-                  onClick={() => handleRowClick(row.original._id)}
+                  onClick={(event) => handleRowClick(row.original._id, event)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -125,7 +135,7 @@ const ProductList: React.FC = () => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columnsArray.length}
                   className="h-24 text-center"
                 >
                   {productsQuery.isError

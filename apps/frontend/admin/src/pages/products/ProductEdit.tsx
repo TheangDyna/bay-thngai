@@ -61,7 +61,7 @@ export const ProductEdit: React.FC = () => {
   const onSubmit = (data: ProductInput) => {
     uploadDialog.openDialog({
       status: "uploading",
-      message: "Updating product..."
+      message: "Please wait while we update your product."
     });
 
     const formData = new FormData();
@@ -77,7 +77,7 @@ export const ProductEdit: React.FC = () => {
       onSuccess: () => {
         uploadDialog.openDialog({
           status: "success",
-          message: "Product updated successfully!"
+          message: "Your product has been successfully updated."
         });
         setTimeout(uploadDialog.closeDialog, 3000);
       },

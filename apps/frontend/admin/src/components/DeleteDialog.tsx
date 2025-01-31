@@ -15,19 +15,19 @@ export type DeleteStatus = "idle" | "deleting" | "error" | "success";
 interface DeleteDialogProps {
   isOpen: boolean;
   status: DeleteStatus;
-  message?: string;
+  title: string;
+  message: string;
   onClose: () => void;
   onConfirm: () => void;
-  title?: string;
 }
 
 export function DeleteDialog({
   isOpen,
   status,
-  message = "This action cannot be undone. This will permanently delete this item and remove it from our servers.",
+  title,
+  message,
   onClose,
-  onConfirm,
-  title = "Are you absolutely sure?"
+  onConfirm
 }: DeleteDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -44,26 +44,14 @@ export function DeleteDialog({
             {status === "error" && (
               <XCircle className="w-12 h-12 text-red-400" />
             )}
-            {status === "idle"
-              ? title
-              : status === "deleting"
-                ? "Deleting..."
-                : status === "success"
-                  ? "Success"
-                  : "Error"}
+            {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
-            {status === "idle"
-              ? message
-              : status === "deleting"
-                ? "Please wait while we process your request."
-                : status === "success"
-                  ? "The item has been successfully deleted."
-                  : "An error occurred while deleting. Please try again."}
+            {message}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <AlertDialogFooter className="sm:justify-center">
+        <AlertDialogFooter className="sm:justify-center flex gap-3">
           {status === "idle" && (
             <>
               <AlertDialogCancel>Cancel</AlertDialogCancel>

@@ -38,12 +38,22 @@ export function DataTableRowActions<TData extends { _id: string }>({
   };
 
   const handleDelete = () => {
+    deleteDialog.openDialog({
+      status: "deleting"
+    });
     deleteProductMutation.mutate(undefined, {
       onSuccess: () => {
-        console.log(`Product with ID ${row.original._id} deleted successfully`);
+        deleteDialog.openDialog({
+          status: "success"
+        });
+        setTimeout(deleteDialog.closeDialog, 3000);
       },
-      onError: (err) => {
-        console.error("Failed to delete product:", err.message);
+      onError: () => {
+        deleteDialog.openDialog({
+          status: "error",
+          onDelete: handleDelete
+        });
+        setTimeout(deleteDialog.closeDialog, 5000);
       }
     });
   };

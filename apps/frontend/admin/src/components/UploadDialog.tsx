@@ -15,19 +15,19 @@ export type UploadStatus = "idle" | "uploading" | "success" | "error";
 interface UploadDialogProps {
   isOpen: boolean;
   status: UploadStatus;
+  title: string;
   progress?: number;
-  message?: string;
-  onClose?: () => void;
-  title?: string;
+  message: string;
+  onClose: () => void;
 }
 
 export const UploadDialog: React.FC<UploadDialogProps> = ({
   isOpen,
   status,
+  title,
   progress = 0,
-  message = "Processing your request...",
-  onClose,
-  title = "Processing your request"
+  message,
+  onClose
 }) => {
   if (!isOpen) return null;
 
@@ -45,13 +45,7 @@ export const UploadDialog: React.FC<UploadDialogProps> = ({
             {status === "error" && (
               <XCircle className="w-12 h-12 text-red-400" />
             )}
-            {status === "idle"
-              ? title
-              : status === "uploading"
-                ? "Uploading..."
-                : status === "success"
-                  ? "Success"
-                  : "Error"}
+            {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             {message}

@@ -41,7 +41,7 @@ const ProductCreate: React.FC = () => {
   const onSubmit = (data: ProductInput) => {
     uploadDialog.openDialog({
       status: "uploading",
-      message: "Creating product..."
+      message: "Please wait while we create your product."
     });
 
     const formData = new FormData();
@@ -66,7 +66,7 @@ const ProductCreate: React.FC = () => {
       onSuccess: () => {
         uploadDialog.openDialog({
           status: "success",
-          message: "Product created successfully!"
+          message: "Your product has been successfully created."
         });
         form.reset();
         setTimeout(uploadDialog.closeDialog, 3000);

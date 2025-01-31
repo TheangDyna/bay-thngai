@@ -2,24 +2,26 @@ import {
   useMutation,
   UseMutationResult,
   useQuery,
-  UseQueryResult
+  UseQueryResult,
+  useQueryClient
 } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
 import { useState } from "react";
 import { AxiosError } from "axios";
-import { Product, ProductInput } from "@/types/product.types";
+import { Product } from "@/types/product.types";
 import { Pagination } from "@/types/pagination.types";
 import { Sorting } from "@/types/sort.types";
 import { ColumnFilter } from "@tanstack/react-table";
 
 // Mutation to Create Product
 export const useCreateProductMutation = (): {
-  mutation: UseMutationResult<ProductInput, AxiosError, FormData>;
+  mutation: UseMutationResult<Product, AxiosError, FormData>;
   progress: number;
 } => {
   const [progress, setProgress] = useState<number>(0);
+  const queryClient = useQueryClient();
 
-  const mutation = useMutation<ProductInput, AxiosError, FormData>({
+  const mutation = useMutation<Product, AxiosError, FormData>({
     mutationFn: async (data) => {
       const response = await axiosInstance.post("/products", data, {
         headers: {
@@ -35,8 +37,12 @@ export const useCreateProductMutation = (): {
       });
       return response.data;
     },
+    onSuccess: () => {
+      // Invalidate the products query to refetch the list
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
     onSettled: () => {
-      setProgress(0);
+      setProgress(0); // Reset progress after mutation is complete
     }
   });
 
@@ -78,14 +84,13 @@ export const useProductsQuery = ({
 export const useProductQuery = (
   id?: string
 ): UseQueryResult<Product, AxiosError> => {
-  // {data: Product}
   return useQuery({
     queryKey: ["products", id],
     queryFn: async () => {
       const response = await axiosInstance.get(`/products/${id}`);
       return response.data;
     },
-    enabled: !!id
+    enabled: !!id // Only fetch if `id` is provided
   });
 };
 
@@ -93,11 +98,13 @@ export const useProductQuery = (
 export const useUpdateProductMutation = (
   id: string
 ): {
-  mutation: UseMutationResult<ProductInput, AxiosError, FormData>;
+  mutation: UseMutationResult<Product, AxiosError, FormData>;
   progress: number;
 } => {
   const [progress, setProgress] = useState<number>(0);
-  const mutation = useMutation<ProductInput, AxiosError, FormData>({
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<Product, AxiosError, FormData>({
     mutationFn: async (data) => {
       const response = await axiosInstance.patch(`/products/${id}`, data, {
         headers: {
@@ -113,8 +120,14 @@ export const useUpdateProductMutation = (
       });
       return response.data;
     },
+    onSuccess: () => {
+      // Invalidate the products query to refetch the list
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      // Invalidate the specific product query to refetch updated data
+      queryClient.invalidateQueries({ queryKey: ["products", id] });
+    },
     onSettled: () => {
-      setProgress(0);
+      setProgress(0); // Reset progress after mutation is complete
     }
   });
 
@@ -125,9 +138,14 @@ export const useUpdateProductMutation = (
 export const useDeleteProductMutation = (
   id: string
 ): UseMutationResult<void, AxiosError> => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async () => {
       await axiosInstance.delete(`/products/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     }
   });
 };

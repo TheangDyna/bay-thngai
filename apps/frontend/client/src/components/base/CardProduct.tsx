@@ -8,11 +8,13 @@ interface ProductCardProps {
   originalPrice?: string;
   unit: string;
   isOnSale?: boolean;
-  onAddToCart: () => void;
-  onViewDetails: () => void;
+  onAddToCart?: () => void;
+  onViewDetails?: () => void;
+  onClickProductModalDetails?: () => void;
+  className?: string;
 }
 
-const CardGrocery: React.FC<ProductCardProps> = ({
+const CardProduct: React.FC<ProductCardProps> = ({
   image,
   title,
   price,
@@ -20,10 +22,15 @@ const CardGrocery: React.FC<ProductCardProps> = ({
   unit,
   isOnSale = false,
   onAddToCart,
-  onViewDetails
+  onViewDetails,
+  onClickProductModalDetails,
+  className
 }) => {
   return (
-    <div className="relative bg-white shadow-md rounded-lg p-4 w-full max-w-[300px] group hover:shadow-lg transition-shadow duration-300">
+    <div
+      onClick={onClickProductModalDetails}
+      className={`relative cursor-pointer bg-white shadow-sm rounded-lg p-4 w-full max-w-[300px] h-[350px] shrink-0 group hover:shadow-md transition-shadow duration-300 ${className}`}
+    >
       {/* Sale Badge */}
       {isOnSale && (
         <div className="absolute top-6 left-6 bg-green-500 text-white text-xs font-bold rounded-full px-3 py-1 z-10">
@@ -36,12 +43,15 @@ const CardGrocery: React.FC<ProductCardProps> = ({
         <img
           src={image}
           alt={title}
-          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+          className="object-cover w-[200px] transition-transform duration-300 group-hover:scale-105"
         />
         {/* Eye Icon */}
         <button
-          onClick={onViewDetails}
-          className="absolute bottom-4 right-4 bg-gray-900 text-white p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition duration-300"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the parent onClick
+            onViewDetails();
+          }}
+          className="absolute bottom-4 right-4 bg-primary text-white p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
           aria-label="View Details"
         >
           <Eye className="w-5 h-5" />
@@ -70,9 +80,12 @@ const CardGrocery: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Add to Cart Button */}
-      <div className="mt-4 flex justify-end">
+      <div className="mb-4 flex justify-end">
         <button
-          onClick={onAddToCart}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent triggering the parent onClick
+            onAddToCart();
+          }}
           className="flex items-center gap-2 justify-center w-10 h-10 rounded-full bg-green-500 text-white hover:bg-green-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           aria-label="Add to Cart"
         >
@@ -83,4 +96,4 @@ const CardGrocery: React.FC<ProductCardProps> = ({
   );
 };
 
-export default CardGrocery;
+export default CardProduct;

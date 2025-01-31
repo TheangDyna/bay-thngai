@@ -59,7 +59,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#ffeed6"
             description="Get your clean on supplies."
-            imageUrl="/1.webp"
+            imageUrl="/package-banner/1.webp"
             title="Spring cleaning for home appliance"
           />
         </SwiperSlide>
@@ -67,7 +67,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#d9ebd2"
             description="Get your clean on supplies."
-            imageUrl="/2.webp"
+            imageUrl="/package-banner/2.webp"
             title="Your pet choice for fresh healthy food"
           />
         </SwiperSlide>
@@ -75,7 +75,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#dbe5ef"
             description="Get your clean on supplies."
-            imageUrl="/3.webp"
+            imageUrl="/package-banner/3.webp"
             title="Washing item with discount product"
           />
         </SwiperSlide>
@@ -83,7 +83,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#EFD8D4"
             description="Get your clean on supplies."
-            imageUrl="/4.webp"
+            imageUrl="/package-banner/4.webp"
             title="Fresh quality meat item with discount"
           />
         </SwiperSlide>

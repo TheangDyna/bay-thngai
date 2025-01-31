@@ -39,7 +39,7 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
           <div className="flex items-start justify-between w-full overflow-hidden">
             <div className="ltr:pl-3 rtl:pr-3 md:ltr:pl-4 md:rtl:pr-4">
               <a
-                className="block leading-5 transition-all text-secondary text-13px sm:text-sm lg:text-15px hover:text-brand"
+                className="block leading-5 transition-all  text-13px sm:text-sm lg:text-15px hover:text-brand"
                 href="/en/products/fresh-green-leaf-lettuce"
               >
                 {title}
@@ -51,7 +51,7 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
                 <button className="flex items-center justify-center shrink-0  transition-all ease-in-out duration-300 focus:outline-none focus-visible:outline-none !w-6 !h-6 pr-0 border border-border-three hover:bg-brand text-brand-muted hover:border-brand rounded-full hover:text-brand-light">
                   <MinusIcon className="w-4 h-4" />
                 </button>
-                <span className="font-semibold text-secondary flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-default shrink-0 text-15px w-9">
+                <span className="font-semibold  flex items-center justify-center h-full transition-colors duration-250 ease-in-out cursor-default shrink-0 text-15px w-9">
                   {quantity}
                 </span>
                 <button
@@ -62,7 +62,7 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
                 </button>
               </div>
             </div>
-            <div className="flex font-semibold text-sm md:text-base text-secondary leading-5 shrink-0 min-w-[65px] md:min-w-[80px] justify-end">
+            <div className="flex font-semibold text-sm md:text-base  leading-5 shrink-0 min-w-[65px] md:min-w-[80px] justify-end">
               $ {price}
             </div>
           </div>

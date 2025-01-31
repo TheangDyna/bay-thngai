@@ -1,5 +1,4 @@
-import SignIn from "@/pages/auth/SignIn";
-import Cart from "@/pages/Cart";
+import { useLocation, Link } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,10 +7,17 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from "@radix-ui/react-navigation-menu";
+import SignIn from "@/pages/auth/SignIn";
+import Cart from "@/pages/Cart";
 
 const NavigationBar = () => {
+  const location = useLocation(); // Hook to get the current path
+
+  // Function to check if a path is active
+  const isActive = (path: string) => location.pathname === path;
+
   return (
-    <nav className="flex items-center justify-between w-full h-full mx-auto max-w-[1920px] px-4 md:px-6 lg:px-8 2xl:px-10 bg-white">
+    <nav className="flex items-center justify-between w-full h-full mx-auto max-w-[1920px] px-4 md:px-6 lg:px-8 2xl:px-10 bg-[#F8F9FB]">
       {/* Left Section */}
       <div className="flex items-center space-x-8">
         <a href="/">
@@ -26,7 +32,11 @@ const NavigationBar = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
+              <NavigationMenuTrigger
+                className={`text-gray-800 hover:underline hover:underline-offset-8 hover:text-primary ${
+                  isActive("/categories") ? "text-primary font-bold" : ""
+                }`}
+              >
                 Categories
               </NavigationMenuTrigger>
               <NavigationMenuContent className="absolute mt-2 z-50 bg-white shadow-md rounded-[16px] w-56 p-4">
@@ -73,7 +83,11 @@ const NavigationBar = () => {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-gray-800 hover:underline  hover:underline-offset-8 hover:text-primary">
+              <NavigationMenuTrigger
+                className={`text-gray-800 hover:underline hover:underline-offset-8 hover:text-primary ${
+                  isActive("/dietary") ? "text-primary font-bold" : ""
+                }`}
+              >
                 Dietary
               </NavigationMenuTrigger>
               <NavigationMenuContent className="absolute mt-2 z-50 bg-white shadow-md rounded-[16px] w-56 p-4">
@@ -107,6 +121,27 @@ const NavigationBar = () => {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+
+        {/* Links */}
+        <Link to="/search">
+          <span
+            className={`text-gray-800 hover:underline cursor-pointer hover:underline-offset-8 hover:text-primary ${
+              isActive("/search") ? "text-primary font-bold" : ""
+            }`}
+          >
+            Search
+          </span>
+        </Link>
+
+        <Link to="/shop">
+          <span
+            className={`text-gray-800 hover:underline cursor-pointer hover:underline-offset-8 hover:text-primary ${
+              isActive("/shop") ? "text-primary font-bold" : ""
+            }`}
+          >
+            Shop
+          </span>
+        </Link>
       </div>
 
       {/* Right Section */}

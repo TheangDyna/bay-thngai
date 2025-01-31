@@ -26,6 +26,7 @@ import { useUploadDialog } from "@/hooks/useUploadDialog";
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Error from "@/pages/Error";
 
 export const ProductEdit: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -107,14 +108,7 @@ export const ProductEdit: React.FC = () => {
   };
 
   if (productQuery.isError || cuisinesQuery.isError) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <p className="text-xl font-semibold text-destructive">
-          Error loading product edit
-        </p>
-        <Button onClick={() => window.location.reload()}>Try Again</Button>
-      </div>
-    );
+    return <Error />;
   }
 
   if (productQuery.isLoading || cuisinesQuery.isLoading) {

@@ -24,6 +24,7 @@ import {
 import { ProductInput } from "@/types/product.types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUploadDialog } from "@/hooks/useUploadDialog";
+import Error from "@/pages/Error";
 
 const ProductCreate: React.FC = () => {
   const { mutation: createProductMutation, progress } =
@@ -123,6 +124,10 @@ const ProductCreate: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  if (cuisinesQuery.isError) {
+    return <Error />;
   }
 
   const cuisinesOptions =

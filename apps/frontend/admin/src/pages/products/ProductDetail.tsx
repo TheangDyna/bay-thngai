@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CircleDot, Clock, DollarSign, Pencil, Trash2 } from "lucide-react";
 import { formatDistance } from "date-fns";
 import { useProductQuery } from "@/api/product.api";
+import Error from "@/pages/Error";
 
 const ProductDetail: React.FC = () => {
   const { productId } = useParams();
@@ -40,14 +41,7 @@ const ProductDetail: React.FC = () => {
   }
 
   if (productQuery.error) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <p className="text-xl font-semibold text-destructive">
-          Error loading product details
-        </p>
-        <Button onClick={() => window.location.reload()}>Try Again</Button>
-      </div>
-    );
+    return <Error />;
   }
 
   const product = productQuery.data?.data;

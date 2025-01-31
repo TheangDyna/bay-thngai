@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import { useDeleteDialog } from "@/hooks/useDeleteDialog";
+import { useDeleteProductMutation } from "@/api/product.api";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -22,6 +23,8 @@ export function DataTableRowActions<TData extends { _id: string }>({
   const navigate = useNavigate();
   const deleteDialog = useDeleteDialog();
 
+  const deleteProductMutation = useDeleteProductMutation(row.original._id);
+
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     navigate(`/products/${row.original._id}/edit`);
@@ -29,7 +32,20 @@ export function DataTableRowActions<TData extends { _id: string }>({
 
   const handleDeleteClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    deleteDialog.openDialog();
+    deleteDialog.openDialog({
+      onDelete: handleDelete
+    });
+  };
+
+  const handleDelete = () => {
+    deleteProductMutation.mutate(undefined, {
+      onSuccess: () => {
+        console.log(`Product with ID ${row.original._id} deleted successfully`);
+      },
+      onError: (err) => {
+        console.error("Failed to delete product:", err.message);
+      }
+    });
   };
 
   return (
@@ -52,7 +68,7 @@ export function DataTableRowActions<TData extends { _id: string }>({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {deleteDialog.DialogComponent({})}
+      {deleteDialog.DialogComponent()}
     </>
   );
 }

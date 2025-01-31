@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/DataTableRowActions";
+import { DataTableRowActions } from "@/pages/cuisines/DataTableRowActions";
 import { Cuisine } from "@/types/cuisine.types";
 
 export const columns: (

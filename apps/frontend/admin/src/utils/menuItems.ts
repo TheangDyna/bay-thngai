@@ -41,7 +41,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Analytics",
         icon: ChartPie,
-        path: "/analytics"
+        path: "#"
       }
     ]
   },

@@ -8,7 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import { menuItems } from "@/utils/constants";
+import { menuItems } from "@/utils/menuItems";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLocation, Link, matchPath } from "react-router-dom";
 

@@ -8,15 +8,15 @@ export const useUploadDialog = () => {
 
   const openDialog = ({
     status,
-    message = "Processing your request..."
+    message
   }: {
     status: UploadStatus;
     progress?: number;
     message?: string;
   }) => {
-    setStatus(status);
-    setMessage(message);
     setIsOpen(true);
+    setStatus(status);
+    if (message) setMessage(message);
   };
 
   const closeDialog = () => {

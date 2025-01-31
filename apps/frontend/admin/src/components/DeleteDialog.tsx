@@ -5,9 +5,9 @@ import {
   AlertDialogTitle,
   AlertDialogFooter,
   AlertDialogDescription,
-  AlertDialogAction,
   AlertDialogCancel
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle, XCircle, Trash2 } from "lucide-react";
 
 export type DeleteStatus = "idle" | "deleting" | "error" | "success";
@@ -34,9 +34,7 @@ export function DeleteDialog({
       <AlertDialogContent className="sm:max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-col items-center gap-4">
-            {status === "idle" && (
-              <Trash2 className="w-12 h-12 text-destructive" />
-            )}
+            {status === "idle" && <Trash2 className="w-12 h-12 text-red-400" />}
             {status === "deleting" && (
               <Loader2 className="w-12 h-12 text-primary animate-spin" />
             )}
@@ -51,7 +49,7 @@ export function DeleteDialog({
               : status === "deleting"
                 ? "Deleting..."
                 : status === "success"
-                  ? "Success!"
+                  ? "Success"
                   : "Error"}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
@@ -69,27 +67,23 @@ export function DeleteDialog({
           {status === "idle" && (
             <>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={onConfirm}
-                className="bg-destructive hover:bg-destructive/90"
-              >
+              <Button onClick={onConfirm} variant="destructive">
                 Delete
-              </AlertDialogAction>
+              </Button>
             </>
           )}
           {status === "error" && (
             <>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={onConfirm}
-                className="bg-destructive hover:bg-destructive/90"
-              >
+              <Button onClick={onConfirm} variant="destructive">
                 Try Again
-              </AlertDialogAction>
+              </Button>
             </>
           )}
           {status === "success" && (
-            <AlertDialogAction onClick={onClose}>Close</AlertDialogAction>
+            <Button variant="secondary" onClick={onClose}>
+              Close
+            </Button>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>

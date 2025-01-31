@@ -4,6 +4,7 @@ import BaseLayout from "@/components/layouts/BaseLayout";
 import NotFound from "@/pages/NotFound";
 import Search from "@/pages/Search";
 import Shop from "@/pages/Shop";
+import ShopProductDetailSlug from "@/pages/shops/[shopProductDetailSlug]";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,7 +20,8 @@ const AppRoutes: React.FC = () => {
         >
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/shop" element={<Shop />} />
+          <Route path="/shops" element={<Shop />} />
+          <Route path="/shops/:slug" element={<ShopProductDetailSlug />} />
         </Route>
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />

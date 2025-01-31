@@ -1,108 +1,130 @@
-export const products = [
-    {
-        id: 1,
-        image: "/grocery/lettuce.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 2,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
-    },
-    {
-        id: 3,
-        image: "/grocery/orange.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 4,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
-    },
-    {
-        id: 5,
-        image: "/grocery/lettuce.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 6,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
-    },
-    {
-        id: 7,
-        image: "/grocery/lettuce.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 8,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
-    },
-    {
-        id: 9,
-        image: "/grocery/lettuce.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 10,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
-    },
-    {
-        id: 11,
-        image: "/grocery/lettuce.png",
-        title: "Fresh Green Leaf Lettuce",
-        price: "2.64",
-        originalPrice: "2.74",
-        unit: "1 each",
-        isOnSale: true
-    },
-    {
-        id: 12,
-        image: "/grocery/fresh-carrots.png",
-        title: "Fresh Carrots",
-        price: "$3.50 - $5.00",
-        unit: "1 lb",
-        isOnSale: false
+// Helper function to generate random prices
+const generateRandomPrice = (min: number = 1, max: number = 15) => {
+  const price = Math.random() * (max - min) + min;
+  return {
+    numeric: Number(price.toFixed(2)),       // For sorting
+    formatted: `${price.toFixed(2)}`,      // For display
+    range: () => {
+      const higher = price + Math.random() * 3;
+      return `$${price.toFixed(2)} - $${higher.toFixed(2)}`;
     }
-];
+  };
+};
 
+export const products = [
+  {
+    id: 1,
+    image: "/grocery/lettuce.png",
+    title: "Fresh Green Leaf Lettuce",
+    price: generateRandomPrice(2, 4).formatted,
+    originalPrice: generateRandomPrice(3, 5).formatted,
+    unit: "1 each",
+    isOnSale: true,
+    createdAt: "2025-02-01T12:00:00Z",
+  },
+  {
+    id: 2,
+    image: "/grocery/fresh-carrots.png",
+    title: "Fresh Carrots",
+    price: generateRandomPrice(1.5, 3.5).range(),
+    unit: "1 lb",
+    isOnSale: false,
+    createdAt: "2025-02-28T09:30:00Z",
+  },
+  {
+    id: 3,
+    image: "/grocery/orange.png",
+    title: "Organic Valencia Oranges",
+    price: generateRandomPrice(3, 6).range(),
+    unit: "1 lb",
+    isOnSale: true,
+    createdAt: "2025-02-02T14:15:00Z",
+  },
+  {
+    id: 4,
+    image: "/grocery/apple.png",
+    title: "Baby Carrots",
+    price: generateRandomPrice(2.2, 3.8).formatted,
+    originalPrice: generateRandomPrice(3, 4).formatted,
+    unit: "1 pack",
+    isOnSale: true,
+    createdAt: "2025-02-30T16:45:00Z",
+  },
+  {
+    id: 5,
+    image: "/grocery/avocado.png",
+    title: "Organic Romaine Lettuce",
+    price: generateRandomPrice(3.25, 4.75).formatted,
+    unit: "1 each",
+    isOnSale: false,
+    createdAt: "2025-02-03T08:00:00Z",
+  },
+  {
+    id: 6,
+    image: "/grocery/banana.png",
+    title: "Rainbow Carrots",
+    price: generateRandomPrice(2.9, 4.2).range(),
+    unit: "1 lb",
+    isOnSale: true,
+    createdAt: "2025-02-29T11:20:00Z",
+  },
+  {
+    id: 7,
+    image: "/grocery/cabbage.png",
+    title: "Butterhead Lettuce",
+    price: generateRandomPrice(2.4, 3.1).formatted,
+    originalPrice: generateRandomPrice(3, 3.5).formatted,
+    unit: "1 each",
+    isOnSale: true,
+    createdAt: "2025-02-04T10:10:00Z",
+  },
+  {
+    id: 8,
+    image: "/grocery/fresh-carrots.png",
+    title: "Heirloom Carrots",
+    price: generateRandomPrice(4, 6).range(),
+    unit: "1 lb",
+    isOnSale: false,
+    createdAt: "2025-02-27T13:50:00Z",
+  },
+  {
+    id: 9,
+    image: "/grocery/lettuce.png",
+    title: "Iceberg Lettuce",
+    price: generateRandomPrice(1.9, 2.5).formatted,
+    unit: "1 each",
+    isOnSale: false,
+    createdAt: "2025-02-05T07:30:00Z",
+  },
+  {
+    id: 10,
+    image: "/grocery/fresh-carrots.png",
+    title: "Organic Carrots",
+    price: generateRandomPrice(3.75, 5.25).formatted,
+    originalPrice: generateRandomPrice(4.5, 6).formatted,
+    unit: "1 lb",
+    isOnSale: true,
+    createdAt: "2025-02-26T15:00:00Z",
+  },
+  {
+    id: 11,
+    image: "/grocery/lettuce.png",
+    title: "Red Leaf Lettuce",
+    price: generateRandomPrice(2.8, 3.4).formatted,
+    unit: "1 each",
+    isOnSale: true,
+    createdAt: "2025-02-06T12:45:00Z",
+  },
+  {
+    id: 12,
+    image: "/grocery/fresh-carrots.png",
+    title: "Purple Carrots",
+    price: generateRandomPrice(4.2, 5.8).range(),
+    unit: "1 lb",
+    isOnSale: false,
+    createdAt: "2025-02-25T18:20:00Z",
+  },
+];
 
 export const categories = [
     {

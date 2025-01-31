@@ -1,4 +1,4 @@
-const NotFoundPage: React.FC = () => {
+const NotFound: React.FC = () => {
   return (
     <div>
       <p>Not Found :(</p>
@@ -6,4 +6,4 @@ const NotFoundPage: React.FC = () => {
   );
 };
 
-export default NotFoundPage;
+export default NotFound;

@@ -18,7 +18,7 @@ export const formatZodErrors = (errors: z.ZodError["issues"]) => {
         return `Field '${fieldPath}' must be one of [${error.options.join(", ")}].`;
 
       case z.ZodIssueCode.invalid_arguments:
-        return `Invalid arguments provided in '${fieldPath}': ${error.argumentsError.message}.`;
+        return `Invalid arguments in '${fieldPath}': ${error.argumentsError.message}.`;
 
       case z.ZodIssueCode.invalid_return_type:
         return `Invalid return type in '${fieldPath}': ${error.returnTypeError.message}.`;
@@ -30,30 +30,24 @@ export const formatZodErrors = (errors: z.ZodError["issues"]) => {
         return `Field '${fieldPath}' must be a valid ${error.validation}.`;
 
       case z.ZodIssueCode.too_small:
-        if (
-          (error.type === "string" || error.type === "array") &&
-          error.minimum === 1
-        ) {
-          return `Field '${fieldPath}' is required.`;
-        }
         return `Field '${fieldPath}' must be ${
           error.exact
-            ? `exactly`
+            ? "exactly"
             : error.inclusive
-              ? `at least`
-              : `greater than`
+              ? "at least"
+              : "greater than"
         } ${error.minimum}.`;
 
       case z.ZodIssueCode.too_big:
         return `Field '${fieldPath}' must be ${
-          error.exact ? `exactly` : error.inclusive ? `at most` : `less than`
+          error.exact ? "exactly" : error.inclusive ? "at most" : "less than"
         } ${error.maximum}.`;
 
       case z.ZodIssueCode.not_multiple_of:
         return `Field '${fieldPath}' must be a multiple of ${error.multipleOf}.`;
 
       case z.ZodIssueCode.custom:
-        return `Field '${fieldPath}': ${error.message}`;
+        return `Field '${fieldPath}': ${error.message}.`;
 
       default:
         return `Field '${fieldPath}' has an unknown error: ${error.message}.`;

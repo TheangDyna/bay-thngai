@@ -14,22 +14,19 @@ import {
   LogOut,
   Percent,
   Puzzle,
-  User,
-  CircleIcon,
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon
+  User
 } from "lucide-react";
-
-type MenuItem = {
-  title: string;
-  icon: React.ComponentType;
-  url: string;
-};
 
 type MenuSection = {
   title: string;
   subItems: MenuItem[];
+};
+
+type MenuItem = {
+  title: string;
+  icon: React.ComponentType;
+  path: string;
+  disabled?: boolean;
 };
 
 export const menuItems: MenuSection[] = [
@@ -39,12 +36,12 @@ export const menuItems: MenuSection[] = [
       {
         title: "Overview",
         icon: Gauge,
-        url: "/dashboard"
+        path: "/dashboard"
       },
       {
         title: "Analytics",
         icon: ChartPie,
-        url: "/analytics"
+        path: "#"
       }
     ]
   },
@@ -54,32 +51,39 @@ export const menuItems: MenuSection[] = [
       {
         title: "Products List",
         icon: Box,
-        url: "/products"
+        path: "/products"
       },
       {
-        title: "Create Products",
+        title: "Create Product",
         icon: Box,
-        url: "/products/new"
+        path: "/products/new"
+      },
+      {
+        title: "Detail Product",
+        path: "/products/:id",
+        icon: Box,
+        disabled: true
+      },
+      {
+        title: "Edit Product",
+        path: "/products/:id/edit",
+        icon: Box,
+        disabled: true
       }
     ]
   },
   {
-    title: "Categories",
+    title: "Cuisines",
     subItems: [
       {
-        title: "Categories",
+        title: "Cuisines List",
         icon: Boxes,
-        url: "#"
+        path: "/cuisines"
       },
       {
-        title: "Create Category",
+        title: "Create Cuisine",
         icon: Boxes,
-        url: "/categories/new"
-      },
-      {
-        title: "Inventory",
-        icon: Inbox,
-        url: "#"
+        path: "/cuisines/new"
       }
     ]
   },
@@ -89,7 +93,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Inventory",
         icon: Inbox,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -99,12 +103,12 @@ export const menuItems: MenuSection[] = [
       {
         title: "All Orders",
         icon: ArrowRightLeft,
-        url: "#"
+        path: "#"
       },
       {
         title: "Returns",
         icon: Undo2,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -114,12 +118,12 @@ export const menuItems: MenuSection[] = [
       {
         title: "All Customers",
         icon: User,
-        url: "#"
+        path: "#"
       },
       {
         title: "Segments",
         icon: History,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -129,12 +133,12 @@ export const menuItems: MenuSection[] = [
       {
         title: "Discounts",
         icon: Percent,
-        url: "#"
+        path: "#"
       },
       {
         title: "Coupons",
         icon: Puzzle,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -144,17 +148,17 @@ export const menuItems: MenuSection[] = [
       {
         title: "Store Settings",
         icon: Settings2,
-        url: "#"
+        path: "#"
       },
       {
         title: "User Management",
         icon: Users,
-        url: "#"
+        path: "#"
       },
       {
         title: "Notifications",
         icon: Bell,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -164,7 +168,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Reports",
         icon: MessageSquareWarning,
-        url: "#"
+        path: "#"
       }
     ]
   },
@@ -174,69 +178,8 @@ export const menuItems: MenuSection[] = [
       {
         title: "Logout",
         icon: LogOut,
-        url: "#"
+        path: "#"
       }
     ]
-  }
-];
-
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug"
-  },
-  {
-    value: "feature",
-    label: "Feature"
-  },
-  {
-    value: "documentation",
-    label: "Documentation"
-  }
-];
-
-export const statuses = [
-  {
-    value: "backlog",
-    label: "Backlog",
-    icon: CircleIcon
-  },
-  {
-    value: "todo",
-    label: "Todo",
-    icon: CircleIcon
-  },
-  {
-    value: "in progress",
-    label: "In Progress",
-    icon: CircleIcon
-  },
-  {
-    value: "done",
-    label: "Done",
-    icon: CircleIcon
-  },
-  {
-    value: "canceled",
-    label: "Canceled",
-    icon: CircleIcon
-  }
-];
-
-export const priorities = [
-  {
-    label: "Low",
-    value: "low",
-    icon: ArrowDownIcon
-  },
-  {
-    label: "Medium",
-    value: "medium",
-    icon: ArrowRightIcon
-  },
-  {
-    label: "High",
-    value: "high",
-    icon: ArrowUpIcon
   }
 ];

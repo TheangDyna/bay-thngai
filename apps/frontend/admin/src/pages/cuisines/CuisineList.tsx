@@ -1,15 +1,9 @@
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table";
 
@@ -24,42 +18,59 @@ import {
 
 import { useState } from "react";
 import { DataTablePagination } from "@/components/DataTablePagination";
-import { DataTableToolbar } from "@/components/DataTableToolbar";
+import { DataTableSkeleton } from "@/components/DataTableSkeleton";
+import { useCuisinesQuery } from "@/api/cuisine.api";
+import { DataTableToolbar } from "@/pages/cuisines/DataTableToolbar";
+import { columns } from "@/pages/cuisines/columns";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-
-export function DataTable<TData, TValue>({
-  columns,
-  data
-}: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = useState({});
+const CuisineList: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+
+  const searchFilter =
+    globalFilter.length == 0
+      ? { id: "", value: null }
+      : { id: "search", value: globalFilter };
+
+  const cuisinesQuery = useCuisinesQuery({
+    pagination,
+    sorting,
+    columnFilters: [searchFilter, ...columnFilters]
+  });
+
+  const pageCount = Math.ceil(
+    (cuisinesQuery.data?.total || 0) / pagination.pageSize
+  );
 
   const table = useReactTable({
-    data,
-    columns,
+    data: cuisinesQuery.data?.data || [],
+    columns: columns(pagination.pageIndex, pagination.pageSize),
     state: {
       sorting,
+      globalFilter,
       columnVisibility,
-      rowSelection,
-      columnFilters
+      columnFilters,
+      pagination
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: (newGlobalFilter) => {
+      setGlobalFilter(newGlobalFilter);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    },
+    onColumnFiltersChange: (newColumnFilters) => {
+      setColumnFilters(newColumnFilters);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    },
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues()
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
+    pageCount: pageCount
   });
 
   return (
@@ -86,12 +97,11 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {cuisinesQuery.isPending ? (
+              <DataTableSkeleton columns={columns.length} />
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -108,7 +118,9 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {cuisinesQuery.isError
+                    ? "Error fetching data"
+                    : "No results."}
                 </TableCell>
               </TableRow>
             )}
@@ -118,4 +130,6 @@ export function DataTable<TData, TValue>({
       <DataTablePagination table={table} />
     </div>
   );
-}
+};
+
+export default CuisineList;

@@ -1,15 +1,20 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
-import { DataTableRowActions } from "@/components/DataTableRowActions";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../components/ui/badge";
 import { Product } from "@/types/product.types";
+import { DataTableRowActions } from "@/pages/products/DataTableRowActions";
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: (
+  currentPage: number,
+  pageSize: number
+) => ColumnDef<Product>[] = (currentPage, pageSize) => [
   {
     id: "index",
     header: () => <span className="max-w-[100px] truncate">N.o</span>,
     cell: ({ row }) => (
-      <span className="max-w-[100px] truncate">{row.index + 1}</span>
+      <span className="max-w-[100px] truncate">
+        {currentPage * pageSize + row.index + 1}
+      </span>
     ),
     enableSorting: false,
     enableHiding: false

@@ -24,6 +24,7 @@ type MenuSection = {
 
 type MenuItem = {
   title: string;
+  icon: React.ComponentType;
   path: string;
   disabled?: boolean;
 };
@@ -34,11 +35,13 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Overview",
+        icon: Gauge,
         path: "/dashboard"
       },
       {
         title: "Analytics",
-        path: "/analytics"
+        icon: ChartPie,
+        path: "#"
       }
     ]
   },
@@ -47,20 +50,24 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Products List",
+        icon: Box,
         path: "/products"
       },
       {
         title: "Create Product",
+        icon: Box,
         path: "/products/new"
       },
       {
         title: "Detail Product",
         path: "/products/:id",
+        icon: Box,
         disabled: true
       },
       {
         title: "Edit Product",
         path: "/products/:id/edit",
+        icon: Box,
         disabled: true
       }
     ]
@@ -70,10 +77,12 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Cuisines List",
-        path: "#"
+        icon: Boxes,
+        path: "/cuisines"
       },
       {
         title: "Create Cuisine",
+        icon: Boxes,
         path: "/cuisines/new"
       }
     ]
@@ -83,6 +92,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Inventory",
+        icon: Inbox,
         path: "#"
       }
     ]
@@ -92,10 +102,12 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "All Orders",
+        icon: ArrowRightLeft,
         path: "#"
       },
       {
         title: "Returns",
+        icon: Undo2,
         path: "#"
       }
     ]
@@ -105,10 +117,12 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "All Customers",
+        icon: User,
         path: "#"
       },
       {
         title: "Segments",
+        icon: History,
         path: "#"
       }
     ]
@@ -118,10 +132,12 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Discounts",
+        icon: Percent,
         path: "#"
       },
       {
         title: "Coupons",
+        icon: Puzzle,
         path: "#"
       }
     ]
@@ -131,15 +147,17 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Store Settings",
-
+        icon: Settings2,
         path: "#"
       },
       {
         title: "User Management",
+        icon: Users,
         path: "#"
       },
       {
         title: "Notifications",
+        icon: Bell,
         path: "#"
       }
     ]
@@ -149,6 +167,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Reports",
+        icon: MessageSquareWarning,
         path: "#"
       }
     ]
@@ -158,6 +177,7 @@ export const menuItems: MenuSection[] = [
     subItems: [
       {
         title: "Logout",
+        icon: LogOut,
         path: "#"
       }
     ]

@@ -17,6 +17,8 @@ const verifier = CognitoJwtVerifier.create({
   clientId: config.awsCognitoClientId
 });
 
+// note when logout access_token still valid
+
 export const protect = async (
   req: AuthenticatedRequest,
   res: Response,

@@ -21,6 +21,9 @@ const Dashboard = lazy(() => import("@/pages/dashboards/Dashboard"));
 const ProductList = lazy(() => import("@/pages/products/ProductList"));
 const ProductCreate = lazy(() => import("@/pages/products/ProductCreate"));
 const CuisineCreate = lazy(() => import("@/pages/cuisines/CuisineCreate"));
+const CuisineList = lazy(() => import("@/pages/cuisines/CuisineList"));
+const ProductDetail = lazy(() => import("@/pages/products/ProductDetail"));
+const ProductEdit = lazy(() => import("@/pages/products/ProductEdit"));
 
 const queryClient = new QueryClient();
 
@@ -52,20 +55,14 @@ const AppRoutes: React.FC = () => {
                 {/* Products Route */}
                 <Route path="products" element={<Outlet />}>
                   <Route index element={<ProductList />} />
-                  <Route
-                    path=":productId"
-                    element={<div>Product Detail</div>}
-                  />
+                  <Route path=":productId" element={<ProductDetail />} />
                   <Route path="new" element={<ProductCreate />} />
-                  <Route
-                    path=":productId/edit"
-                    element={<div>Product Edit</div>}
-                  />
+                  <Route path=":productId/edit" element={<ProductEdit />} />
                 </Route>
 
                 {/* Cuisines Route */}
-                <Route path="cuisines" element={<Outlet />}>
-                  <Route index element={<div>Cuisine List</div>} />
+                <Route path="cuisines">
+                  <Route index element={<CuisineList />} />
                   <Route
                     path=":cuisineId"
                     element={<div>Cuisine Detail</div>}

@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MultiSelect } from "@/components/MultiSelect";
-import { useCreateProductMutation } from "@/api/product.api";
+import { useProductQuery, useUpdateProductMutation } from "@/api/product.api";
 import { useCuisinesQuery } from "@/api/cuisine.api";
 import { ImagesInput } from "@/components/ImagesInput";
 import { Switch } from "@/components/ui/switch";
@@ -22,14 +22,18 @@ import {
   ProductSchema
 } from "@/validators/product.validators";
 import { ProductInput } from "@/types/product.types";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useUploadDialog } from "@/hooks/useUploadDialog";
+import { useParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import Error from "@/pages/Error";
 
-const ProductCreate: React.FC = () => {
-  const { mutation: createProductMutation, progress } =
-    useCreateProductMutation();
+export const ProductEdit: React.FC = () => {
+  const { productId } = useParams<{ productId: string }>();
+  const { mutation: updateProductMutation, progress } =
+    useUpdateProductMutation(productId!);
   const cuisinesQuery = useCuisinesQuery({});
+  const productQuery = useProductQuery(productId!);
   const uploadDialog = useUploadDialog();
 
   const form = useForm<ProductInput>({
@@ -37,45 +41,51 @@ const ProductCreate: React.FC = () => {
     defaultValues: ProductDefaultValue
   });
 
-  // Handle form submission
+  const cuisinesOptions = useMemo(
+    () =>
+      cuisinesQuery.data?.data.map((cuisine) => ({
+        value: cuisine._id,
+        label: cuisine.name
+      })) || [],
+    [cuisinesQuery.data]
+  );
+
+  useEffect(() => {
+    if (productQuery.data?.data) {
+      const product = { ...productQuery.data.data };
+      product.cuisines = product.cuisines.map((cuisine) => cuisine._id);
+      form.reset(product);
+    }
+  }, [productQuery.data, form]);
+
   const onSubmit = (data: ProductInput) => {
     uploadDialog.openDialog({
       status: "uploading",
-      message: "Please wait while we create your product."
+      message: "Please wait while we update your product."
     });
 
     const formData = new FormData();
-
-    // Append fields
     formData.append("name", data.name);
     formData.append("price", data.price.toString());
     formData.append("inStock", data.inStock.toString());
     formData.append("description", data.description);
     data.cuisines.forEach((cuisine) => formData.append("cuisines[]", cuisine));
-    data.dietaries?.forEach((dietary) =>
-      formData.append("dietaries[]", dietary)
-    );
-    data.ingredients?.forEach((ingredient) =>
-      formData.append("ingredients[]", ingredient)
-    );
-    data.thumbnail && formData.append("thumbnail", data.thumbnail);
+    if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
     data.images?.forEach((image) => formData.append("images", image));
 
-    // Mutation
-    createProductMutation.mutate(formData, {
+    updateProductMutation.mutate(formData, {
       onSuccess: () => {
         uploadDialog.openDialog({
           status: "success",
-          message: "Your product has been successfully created."
+          message: "Your product has been successfully updated."
         });
-        form.reset();
         setTimeout(uploadDialog.closeDialog, 3000);
       },
       onError: (error: any) => {
         uploadDialog.openDialog({
           status: "error",
           message:
-            "There was an issue creating the product. Please check the form for errors."
+            "There was an issue updating the product. Please check the form for errors."
         });
 
         const serverMessage = error.response?.data?.message || "";
@@ -97,8 +107,11 @@ const ProductCreate: React.FC = () => {
     });
   };
 
-  // Show skeletons while cuisines are loading
-  if (cuisinesQuery.isLoading) {
+  if (productQuery.isError || cuisinesQuery.isError) {
+    return <Error />;
+  }
+
+  if (productQuery.isLoading || cuisinesQuery.isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-start justify-between">
@@ -107,14 +120,12 @@ const ProductCreate: React.FC = () => {
             <Skeleton className="h-10 w-24" />
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
           <div className="lg:col-span-3 space-y-5">
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-32 w-full" />
             <Skeleton className="h-12 w-full" />
-
             <Skeleton className="h-40 w-full" />
           </div>
           <div className="lg:col-span-2 space-y-5">
@@ -125,16 +136,6 @@ const ProductCreate: React.FC = () => {
       </div>
     );
   }
-
-  if (cuisinesQuery.isError) {
-    return <Error />;
-  }
-
-  const cuisinesOptions =
-    cuisinesQuery.data?.data.map((cuisine) => ({
-      value: cuisine._id,
-      label: cuisine.name
-    })) || [];
 
   return (
     <>
@@ -147,17 +148,16 @@ const ProductCreate: React.FC = () => {
                 <ArrowLeft className="h-5 w-5" />
               </Button> */}
               <div>
-                <h1 className="text-2xl font-bold">Create Product</h1>
+                <h1 className="text-2xl font-bold">Update Product</h1>
               </div>
             </div>
             {/* Submit screen lg */}
             <Button type="submit" className="hidden md:inline-flex">
-              Create Product
+              Update Product
             </Button>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
             <div className="lg:col-span-3 space-y-3">
-              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -266,7 +266,6 @@ const ProductCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
-
               {/* In Stock */}
               <FormField
                 control={form.control}
@@ -293,7 +292,7 @@ const ProductCreate: React.FC = () => {
           </div>
           {/* Submit screen sm */}
           <Button type="submit" className="md:hidden">
-            Create Product
+            Update Product
           </Button>
         </form>
       </Form>
@@ -302,4 +301,4 @@ const ProductCreate: React.FC = () => {
   );
 };
 
-export default ProductCreate;
+export default ProductEdit;

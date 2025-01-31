@@ -8,6 +8,9 @@ import axiosInstance from "@/utils/axiosInstance";
 import { Cuisine, CuisineInput } from "@/types/cuisine.types";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { Pagination } from "@/types/pagination.types";
+import { Sorting } from "@/types/sort.types";
+import { ColumnFilter } from "@tanstack/react-table";
 
 // Create Cuisine Mutation
 export const useCreateCuisineMutation = (): {
@@ -36,14 +39,30 @@ export const useCreateCuisineMutation = (): {
 };
 
 // Get All Cuisines Query
-export const useCuisinesQuery = (): UseQueryResult<
-  { data: Cuisine[]; total: number },
-  AxiosError
-> => {
+export const useCuisinesQuery = ({
+  pagination = { pageIndex: 0, pageSize: 100 },
+  sorting = [],
+  columnFilters = []
+}: {
+  pagination?: Pagination;
+  sorting?: Sorting[];
+  columnFilters?: ColumnFilter[];
+}): UseQueryResult<{ data: Cuisine[]; total: number }, AxiosError> => {
   return useQuery({
-    queryKey: ["cuisines"],
+    queryKey: ["cuisines", { pagination, sorting, columnFilters }],
     queryFn: async () => {
-      const response = await axiosInstance.get("/cuisines");
+      const params = {
+        page: pagination.pageIndex + 1,
+        limit: pagination.pageSize,
+        sort: sorting[0]
+          ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
+          : undefined,
+        ...columnFilters.reduce((acc, filter) => {
+          (acc as any)[filter.id] = filter.value;
+          return acc;
+        }, {})
+      };
+      const response = await axiosInstance.get("/cuisines", { params });
       return response.data;
     }
   });

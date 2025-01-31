@@ -34,7 +34,7 @@ router.use(protect, restrictTo("admin"));
 router.route("/").post(
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
-    { name: "images", maxCount: 5 }
+    { name: "images", maxCount: 4 }
   ]) as unknown as any,
   processThumbnailAndImages as unknown as any,
   sanitizeProductInput,
@@ -45,7 +45,16 @@ router.route("/").post(
 
 router
   .route("/:id")
-  .patch(validate(UpdateProductSchema), productController.updateOne)
+  .patch(
+    upload.fields([
+      { name: "thumbnail", maxCount: 1 },
+      { name: "images", maxCount: 4 }
+    ]) as unknown as any,
+    processThumbnailAndImages as unknown as any,
+    sanitizeProductInput,
+    validate(UpdateProductSchema),
+    productController.updateOne
+  )
   .delete(protect, restrictTo("admin"), productController.deleteOne);
 
 export const productRoutes = router;

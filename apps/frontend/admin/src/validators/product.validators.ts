@@ -21,8 +21,11 @@ export const ProductSchema = z.object({
   ingredients: z
     .array(z.string().trim().min(1, "Each ingredient must have a value."))
     .optional(),
-  thumbnail: z.instanceof(File, { message: "Thumbnail is required." }),
-  images: z.array(z.instanceof(File)).optional()
+  thumbnail: z.union([
+    z.instanceof(File, { message: "Thumbnail is required." }),
+    z.string().url({ message: "Thumbnail is required." })
+  ]),
+  images: z.array(z.union([z.instanceof(File), z.string().url()])).optional()
 
   // for update
   // thumbnail: z.union([z.instanceof(File), z.string().url()]),

@@ -25,7 +25,7 @@ export const ImagesInput = forwardRef<HTMLInputElement, ImagesInputProps<any>>(
       name,
       control,
       maxSize = 5,
-      maxFiles = 5,
+      maxFiles = 4,
       accept = "image/*",
       className,
       ...props

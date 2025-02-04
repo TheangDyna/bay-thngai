@@ -5,7 +5,7 @@ import ProductSection from "@/components/base/home/section/Product/ProductSectio
 import Promotion from "@/components/base/home/Promotion";
 import CardPackageSwiper from "@/components/base/home/card/CardPackageSwiper";
 import CollectionSection from "@/components/base/home/section/CollectionSection";
-import BannerPromotion from "@/components/base/home/BannerPromotion";
+import DownloadBanner from "@/components/pages/DownloadBanner";
 
 const Home = () => {
   return (
@@ -17,7 +17,7 @@ const Home = () => {
       <Promotion />
       <ProductSection />
       <CollectionSection />
-      <BannerPromotion />
+      <DownloadBanner />
     </div>
   );
 };

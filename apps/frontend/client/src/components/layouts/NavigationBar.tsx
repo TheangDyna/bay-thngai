@@ -133,7 +133,7 @@ const NavigationBar = () => {
           </span>
         </Link>
 
-        <Link to="/shop">
+        <Link to="/shops">
           <span
             className={`text-gray-800 hover:underline cursor-pointer hover:underline-offset-8 hover:text-primary ${
               isActive("/shop") ? "text-primary font-bold" : ""

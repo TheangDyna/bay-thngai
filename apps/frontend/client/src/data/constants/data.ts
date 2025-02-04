@@ -229,3 +229,48 @@ export const categories = [
     }
    
 ]
+
+export const shops = [
+  {
+    id: 1,
+    link: "/shops/1",
+    logo: "/shop/shop-logo-1.webp",
+    title: "Fresh Market",
+    address: "1234 Market St, San Francisco, CA 94102"
+  },
+  {
+    id: 2,
+    link: "/shops/2",
+    logo: "/shop/shop-logo-2.webp",
+    title: "Organic Foods",
+    address: "5678 Organic St, San Francisco, CA 94102"
+  },
+  {
+    id: 3,
+    link: "/shops/3",
+    logo: "/shop/shop-logo-3.webp",
+    title: "Farm Fresh",
+    address: "91011 Farm St, San Francisco, CA 94102"
+  },
+  {
+    id: 4,
+    link: "/shops/4",
+    logo: "/shop/shop-logo-4.webp",
+    title: "Healthy Living",
+    address: "121314 Health St, San Francisco, CA 94102"
+  },
+  {
+    id: 5,
+    link: "/shops/5",
+    logo: "/shop/shop-logo-5.webp",
+    title: "Fresh Produce",
+    address: "151617 Produce St, San Francisco, CA 94102"
+  },
+  {
+    id: 6,
+    link: "/shops/6",
+    logo: "/shop/shop-logo-6.webp",
+    title: "Farmers Market",
+    address: "181920 Farmer St, San Francisco, CA 94102"
+  },
+]

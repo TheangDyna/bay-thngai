@@ -18,8 +18,20 @@ interface LayoutProps {
 const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation(); // Hook to get the current route
 
+  // Mapping of route paths to human-readable names
+  const routeMap: { [key: string]: string } = {
+    search: "Search",
+    shop: "Shop"
+  };
+
+  // Show NavigationBarSearch for both `/shop` and `/search` pages
   const isShowSearchNavigatorBar = () => {
-    if (location.pathname === "/search") {
+    if (
+      location.pathname === "/search" ||
+      location.pathname === "/shops" ||
+      location.pathname.startsWith("/shops/") ||
+      location.pathname.startsWith("/search/")
+    ) {
       return <NavigationBarSearch />;
     } else {
       return <NavigationBar />;
@@ -29,7 +41,7 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
   // Function to generate dynamic breadcrumbs
   const generateBreadcrumbs = () => {
     if (location.pathname === "/") {
-      return null;
+      return null; // Don't show breadcrumbs on the home page
     }
 
     const paths = location.pathname.split("/").filter((path) => path);
@@ -47,8 +59,8 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
             }`}
             href={isLast ? "#" : fullPath} // Prevent navigating to the last breadcrumb
           >
-            {path.replace("-", " ")}{" "}
-            {/* Replace hyphens with spaces for better readability */}
+            {routeMap[path] || path.replace("-", " ")}{" "}
+            {/* Use routeMap for readable names, fallback to path */}
           </BreadcrumbLink>
         </BreadcrumbItem>
       );
@@ -83,7 +95,11 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
       <main className="flex-grow relative">
         {/* Breadcrumbs */}
         <div
-          className={`${location.pathname !== "/" ? "py-8 px-8 bg-white border-b text-md" : ""}`}
+          className={`${
+            location.pathname !== "/"
+              ? "py-8 px-8 bg-white border-b text-md"
+              : ""
+          }`}
         >
           {generateBreadcrumbs()}
         </div>

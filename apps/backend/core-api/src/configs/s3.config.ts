@@ -4,7 +4,7 @@ import { config } from "./config";
 export const s3Client = new S3Client({
   region: config.awsRegion,
   credentials: {
-    accessKeyId: config.awsAccessKeyId,
+    accessKeyId: config.awsAccessKey,
     secretAccessKey: config.awsSecretAccessKey
   }
 });

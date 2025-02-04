@@ -8,7 +8,7 @@ interface Config {
   awsCognitoClientId: string;
   awsCognitoClientSecret: string;
   awsRedirectUri: string;
-  awsAccessKeyId: string;
+  awsAccessKey: string;
   awsS3BucketName: string;
   awsSecretAccessKey: string;
   adminUrl: string;
@@ -25,7 +25,7 @@ const envMapping: Record<keyof Config, string> = {
   awsCognitoClientSecret: "AWS_COGNITO_CLIENT_SECRET",
   awsRedirectUri: "AWS_REDIRECT_URI",
   awsS3BucketName: "AWS_S3_BUCKET_NAME",
-  awsAccessKeyId: "AWS_ACCESS_KEY_ID",
+  awsAccessKey: "AWS_ACCESS_KEY",
   awsSecretAccessKey: "AWS_SECRET_ACCESS_KEY",
   adminUrl: "ADMIN_URL"
 };

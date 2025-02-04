@@ -5,18 +5,53 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CircleDot, Clock, DollarSign, Pencil, Trash2 } from "lucide-react";
 import { formatDistance } from "date-fns";
-import { useProductQuery } from "@/api/product.api";
+import { useDeleteProductMutation, useProductQuery } from "@/api/product.api";
 import Error from "@/pages/Error";
+import { useDeleteDialog } from "@/hooks/useDeleteDialog";
 
 const ProductDetail: React.FC = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const deleteDialog = useDeleteDialog();
+
+  const deleteProductMutation = useDeleteProductMutation(productId!);
+
+  const productQuery = useProductQuery(productId);
 
   const handleEditClick = () => {
     navigate(`/products/${productId}/edit`);
   };
 
-  const productQuery = useProductQuery(productId);
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    deleteDialog.openDialog({
+      onDelete: handleDelete
+    });
+  };
+
+  const handleDelete = () => {
+    deleteDialog.openDialog({
+      status: "deleting"
+    });
+    deleteProductMutation.mutate(undefined, {
+      onSuccess: () => {
+        deleteDialog.openDialog({
+          status: "success"
+        });
+        setTimeout(() => {
+          deleteDialog.closeDialog();
+          navigate(-1);
+        }, 3000);
+      },
+      onError: () => {
+        deleteDialog.openDialog({
+          status: "error",
+          onDelete: handleDelete
+        });
+        setTimeout(deleteDialog.closeDialog, 5000);
+      }
+    });
+  };
 
   if (productQuery.isPending) {
     return (
@@ -77,7 +112,7 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button size="icon" variant="destructive" onClick={() => {}}>
+          <Button size="icon" variant="destructive" onClick={handleDeleteClick}>
             <Trash2 className="h-5 w-5" />
           </Button>
           <Button size="icon" onClick={handleEditClick}>
@@ -158,6 +193,7 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      {deleteDialog.DialogComponent()}
     </>
   );
 };

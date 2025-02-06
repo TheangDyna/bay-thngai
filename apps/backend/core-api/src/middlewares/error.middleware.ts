@@ -10,7 +10,11 @@ import { formatZodErrors } from "../utils/formatZodErrors";
 
 const COGNITO_ERROR_MAP: Record<
   string,
-  { message: string; statusCode: number }
+  {
+    message: string;
+    statusCode: number;
+    specificMessages?: Record<string, string>;
+  }
 > = {
   UserNotFoundException: { message: "User not found.", statusCode: 404 },
   UsernameExistsException: {
@@ -31,7 +35,19 @@ const COGNITO_ERROR_MAP: Record<
   },
   NotAuthorizedException: {
     message: "Invalid username or password.",
-    statusCode: 401
+    statusCode: 401,
+    specificMessages: {
+      "Incorrect username or password.":
+        "The username or password is incorrect.",
+      "Access Token has been revoked":
+        "Your session has expired or is invalid. Please log in again."
+      // "User is disabled.":
+      //   "The user account is disabled. Please contact support.",
+      // "Password attempts exceeded.":
+      //   "You have exceeded the maximum number of login attempts. Please reset your password.",
+      // "Password reset required":
+      //   "A password reset is required for your account."
+    }
   }
 };
 
@@ -58,6 +74,15 @@ class ErrorHandler {
       statusCode: 500
     };
     const mappedError = COGNITO_ERROR_MAP[error.name] || defaultError;
+    if (
+      error.name === "NotAuthorizedException" &&
+      mappedError.specificMessages
+    ) {
+      const specificMessage =
+        mappedError.specificMessages[error.message] || mappedError.message;
+      return new AppError(specificMessage, mappedError.statusCode);
+    }
+
     return new AppError(mappedError.message, mappedError.statusCode);
   }
 

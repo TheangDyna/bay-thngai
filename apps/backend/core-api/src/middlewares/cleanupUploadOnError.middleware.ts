@@ -26,6 +26,7 @@ export const cleanupUploadOnError = async (
       await Promise.all(deletePromises);
     }
   } catch (cleanupError) {
+    // move to globle error
     logger.error("Failed to clean up S3 files:", cleanupError);
   } finally {
     next(err);

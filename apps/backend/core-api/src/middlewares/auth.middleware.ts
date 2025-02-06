@@ -17,8 +17,6 @@ const verifier = CognitoJwtVerifier.create({
   clientId: config.awsCognitoClientId
 });
 
-// note when logout access_token still valid
-
 export const protect = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -37,33 +35,20 @@ export const protect = async (
     }
 
     let payload;
+    const authService = new AuthService();
 
     if (!accessToken && username && refreshToken) {
-      try {
-        const authService = new AuthService();
-        const cognitoToken = await authService.refreshAccessToken(
-          username,
-          refreshToken
-        );
+      const cognitoToken = await authService.refreshAccessToken(
+        username,
+        refreshToken
+      );
 
-        setAuthCookies(res, cognitoToken);
+      setAuthCookies(res, cognitoToken);
 
-        payload = await verifier.verify(cognitoToken.accessToken);
-      } catch (error) {
-        throw new AppError(
-          "Your session has expired or is invalid. Please log in again.",
-          401
-        );
-      }
+      payload = await verifier.verify(cognitoToken.accessToken);
     } else {
-      try {
-        payload = await verifier.verify(accessToken);
-      } catch (error) {
-        throw new AppError(
-          "Your session has expired or is invalid. Please log in again.",
-          401
-        );
-      }
+      await authService.verifyTokenWithCognito(accessToken);
+      payload = await verifier.verify(accessToken);
     }
 
     if (!payload || !payload.username) {

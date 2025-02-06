@@ -5,6 +5,8 @@ import {
   ConfirmSignUpCommand,
   ConfirmSignUpCommandInput,
   ForgotPasswordCommand,
+  GetUserCommand,
+  GetUserCommandInput,
   GlobalSignOutCommand,
   GlobalSignOutCommandInput,
   InitiateAuthCommand,
@@ -303,6 +305,14 @@ export class AuthService {
       AccessToken: accessToken
     };
     const command = new GlobalSignOutCommand(params);
+    await cognitoClient.send(command);
+  }
+
+  public async verifyTokenWithCognito(accessToken: string): Promise<void> {
+    const params: GetUserCommandInput = {
+      AccessToken: accessToken
+    };
+    const command = new GetUserCommand(params);
     await cognitoClient.send(command);
   }
 }

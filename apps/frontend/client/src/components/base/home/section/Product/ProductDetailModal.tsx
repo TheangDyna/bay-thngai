@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, Minus, Plus, Share, ShoppingBag, Tag } from "lucide-react";
 import ShareLink from "@/components/base/ShareLink";
-import { products } from "@/data/constants/data";
+import { products } from "@/utils/data/constants/data";
 import CardProduct from "@/components/base/CardProduct";
 
 interface ProductDetailModalProps {

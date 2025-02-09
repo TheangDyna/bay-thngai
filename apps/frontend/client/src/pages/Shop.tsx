@@ -1,6 +1,6 @@
 import ShopCard from "@/components/base/shop/ShopCard";
-import DownloadBanner from "@/components/pages/DownloadBanner";
-import { shops } from "@/data/constants/data";
+import DownloadBanner from "@/components/DownloadBanner";
+import { shops } from "@/utils/data/constants/data";
 
 const Shop = () => {
   return (

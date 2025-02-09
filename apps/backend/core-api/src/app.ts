@@ -20,7 +20,12 @@ const app = express();
 // Security middleware
 app.use("/api", rateLimiter);
 app.use(helmet());
-app.use(cors({ origin: [config.adminUrl, "*"], credentials: true }));
+app.use(
+  cors({
+    origin: [config.adminUrl, "http://localhost:3000"],
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CardProduct from "../../../CardProduct";
 import BannerHeader from "../../../BannerHeader";
-import { products } from "@/data/constants/data";
+import { products } from "@/utils/data/constants/data";
 import ProductDetailModal from "./ProductDetailModal";
 
 const ProductSection: React.FC = () => {

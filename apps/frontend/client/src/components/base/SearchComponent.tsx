@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { SearchIcon } from "lucide-react";
-import { products } from "@/data/constants/data";
+import { products } from "@/utils/data/constants/data";
 
 const SearchComponent = () => {
   const [searchQuery, setSearchQuery] = useState("");

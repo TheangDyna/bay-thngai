@@ -151,7 +151,9 @@ export const errorHandler = (
     })
   };
 
-  logger.error(logData);
+  if (error.statusCode === 500) {
+    logger.error(logData);
+  }
 
   res.status(error.statusCode).json({
     status: error.status,

@@ -5,7 +5,7 @@ import ProductSection from "@/components/base/home/section/Product/ProductSectio
 import Promotion from "@/components/base/home/Promotion";
 import CardPackageSwiper from "@/components/base/home/card/CardPackageSwiper";
 import CollectionSection from "@/components/base/home/section/CollectionSection";
-import DownloadBanner from "@/components/pages/DownloadBanner";
+import DownloadBanner from "@/components/DownloadBanner";
 
 const Home = () => {
   return (

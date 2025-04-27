@@ -1,7 +1,7 @@
 import { Check, CirclePlus } from "lucide-react";
 import { Column } from "@tanstack/react-table";
 
-import { cn } from "@/libs/utils";
+import { cn } from "@/utils/cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -125,6 +125,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 );
               })}
             </CommandGroup>
+
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />

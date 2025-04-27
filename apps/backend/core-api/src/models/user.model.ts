@@ -22,7 +22,4 @@ const userSchema = new Schema<IUserDocument>(
   defaultSchemaOptions
 );
 
-userSchema.index({ email: 1 });
-userSchema.index({ cognitoId: 1 });
-
 export const User = mongoose.model<IUserDocument>("User", userSchema);

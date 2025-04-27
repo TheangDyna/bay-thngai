@@ -1,11 +1,11 @@
 import { z } from "zod";
 import {
-  ConfirmSignUpSchema,
+  ConfirmRegisterSchema,
   ForgotPasswordSchema,
   ResendConfirmCodeSchema,
   ResetPasswordSchema,
-  SignInSchema,
-  SignUpSchema
+  LoginSchema,
+  RegisterSchema
 } from "../validators/auth.validators";
 
 export interface AuthResponse {
@@ -29,9 +29,9 @@ export interface UserInfoFromIdToken {
   [key: string]: any;
 }
 
-export type SignUpInput = z.infer<typeof SignUpSchema>;
+export type RegisterInput = z.infer<typeof RegisterSchema>;
 export type ResendConfirmCodeUpInput = z.infer<typeof ResendConfirmCodeSchema>;
-export type ConfirmSignUpInput = z.infer<typeof ConfirmSignUpSchema>;
-export type SignInInput = z.infer<typeof SignInSchema>;
+export type ConfirmRegisterInput = z.infer<typeof ConfirmRegisterSchema>;
+export type LoginInput = z.infer<typeof LoginSchema>;
 export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;

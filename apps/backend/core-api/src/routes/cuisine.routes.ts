@@ -11,7 +11,8 @@ import { GenericRepository } from "../repositories/generic.repository";
 import { GenericService } from "../services/generic.service";
 
 const router = Router();
-const cuisineRepository = new GenericRepository(Cuisine);
+const searchFields = ["name", "description"];
+const cuisineRepository = new GenericRepository(Cuisine, searchFields);
 const cuisineService = new GenericService(cuisineRepository);
 const cuisineController = new GenericController(cuisineService);
 

@@ -5,6 +5,8 @@ import {
   ConfirmSignUpCommand,
   ConfirmSignUpCommandInput,
   ForgotPasswordCommand,
+  GetUserCommand,
+  GetUserCommandInput,
   GlobalSignOutCommand,
   GlobalSignOutCommandInput,
   InitiateAuthCommand,
@@ -18,12 +20,12 @@ import { cognitoClient } from "../configs/cognito.config";
 import { config } from "../configs/config";
 import {
   CognitoToken,
-  ConfirmSignUpInput,
+  ConfirmRegisterInput,
   ForgotPasswordInput,
   ResendConfirmCodeUpInput,
   ResetPasswordInput,
-  SignInInput,
-  SignUpInput
+  LoginInput,
+  RegisterInput
 } from "../types/auth.types";
 import { UserService } from "./user.service";
 import { AppError } from "../utils/appError";
@@ -56,7 +58,7 @@ export class AuthService {
     return userInfo;
   }
 
-  public async signUp(data: SignUpInput): Promise<void> {
+  public async register(data: RegisterInput): Promise<void> {
     const { email, password } = data;
 
     const params: SignUpCommandInput = {
@@ -85,7 +87,7 @@ export class AuthService {
     await cognitoClient.send(command);
   }
 
-  public async confirmSignUp(data: ConfirmSignUpInput): Promise<void> {
+  public async confirmRegister(data: ConfirmRegisterInput): Promise<void> {
     const { email, code } = data;
 
     const params: ConfirmSignUpCommandInput = {
@@ -111,7 +113,7 @@ export class AuthService {
     await this.userService.createOne(userData);
   }
 
-  public async signIn(data: SignInInput): Promise<CognitoToken> {
+  public async login(data: LoginInput): Promise<CognitoToken> {
     const { email, password } = data;
 
     const params: InitiateAuthCommandInput = {
@@ -298,11 +300,19 @@ export class AuthService {
     await cognitoClient.send(command);
   } // not yet
 
-  public async signOut(accessToken: string): Promise<void> {
+  public async logOut(accessToken: string): Promise<void> {
     const params: GlobalSignOutCommandInput = {
       AccessToken: accessToken
     };
     const command = new GlobalSignOutCommand(params);
+    await cognitoClient.send(command);
+  }
+
+  public async verifyTokenWithCognito(accessToken: string): Promise<void> {
+    const params: GetUserCommandInput = {
+      AccessToken: accessToken
+    };
+    const command = new GetUserCommand(params);
     await cognitoClient.send(command);
   }
 }

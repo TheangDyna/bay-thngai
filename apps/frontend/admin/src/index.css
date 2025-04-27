@@ -81,3 +81,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+.lab-bg {
+  --mask-offset: 400px;
+  -webkit-mask: linear-gradient(
+      to bottom,
+      transparent,
+      #fff var(--mask-offset) calc(100% - var(--mask-offset)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #fff var(--mask-offset) calc(100% - var(--mask-offset)),
+      transparent
+    );
+  mask: linear-gradient(
+      to bottom,
+      transparent,
+      #fff var(--mask-offset) calc(100% - var(--mask-offset)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #fff var(--mask-offset) calc(100% - var(--mask-offset)),
+      transparent
+    );
+  -webkit-mask-composite: source-in, xor;
+  mask-composite: intersect;
+}

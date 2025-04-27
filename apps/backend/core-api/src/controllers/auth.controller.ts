@@ -1,19 +1,21 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { catchAsync } from "../utils/catchAsync";
-import { clearCookie, setCookie } from "../utils/cookie";
+import { setAuthCookies, clearAllCookies } from "../utils/cookie";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
+import { config } from "../configs/config";
 
 export class AuthController {
   private authService = new AuthService();
 
-  public signUp = catchAsync(
+  public register = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      await this.authService.signUp(req.body);
+      await this.authService.register(req.body);
 
       res.status(201).json({
         status: "success",
-        message: "User signed up successfully. Please confirm your email."
+        message:
+          "Registration successful! Please check your email to confirm your account."
       });
     }
   );
@@ -21,43 +23,40 @@ export class AuthController {
   public resendConfirmCode = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       await this.authService.resendConfirmCode(req.body);
+
       res.status(200).json({
         status: "success",
-        message: "Resend code successfully. Please confirm your email."
+        message:
+          "A new confirmation code has been sent! Please check your email."
       });
     }
   );
 
-  public confirmSignUp = catchAsync(
+  public confirmRegister = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      await this.authService.confirmSignUp(req.body);
+      await this.authService.confirmRegister(req.body);
+
       res.status(200).json({
         status: "success",
-        message: "User confirmed successfully."
+        message: "Your account has been successfully confirmed!"
       });
     }
   );
 
-  public signIn = catchAsync(async (req: Request, res: Response) => {
-    const cognitoToken = await this.authService.signIn(req.body);
+  public login = catchAsync(async (req: Request, res: Response) => {
+    const cognitoToken = await this.authService.login(req.body);
 
-    setCookie(res, "id_token", cognitoToken.idToken);
-    setCookie(res, "access_token", cognitoToken.accessToken);
-    setCookie(res, "refresh_token", cognitoToken.refreshToken, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
-    setCookie(res, "username", cognitoToken.username, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
+    setAuthCookies(res, cognitoToken);
 
     res.status(200).json({
       status: "success",
-      message: "User signed in successfully."
+      message: "You have successfully logged in!"
     });
   });
 
   public googleLogin = catchAsync(async (_req: Request, res: Response) => {
     const cognitoOAuthURL = await this.authService.googleLogin();
+
     res.status(200).json({
       status: "success",
       data: cognitoOAuthURL
@@ -67,34 +66,32 @@ export class AuthController {
   public googleCallback = catchAsync(async (req: Request, res: Response) => {
     const cognitoToken = await this.authService.googleCallback(req.query);
 
-    setCookie(res, "id_token", cognitoToken.idToken);
-    setCookie(res, "access_token", cognitoToken.accessToken);
-    setCookie(res, "refresh_token", cognitoToken.refreshToken, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
-    setCookie(res, "username", cognitoToken.username, {
-      maxAge: 30 * 24 * 3600 * 1000 // 30 days
-    });
+    setAuthCookies(res, cognitoToken);
 
-    res.status(200).json({
-      status: "success",
-      message: "User signed in successfully."
-    });
+    // redirect specific target
+    // const { target } = req.query;
+
+    // if (target === "admin") {
+    //   res.redirect("https://your-app.com/admin-dashboard");
+    // } else if (target === "user") {
+    //   res.redirect("https://your-app.com/user-dashboard");
+    // } else {
+    //   res.redirect("https://your-app.com");
+    // }
+    res.redirect(config.adminUrl);
   });
 
-  public signOut = catchAsync(async (req: Request, res: Response) => {
+  public logOut = catchAsync(async (req: Request, res: Response) => {
     const tokens = req.cookies;
     const accessToken = tokens["access_token"];
 
-    await this.authService.signOut(accessToken);
+    await this.authService.logOut(accessToken);
 
-    for (const token in tokens) {
-      clearCookie(res, token);
-    }
+    clearAllCookies(res, req.cookies);
 
     res.status(200).json({
       status: "success",
-      message: "User signed out successfully."
+      message: "You have successfully logged out!"
     });
   });
 

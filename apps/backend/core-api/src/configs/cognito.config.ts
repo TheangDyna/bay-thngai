@@ -4,7 +4,7 @@ import { config } from "./config";
 export const cognitoClient = new CognitoIdentityProviderClient({
   region: config.awsRegion,
   credentials: {
-    accessKeyId: config.awsAccessKeyId,
+    accessKeyId: config.awsAccessKey,
     secretAccessKey: config.awsSecretAccessKey
   }
 });

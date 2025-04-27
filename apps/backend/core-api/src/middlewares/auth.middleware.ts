@@ -5,7 +5,7 @@ import { UserService } from "../services/user.service";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import { IUserDocument, UserRole } from "../types/user.types";
 import { AuthService } from "../services/auth.service";
-import { setCookie } from "../utils/cookie";
+import { setAuthCookies } from "../utils/cookie";
 
 export interface AuthenticatedRequest extends Request {
   user?: IUserDocument;
@@ -29,59 +29,39 @@ export const protect = async (
 
     if (!accessToken && !refreshToken) {
       throw new AppError(
-        "You are not logged in. Please log in to access this route.",
+        "You are not logged in. Please log in to access this page.",
         401
       );
     }
 
     let payload;
+    const authService = new AuthService();
 
     if (!accessToken && username && refreshToken) {
-      try {
-        const authService = new AuthService();
-        const cognitoToken = await authService.refreshAccessToken(
-          username,
-          refreshToken
-        );
+      const cognitoToken = await authService.refreshAccessToken(
+        username,
+        refreshToken
+      );
 
-        // Set new tokens in cookies
-        setCookie(res, "id_token", cognitoToken.idToken);
-        setCookie(res, "access_token", cognitoToken.accessToken);
-        setCookie(res, "refresh_token", cognitoToken.refreshToken, {
-          maxAge: 30 * 24 * 3600 * 1000 // 30 days
-        });
-        setCookie(res, "username", cognitoToken.username, {
-          maxAge: 30 * 24 * 3600 * 1000 // 30 days
-        });
+      setAuthCookies(res, cognitoToken);
 
-        payload = await verifier.verify(cognitoToken.accessToken);
-      } catch (error) {
-        throw new AppError(
-          "Invalid or expired token. Please log in again.",
-          401
-        );
-      }
+      payload = await verifier.verify(cognitoToken.accessToken);
     } else {
-      try {
-        payload = await verifier.verify(accessToken);
-      } catch (error) {
-        throw new AppError(
-          "Invalid or expired token. Please log in again.",
-          401
-        );
-      }
+      await authService.verifyTokenWithCognito(accessToken);
+      payload = await verifier.verify(accessToken);
     }
 
     if (!payload || !payload.username) {
-      throw new AppError("Invalid or expired token. Please log in again.", 401);
+      throw new AppError("Your session is invalid. Please log in again.", 401);
     }
+
     try {
       const userService = new UserService();
       const user = await userService.getBy({ cognitoId: payload.sub });
       req.user = user;
     } catch (error) {
       throw new AppError(
-        "User associated with this token no longer exists.",
+        "The user associated with this session no longer exists. Please contact support if this is unexpected.",
         401
       );
     }
@@ -97,7 +77,7 @@ export const restrictTo =
   (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
       throw new AppError(
-        "You do not have permission to perform this action.",
+        "You do not have the necessary permissions to perform this action.",
         403
       );
     }

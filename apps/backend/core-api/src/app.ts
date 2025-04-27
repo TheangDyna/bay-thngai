@@ -18,7 +18,7 @@ import { config } from "./configs/config";
 const app = express();
 
 // Security middleware
-app.use("/api", rateLimiter);
+app.use(rateLimiter);
 app.use(helmet());
 app.use(
   cors({

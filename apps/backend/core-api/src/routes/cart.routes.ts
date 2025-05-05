@@ -1,31 +1,20 @@
 import { Router } from "express";
-import {
-  CreateCartSchema,
-  UpdateCartSchema
-} from "../validators/cart.validators";
 import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { GenericController } from "../controllers/generic.controller";
-import { Cart } from "../models/cart.model";
-import { GenericRepository } from "../repositories/generic.repository";
-import { GenericService } from "../services/generic.service";
+import { AddToCartSchema } from "@/src/validators/cart.validators";
+import { CartController } from "@/src/controllers/cart.controller";
 
 const router = Router();
-const cartRepository = new GenericRepository(Cart);
-const cartService = new GenericService(cartRepository);
-const cartController = new GenericController(cartService);
+const cartController = new CartController();
 
 router.use(protect, restrictTo("user", "admin"));
 
 router
   .route("/")
-  .get(cartController.getAll)
-  .post(validate(CreateCartSchema), cartController.createOne);
+  .get(cartController.getCart)
+  .post(validate(AddToCartSchema), cartController.addToCart)
+  .delete(cartController.clearCart);
 
-router
-  .route("/:id")
-  .get(cartController.getOne)
-  .patch(validate(UpdateCartSchema), cartController.updateOne)
-  .delete(cartController.deleteOne);
+router.route("/:productId").delete(cartController.removeFromCart);
 
 export const cartRoutes = router;

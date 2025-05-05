@@ -12,6 +12,7 @@ interface Config {
   awsS3BucketName: string;
   awsSecretAccessKey: string;
   adminUrl: string;
+  clientUrl: string;
 }
 
 const envMapping: Record<keyof Config, string> = {
@@ -27,7 +28,8 @@ const envMapping: Record<keyof Config, string> = {
   awsS3BucketName: "AWS_S3_BUCKET_NAME",
   awsAccessKey: "AWS_ACCESS_KEY",
   awsSecretAccessKey: "AWS_SECRET_ACCESS_KEY",
-  adminUrl: "ADMIN_URL"
+  adminUrl: "ADMIN_URL",
+  clientUrl: "CLIENT_URL"
 };
 
 const ensureEnv = (envMapping: Record<keyof Config, string>): Config => {

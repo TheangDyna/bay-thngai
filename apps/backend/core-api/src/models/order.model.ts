@@ -1,20 +1,43 @@
-import mongoose, { Schema } from "mongoose";
-import { IOrderDocument } from "../types/order.types";
-import { defaultSchemaOptions } from "../utils/schemaOptions";
-import { cartProductSchema } from "./cart.model";
+import { Schema, model, Document } from "mongoose";
 
-const orderSchema = new mongoose.Schema<IOrderDocument>(
+interface OrderItem {
+  product: Schema.Types.ObjectId;
+  quantity: number;
+  price: number;
+}
+
+export interface IOrderDocument extends Document {
+  user: string;
+  items: OrderItem[];
+  total: number;
+  paymentStatus: "pending" | "paid" | "failed";
+  paymentRef?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const OrderItemSchema = new Schema<OrderItem>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
-    products: [cartProductSchema],
-    total: { type: Number },
-    status: { type: String },
-    shippingAddress: {
-      coordinates: [{ type: Number }]
-    }
-    // discount:
+    product: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    quantity: { type: Number, required: true },
+    price: { type: Number, required: true }
   },
-  defaultSchemaOptions
+  { _id: false }
 );
 
-export const Order = mongoose.model<IOrderDocument>("Order", orderSchema);
+const OrderSchema = new Schema<IOrderDocument>(
+  {
+    user: { type: String, ref: "User", required: true },
+    items: { type: [OrderItemSchema], required: true },
+    total: { type: Number, required: true },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      default: "pending"
+    },
+    paymentRef: String
+  },
+  { timestamps: true }
+);
+
+export const Order = model<IOrderDocument>("Order", OrderSchema);

@@ -1,19 +1,17 @@
+import { ObjectIdSchema } from "@/src/utils/objectIdSchema";
 import { z } from "zod";
-import { ObjectIdSchema } from "../utils/objectIdSchema";
 
-export const CartProductSchema = z
-  .object({
-    product: ObjectIdSchema,
-    quantity: z.number().int().min(1)
-  })
-  .strict();
+export const CartItemSchema = z.object({
+  product: ObjectIdSchema,
+  quantity: z.number().int().min(1)
+});
 
-export const CartSchema = z
-  .object({
-    user: ObjectIdSchema,
-    products: z.array(CartProductSchema).min(1)
-  })
-  .strict();
+export const CartSchema = z.object({
+  user: ObjectIdSchema,
+  items: z.array(CartItemSchema)
+});
 
-export const CreateCartSchema = CartSchema;
-export const UpdateCartSchema = CartSchema.partial();
+export const AddToCartSchema = z.object({
+  productId: ObjectIdSchema,
+  quantity: z.number().int().default(1)
+});

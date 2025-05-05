@@ -1,21 +1,47 @@
 import mongoose, { Schema } from "mongoose";
-import { ICartDocument, ICartProduct } from "../types/cart.types";
 import { defaultSchemaOptions } from "../utils/schemaOptions";
+import { ICartDocument } from "@/src/types/cart.types";
 
-export const cartProductSchema = new mongoose.Schema<ICartProduct>(
+const CartItemSchema = new Schema(
   {
-    product: { type: Schema.Types.ObjectId, ref: "Product" },
-    quantity: { type: Number }
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+      required: true
+    },
+    quantity: {
+      type: Number,
+      default: 1,
+      min: 1
+    }
   },
   { _id: false }
 );
 
-const cartSchema = new mongoose.Schema<ICartDocument>(
+const CartSchema = new Schema<ICartDocument>(
   {
-    user: { type: Schema.Types.ObjectId, ref: "User" },
-    products: [cartProductSchema]
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true
+    },
+    items: {
+      type: [CartItemSchema],
+      default: []
+    }
   },
   defaultSchemaOptions
 );
 
-export const Cart = mongoose.model<ICartDocument>("Cart", cartSchema);
+CartSchema.pre(
+  /^find/,
+  function (this: mongoose.Query<any, ICartDocument>, next) {
+    this.populate({ path: "items.product", select: "name price thumbnail" });
+    next();
+  }
+);
+
+export const Cart = mongoose.model<ICartDocument>("Cart", CartSchema);
+
+export { ICartDocument };

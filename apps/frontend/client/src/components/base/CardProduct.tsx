@@ -7,7 +7,6 @@ interface ProductCardProps {
   price: string;
   originalPrice?: string;
   unit: string;
-  isOnSale?: boolean;
   onAddToCart?: () => void;
   onViewDetails?: () => void;
   onClickProductModalDetails?: () => void;
@@ -20,7 +19,6 @@ const CardProduct: React.FC<ProductCardProps> = ({
   price,
   originalPrice,
   unit,
-  isOnSale = false,
   onAddToCart,
   onViewDetails,
   onClickProductModalDetails,
@@ -31,13 +29,6 @@ const CardProduct: React.FC<ProductCardProps> = ({
       onClick={onClickProductModalDetails}
       className={`relative cursor-pointer bg-white shadow-sm rounded-lg p-4 w-full max-w-[300px] h-[350px] shrink-0 group hover:shadow-md transition-shadow duration-300 ${className}`}
     >
-      {/* Sale Badge */}
-      {isOnSale && (
-        <div className="absolute top-6 left-6 bg-green-500 text-white text-xs font-bold rounded-full px-3 py-1 z-10">
-          ON SALE
-        </div>
-      )}
-
       {/* Product Image */}
       <div className="relative flex justify-center items-center overflow-hidden rounded-md h-[200px] bg-gray-100 group">
         <img

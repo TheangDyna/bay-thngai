@@ -14,6 +14,7 @@ import { cartRoutes } from "./routes/cart.routes";
 import { orderRoutes } from "./routes/order.routes";
 import { reviewRoutes } from "./routes/review.routes";
 import { config } from "./configs/config";
+import { paymentRoutes } from "@/src/routes/payment.routes";
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use(rateLimiter);
 app.use(helmet());
 app.use(
   cors({
-    origin: [config.adminUrl, "http://localhost:3000"],
+    origin: [config.adminUrl, config.clientUrl],
     credentials: true
   })
 );
@@ -43,6 +44,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/carts", cartRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/v1/payments", paymentRoutes);
 
 // Error handling
 app.use(routeNotFound);

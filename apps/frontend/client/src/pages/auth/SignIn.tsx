@@ -1,13 +1,74 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, LogIn } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+import { LoginInput } from "@/types/auth.types";
+import { useLoginMutation, useGoogleLoginMutation } from "@/api/auth.api";
+import { LoginSchema } from "@/validators/auth.validators";
+
+const defaultValues: Partial<LoginInput> = {
+  email: "",
+  password: ""
+};
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const form = useForm<LoginInput>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues
+  });
+
+  const loginMutation = useLoginMutation();
+  const googleLoginMutation = useGoogleLoginMutation();
+
+  const onSubmit = (data: LoginInput) => {
+    loginMutation.mutate(data, {
+      onSuccess: (res) => {
+        toast({ description: res.message });
+        form.reset();
+        navigate("/dashboard", { replace: true });
+      },
+      onError: (err: any) => {
+        toast({
+          description:
+            err.response?.data?.message ||
+            "Something went wrong. Please try again.",
+          variant: "destructive"
+        });
+      }
+    });
+  };
+
+  const handleGoogleLogin = () => {
+    googleLoginMutation.mutate(undefined, {
+      onSuccess: (res) => {
+        // redirect to Google OAuth
+        window.location.href = res.data;
+      },
+      onError: (err: any) => {
+        toast({
+          description: err.response?.data?.message || "An error occurred",
+          variant: "destructive"
+        });
+      }
+    });
+  };
+
+  const handleFacebookLogin = () => {
+    // implement facebook login mutation if available
+    toast({ description: "Facebook login not set up yet." });
+  };
 
   return (
     <Dialog>
@@ -19,14 +80,18 @@ const SignIn = () => {
           <LogIn /> Sign In
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[1025px] rounded-[16px] overflow-hidden p-0 m-0 flex items-center justify-between">
-        <div className="max-w-full h-[600px]">
+
+      <DialogContent className="max-w-[1025px] rounded-[16px] p-0 m-0 flex">
+        {/* Left image */}
+        <div className="w-full h-[600px]">
           <img
             src="/login.webp"
-            alt="login-background"
+            alt="login-bg"
             className="w-full h-full object-cover"
           />
         </div>
+
+        {/* Right form */}
         <div className="w-[500px] h-[600px] flex flex-col items-center justify-center p-8">
           <img
             src="/bay-thngai-logo.svg"
@@ -34,56 +99,98 @@ const SignIn = () => {
             className="h-[100px] w-[100px]"
           />
           <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
-          <span className="text-sm">
+          <span className="text-sm mb-6">
             Don’t have an account?
-            <Button variant="link" className="text-primary ml-1">
-              Create Account
-            </Button>
+            <Link to="/signup">
+              <Button variant="link" className="text-primary ml-1">
+                Create Account
+              </Button>
+            </Link>
           </span>
-          <div className="w-full flex flex-col items-center space-y-4">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
+
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="w-full flex flex-col items-center space-y-4"
+          >
+            {/* Email */}
+            <div className="grid w-full max-w-sm gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input type="email" id="email" placeholder="Email" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                {...form.register("email")}
+              />
+              {form.formState.errors.email && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5 relative">
+
+            {/* Password */}
+            <div className="grid w-full max-w-sm gap-1.5 relative">
               <Label htmlFor="password">Password</Label>
               <Input
-                type={showPassword ? "text" : "password"}
                 id="password"
-                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                {...form.register("password")}
               />
               <Button
+                type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-1 top-5 hover:bg-transparent hover:outline-none focus:outline-none  text-secondary hover:text-primary"
+                className="absolute right-1 top-8 p-0 hover:bg-transparent focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </Button>
+              {form.formState.errors.password && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.password.message}
+                </p>
+              )}
             </div>
-          </div>
-          <div className="w-full flex items-center justify-between mt-4">
-            <div className="flex items-center space-x-2">
-              <Switch id="remember-me" />
-              <Label htmlFor="remember-me">Remember me</Label>
+
+            {/* Remember & forgot */}
+            <div className="w-full flex items-center justify-between mt-2">
+              <div className="flex items-center space-x-2">
+                <Switch id="remember-me" />
+                <Label htmlFor="remember-me">Remember me</Label>
+              </div>
+              <Link to="/forgot-password">
+                <Button variant="link" className="text-primary">
+                  Forgot Password?
+                </Button>
+              </Link>
             </div>
-            <Button variant="link" className="text-primary">
-              Forgot Password?
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full mt-4 rounded-full"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? "Signing in..." : "Sign In"}
             </Button>
-          </div>
-          <Button className="w-full mt-4 rounded-full">Sign In</Button>
-          <Label className="my-4">Or Login with </Label>
-          <div className="flex space-x-4 mt-2">
+          </form>
+
+          <Label className="my-4">Or login with</Label>
+          <div className="flex space-x-4">
             <Button
               variant="outline"
-              className="flex items-center space-x-2 hover:outline-none hover:bg-transparent hover:text-primary rounded-full"
+              className="flex items-center space-x-2 rounded-full"
+              onClick={handleGoogleLogin}
+              disabled={googleLoginMutation.isPending}
             >
               <img src="/google.webp" alt="Google" className="h-5 w-5" />
               <span>Google</span>
             </Button>
             <Button
               variant="outline"
-              className="flex items-center space-x-2 hover:outline-none hover:bg-transparent hover:text-primary rounded-full"
+              className="flex items-center space-x-2 rounded-full"
+              onClick={handleFacebookLogin}
             >
               <img src="/facebook.png" alt="Facebook" className="h-5 w-5" />
               <span>Facebook</span>

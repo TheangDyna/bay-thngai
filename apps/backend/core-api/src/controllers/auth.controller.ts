@@ -69,16 +69,13 @@ export class AuthController {
     setAuthCookies(res, cognitoToken);
 
     // redirect specific target
-    // const { target } = req.query;
+    const { target } = req.query;
 
-    // if (target === "admin") {
-    //   res.redirect("https://your-app.com/admin-dashboard");
-    // } else if (target === "user") {
-    //   res.redirect("https://your-app.com/user-dashboard");
-    // } else {
-    //   res.redirect("https://your-app.com");
-    // }
-    res.redirect(config.adminUrl);
+    if (target === "admin") {
+      res.redirect(config.adminUrl);
+    } else {
+      res.redirect(config.clientUrl);
+    }
   });
 
   public logOut = catchAsync(async (req: Request, res: Response) => {

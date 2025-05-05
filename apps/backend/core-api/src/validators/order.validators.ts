@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ObjectIdSchema } from "../utils/objectIdSchema";
-import { CartProductSchema } from "./cart.validators";
+// import { CartProductSchema } from "./cart.validators";
 
 export const OrderStatusSchema = z.enum([
   "pending",
@@ -12,7 +12,7 @@ export const OrderStatusSchema = z.enum([
 export const OrderSchema = z
   .object({
     user: ObjectIdSchema,
-    products: z.array(CartProductSchema).min(1),
+    products: z.array(z.string()),
     total: z.number().positive(),
     status: OrderStatusSchema.optional().default("pending"),
     shippingAddress: z.object({

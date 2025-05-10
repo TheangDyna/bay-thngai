@@ -15,7 +15,6 @@ export const PaywayIframe: React.FC<Props> = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    console.log("▶️ submitting payload:", payload);
     formRef.current?.submit();
   }, [payload]);
 
@@ -23,7 +22,12 @@ export const PaywayIframe: React.FC<Props> = ({
     <Modal onClose={onClose}>
       <iframe
         name="payway_iframe"
-        style={{ width: "100%", height: "80vh", border: "none" }}
+        style={{
+          width: "100%",
+          minHeight: "80vh",
+          height: "100%",
+          border: "none"
+        }}
       />
       <form
         ref={formRef}

@@ -57,15 +57,20 @@ export class PaymentService {
       email?: string;
       phone?: string;
     };
-  }): Promise<{ endpoint: string; payload: Record<string, string> }> {
+  }): Promise<{
+    endpoint: string;
+    payload: Record<string, string> | FormData;
+  }> {
     const req_time = this.makeReqTime();
     const { orderId, amount, items, customer = {} } = input;
+
+    console.log(orderId, amount, items, customer);
 
     // 1) Build fields
     const fields: Record<string, string> = {
       req_time,
       merchant_id: this.merchantId,
-      tran_id: orderId,
+      tran_id: req_time,
       amount: amount.toString(),
       currency: "USD",
       items: Buffer.from(JSON.stringify(items)).toString("base64"),
@@ -74,50 +79,45 @@ export class PaymentService {
       lastname: customer.lastname || "",
       email: customer.email || "",
       phone: customer.phone || "",
-      type: "purchase",
-      payment_option: "",
-      return_url: `${process.env.FRONTEND_URL}/payments/callback`,
-      cancel_url: `${process.env.FRONTEND_URL}/payments/cancel`,
-      continue_success_url: `${process.env.FRONTEND_URL}/payments/success`,
+      type: "",
+      return_url: `${process.env.CLIENT_URL}`,
+      cancel_url: `${process.env.CLIENT_URL}`,
+      continue_success_url: `${process.env.CLIENT_URL}`,
       return_deeplink: "",
       custom_fields: "",
       return_params: "",
-      payout: "",
       lifetime: "",
       additional_params: "",
-      google_pay_token: ""
+      google_pay_token: "",
+      payment_gate: "0"
     };
 
     // 2) Add hash
     fields.hash = this.generateHash(fields);
 
     // 3) POST as multipart/form-data
-    const form = new FormData();
-    Object.entries(fields).forEach(([k, v]) => form.append(k, v));
+    // const form = new FormData();
+    // Object.entries(fields).forEach(([k, v]) => form.append(k, v));
 
     // const resp = await axios.post(
     //   `${this.baseUrl}/api/payment-gateway/v1/payments/purchase`,
     //   form,
-    //   { headers: form.getHeaders() }
+    //   {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //       ...form.getHeaders()
+    //     }
+    //   }
     // );
+
+    // console.log(resp);
 
     // const html = resp.data as string;
 
-    // 4) Parse with cheerio
-    // const $ = cheerio.load(html);
-    // const $form = $("form");
-    // if (!$form.length) {
-    //   throw new Error("No <form> found in PayWay response");
-    // }
-
     const endpoint = `${this.baseUrl}/api/payment-gateway/v1/payments/purchase`;
-    // const payload: Record<string, string> = {};
-    // $form.find("input").each((_, el) => {
-    //   const name = $(el).attr("name");
-    //   if (name) {
-    //     payload[name] = $(el).attr("value") || "";
-    //   }
-    // });
+
+    console.log(fields);
+    // console.log(form);
 
     return { endpoint, payload: fields };
   }

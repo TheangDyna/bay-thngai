@@ -85,10 +85,14 @@ const Cart: React.FC = () => {
     );
   };
 
+  const MAX_TRAN_ID = 20;
+  const rawTranId =
+    cartId?.length > MAX_TRAN_ID ? cartId.substring(0, MAX_TRAN_ID) : cartId;
+
   // 4) Checkout → shadcn Dialog + iframe
   const handleCheckout = async () => {
     const payload = {
-      orderId: cartId!,
+      orderId: rawTranId,
       amount: subtotal,
       items: items.map((i) => ({
         name: i.product.name,
@@ -183,7 +187,11 @@ const Cart: React.FC = () => {
                   <span className="font-semibold">Subtotal:</span>
                   <span className="font-semibold">${subtotal.toFixed(2)}</span>
                 </div>
-                <Button onClick={handleCheckout} className="w-full">
+                <Button
+                  onClick={handleCheckout}
+                  disabled={isCreatingOrder || isPaying || items.length === 0}
+                  className="w-full"
+                >
                   {isCreatingOrder
                     ? "Creating Order…"
                     : isPaying

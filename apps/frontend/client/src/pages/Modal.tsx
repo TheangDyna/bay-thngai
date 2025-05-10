@@ -25,11 +25,11 @@ export const Modal: React.FC<Props> = ({ children, onClose }) => (
       onClick={(e) => e.stopPropagation()}
       style={{
         position: "relative",
-        width: "90%",
-        maxWidth: 800,
+        width: "60%",
+        maxWidth: 500,
         maxHeight: "90%",
         background: "#fff",
-        borderRadius: 8,
+        borderRadius: 10,
         overflow: "hidden"
       }}
     >

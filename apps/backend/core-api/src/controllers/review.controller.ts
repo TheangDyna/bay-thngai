@@ -1,19 +1,15 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { ReviewService } from "../services/review.service";
-import { GenericController } from "./generic.controller";
-import { IReviewDocument } from "../types/review.types";
 
-export class ReviewController extends GenericController<IReviewDocument> {
+export class ReviewController {
   private reviewService: ReviewService;
 
   constructor() {
-    const reviewService = new ReviewService();
-    super(reviewService);
-    this.reviewService = reviewService;
+    this.reviewService = new ReviewService();
   }
 
-  public createOne = catchAsync(
+  public createReview = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       const { user: userId, product: productId, ...data } = req.body;
       const document = await this.reviewService.createReview(
@@ -28,20 +24,7 @@ export class ReviewController extends GenericController<IReviewDocument> {
     }
   );
 
-  public getAll = catchAsync(
-    async (req: Request, res: Response): Promise<void> => {
-      req.query.product = req.body.product;
-      const { total, documents } = await this.reviewService.getAll(req.query);
-      res.status(200).json({
-        status: "success",
-        total,
-        results: documents.length,
-        data: documents
-      });
-    }
-  );
-
-  public updateOne = catchAsync(
+  public updateReview = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       const { user: userId, product: productId, ...data } = req.body;
       const document = await this.reviewService.updateReview(
@@ -57,7 +40,7 @@ export class ReviewController extends GenericController<IReviewDocument> {
     }
   );
 
-  public deleteOne = catchAsync(
+  public deleteReview = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       const userId = req.body.user;
       const productId = req.body.product;

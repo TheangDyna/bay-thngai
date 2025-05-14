@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { protect } from "../middlewares/auth.middleware";
-import { setProductAndUserRequest } from "../middlewares/populateRequest.middleware";
 import { validate } from "../middlewares/validation.middleware";
 import {
   CreateReviewSchema,
@@ -11,17 +10,15 @@ import { ReviewController } from "../controllers/review.controller";
 const router = Router({ mergeParams: true });
 const reviewController = new ReviewController();
 
-router.use(protect, setProductAndUserRequest);
+router.use(protect);
 
 router
   .route("/")
-  .get(reviewController.getAll)
-  .post(validate(CreateReviewSchema), reviewController.createOne);
+  .post(validate(CreateReviewSchema), reviewController.createReview);
 
 router
   .route("/:id")
-  .get(reviewController.getOne)
-  .patch(validate(UpdateReviewSchema), reviewController.updateOne)
-  .delete(reviewController.deleteOne);
+  .patch(validate(UpdateReviewSchema), reviewController.updateReview)
+  .delete(reviewController.deleteReview);
 
 export const reviewRoutes = router;

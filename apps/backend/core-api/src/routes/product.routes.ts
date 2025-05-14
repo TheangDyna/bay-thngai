@@ -5,29 +5,24 @@ import {
 } from "../validators/product.validators";
 import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { Product } from "../models/product.model";
-import { GenericController } from "../controllers/generic.controller";
 import { reviewRoutes } from "./review.routes";
-import { GenericRepository } from "../repositories/generic.repository";
-import { GenericService } from "../services/generic.service";
 import {
   processThumbnailAndImages,
   upload
 } from "../middlewares/upload.middleware";
 import { sanitizeProductInput } from "../middlewares/sanitizeInput.middleware";
 import { cleanupUploadOnError } from "../middlewares/cleanupUploadOnError.middleware";
+import { ProductController } from "@/src/controllers/product.controller";
 
 const router = Router();
-const searchFields = ["name", "description"];
-const productRepository = new GenericRepository(Product, searchFields);
-const productService = new GenericService(productRepository);
-const productController = new GenericController(productService);
+
+const productController = new ProductController();
 
 router.use("/:productId/reviews", reviewRoutes);
 
-router.route("/").get(productController.getAll);
+router.route("/").get(productController.getAllProducts);
 
-router.route("/:id").get(productController.getOne);
+router.route("/:id").get(productController.getProductById);
 
 router.use(protect, restrictTo("admin"));
 
@@ -39,7 +34,7 @@ router.route("/").post(
   processThumbnailAndImages as unknown as any,
   sanitizeProductInput,
   validate(CreateProductSchema),
-  productController.createOne,
+  productController.createProduct,
   cleanupUploadOnError as unknown as any
 );
 
@@ -53,8 +48,8 @@ router
     processThumbnailAndImages as unknown as any,
     sanitizeProductInput,
     validate(UpdateProductSchema),
-    productController.updateOne
+    productController.updateProduct
   )
-  .delete(protect, restrictTo("admin"), productController.deleteOne);
+  .delete(protect, restrictTo("admin"), productController.deleteProduct);
 
 export const productRoutes = router;

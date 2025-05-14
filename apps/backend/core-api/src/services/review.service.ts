@@ -1,20 +1,17 @@
 import { Types } from "mongoose";
 import { Review } from "../models/review.model";
-import { GenericRepository } from "../repositories/generic.repository";
 import { IReviewDocument } from "../types/review.types";
 import { AppError } from "../utils/appError";
-import { GenericService } from "./generic.service";
 import { ProductService } from "./product.service";
+import { ReviewRepository } from "@/src/repositories/review.repository";
 
-export class ReviewService extends GenericService<IReviewDocument> {
+export class ReviewService {
   private productService: ProductService;
-  private reviewRepository: GenericRepository<IReviewDocument>;
+  private reviewRepository: ReviewRepository;
 
   constructor() {
-    const reviewRepository = new GenericRepository(Review);
-    super(reviewRepository);
     this.productService = new ProductService();
-    this.reviewRepository = new GenericRepository(Review);
+    this.reviewRepository = new ReviewRepository();
   }
 
   public async createReview(
@@ -23,9 +20,9 @@ export class ReviewService extends GenericService<IReviewDocument> {
     productId: string
   ): Promise<IReviewDocument> {
     const reviewQuery = { user: userId, product: productId };
-    await this.productService.getOne(productId);
+    await this.productService.getProductById(productId);
     const existingReview = await this.reviewRepository
-      .getBy(reviewQuery)
+      .getReviewByField(reviewQuery)
       .catch((error) => {
         if (error instanceof AppError && error.statusCode === 404) return null;
         throw error;
@@ -35,7 +32,7 @@ export class ReviewService extends GenericService<IReviewDocument> {
       throw new AppError("You have already reviewed this product.", 400);
     }
 
-    const review = await this.reviewRepository.createOne({
+    const review = await this.reviewRepository.createReview({
       ...reviewQuery,
       ...data
     });
@@ -51,7 +48,7 @@ export class ReviewService extends GenericService<IReviewDocument> {
   ): Promise<IReviewDocument> {
     const reviewQuery = { _id: id, user: userId, product: productId };
     const existingReview = await this.reviewRepository
-      .getBy(reviewQuery)
+      .getReviewByField(reviewQuery)
       .catch((error) => {
         if (error instanceof AppError && error.statusCode === 404) {
           throw new AppError("You do not own this review.", 403);
@@ -63,7 +60,7 @@ export class ReviewService extends GenericService<IReviewDocument> {
       throw new AppError("Review not found.", 404);
     }
 
-    const updatedReview = await this.reviewRepository.updateOne(id, data);
+    const updatedReview = await this.reviewRepository.updateReview(id, data);
     await this.updateAverageRatings(productId);
     return updatedReview;
   }
@@ -75,7 +72,7 @@ export class ReviewService extends GenericService<IReviewDocument> {
   ): Promise<void> {
     const reviewQuery = { _id: id, user: userId, product: productId };
     const existingReview = await this.reviewRepository
-      .getBy(reviewQuery)
+      .getAllReviews(reviewQuery)
       .catch((error) => {
         if (error instanceof AppError && error.statusCode === 404) {
           throw new AppError("You do not own this review.", 403);
@@ -87,7 +84,7 @@ export class ReviewService extends GenericService<IReviewDocument> {
       throw new AppError("Review not found.", 404);
     }
 
-    await this.reviewRepository.deleteOne(id);
+    await this.reviewRepository.deleteReview(id);
     await this.updateAverageRatings(productId);
   }
 
@@ -104,12 +101,12 @@ export class ReviewService extends GenericService<IReviewDocument> {
     ]);
 
     if (stats.length > 0) {
-      await this.productService.updateOne(productId, {
+      await this.productService.updateProduct(productId, {
         ratingsAverage: stats[0].avgRating.toFixed(1),
         ratingsQuantity: stats[0].numRatings
       });
     } else {
-      await this.productService.updateOne(productId, {
+      await this.productService.updateProduct(productId, {
         ratingsAverage: 0,
         ratingsQuantity: 0
       });

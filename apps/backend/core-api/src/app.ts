@@ -10,8 +10,6 @@ import helmet from "helmet";
 import cors from "cors";
 import { userRoutes } from "./routes/user.routes";
 import { cuisineRoutes } from "./routes/cuisine.routes";
-import { cartRoutes } from "./routes/cart.routes";
-import { orderRoutes } from "./routes/order.routes";
 import { reviewRoutes } from "./routes/review.routes";
 import { config } from "./configs/config";
 import { paymentRoutes } from "@/src/routes/payment.routes";
@@ -41,8 +39,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/carts", cartRoutes);
-app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 

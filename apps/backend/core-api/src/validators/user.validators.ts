@@ -1,4 +1,3 @@
-import { CartItemSchema } from "@/src/validators/cart.validators";
 import { z } from "zod";
 
 export const UserRoleSchema = z.enum(["user", "admin"]);
@@ -45,8 +44,7 @@ export const UserSchema = z
       .default([]),
     healthGoals: HealthGoalsSchema.optional().default("maintenance"),
     allergies: z.array(z.string().trim().min(1)).optional().default([]),
-    dailyCalorieTarget: z.number().positive().optional().default(2000),
-    cart: z.array(CartItemSchema).default([])
+    dailyCalorieTarget: z.number().positive().optional().default(2000)
   })
   .strict();
 

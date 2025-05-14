@@ -57,7 +57,7 @@ export const protect = async (
 
     try {
       const userService = new UserService();
-      const user = await userService.getBy({ cognitoId: payload.sub });
+      const user = await userService.getUserByField({ cognitoId: payload.sub });
       req.user = user;
     } catch (error) {
       throw new AppError(

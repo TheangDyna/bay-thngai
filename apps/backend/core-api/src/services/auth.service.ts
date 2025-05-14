@@ -1,10 +1,8 @@
 import {
   AdminGetUserCommand,
   AdminGetUserResponse,
-  ConfirmForgotPasswordCommand,
   ConfirmSignUpCommand,
   ConfirmSignUpCommandInput,
-  ForgotPasswordCommand,
   GetUserCommand,
   GetUserCommandInput,
   GlobalSignOutCommand,
@@ -21,9 +19,7 @@ import { config } from "../configs/config";
 import {
   CognitoToken,
   ConfirmRegisterInput,
-  ForgotPasswordInput,
   ResendConfirmCodeUpInput,
-  ResetPasswordInput,
   LoginInput,
   RegisterInput
 } from "../types/auth.types";
@@ -110,7 +106,7 @@ export class AuthService {
       cognitoId: userInfo.Username
     });
 
-    await this.userService.createOne(userData);
+    await this.userService.createUser(userData);
   }
 
   public async login(data: LoginInput): Promise<CognitoToken> {
@@ -217,13 +213,13 @@ export class AuthService {
       throw new AppError("Authentication failed.", 401);
     }
 
-    await this.userService.getBy({ cognitoId }).catch((error) => {
+    await this.userService.getUserByField({ cognitoId }).catch((error) => {
       if (error instanceof AppError && error.statusCode === 404) {
         const userData = CreateUserSchema.parse({
           email,
           cognitoId
         });
-        this.userService.createOne(userData);
+        this.userService.createUser(userData);
       }
       throw error;
     });
@@ -269,36 +265,6 @@ export class AuthService {
       username
     };
   }
-
-  public async forgotPassword(data: ForgotPasswordInput): Promise<void> {
-    const { email } = data;
-
-    const params = {
-      ClientId: config.awsCognitoClientId,
-      Username: email
-    };
-
-    try {
-      const command = new ForgotPasswordCommand(params);
-      await cognitoClient.send(command);
-    } catch (error: any) {
-      throw error;
-    }
-  } // not yet
-
-  public async resetPassword(data: ResetPasswordInput): Promise<void> {
-    const { email, code, newPassword } = data;
-
-    const params = {
-      ClientId: config.awsCognitoClientId,
-      Username: email,
-      ConfirmationCode: code,
-      Password: newPassword
-    };
-
-    const command = new ConfirmForgotPasswordCommand(params);
-    await cognitoClient.send(command);
-  } // not yet
 
   public async logOut(accessToken: string): Promise<void> {
     const params: GlobalSignOutCommandInput = {

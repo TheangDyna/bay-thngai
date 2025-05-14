@@ -5,30 +5,24 @@ import {
 } from "../validators/cuisine.validators";
 import { validate } from "../middlewares/validation.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { GenericController } from "../controllers/generic.controller";
-import { Cuisine } from "../models/cuisine.model";
-import { GenericRepository } from "../repositories/generic.repository";
-import { GenericService } from "../services/generic.service";
+import { CuisineController } from "@/src/controllers/cuisine.controller";
 
 const router = Router();
-const searchFields = ["name", "description"];
-const cuisineRepository = new GenericRepository(Cuisine, searchFields);
-const cuisineService = new GenericService(cuisineRepository);
-const cuisineController = new GenericController(cuisineService);
+const cuisineController = new CuisineController();
 
-router.route("/").get(cuisineController.getAll);
+router.route("/").get(cuisineController.getAllCuisines);
 
-router.route("/:id").get(cuisineController.getOne);
+router.route("/:id").get(cuisineController.getCuisineById);
 
 router.use(protect, restrictTo("admin"));
 
 router
   .route("/")
-  .post(validate(CreateCuisineSchema), cuisineController.createOne);
+  .post(validate(CreateCuisineSchema), cuisineController.createCuisine);
 
 router
   .route("/:id")
-  .patch(validate(UpdateCuisineSchema), cuisineController.updateOne)
-  .delete(cuisineController.deleteOne);
+  .patch(validate(UpdateCuisineSchema), cuisineController.updateCuisine)
+  .delete(cuisineController.deleteCuisine);
 
 export const cuisineRoutes = router;

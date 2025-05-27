@@ -3,17 +3,10 @@ import { ShoppingCart, TrashIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CardProductCart from "@/components/base/home/card/CardProductCart";
 import EmptyCartSection from "@/components/base/home/section/EmptyCartSection";
-import {
-  useGetCartQuery,
-  useRemoveFromCartMutation,
-  useClearCartMutation,
-  useAddToCartMutation
-} from "@/api/cart.api";
 import { toast } from "@/hooks/use-toast";
-import { useCreateOrder } from "@/api/order.api";
-import { usePurchasePayment } from "@/api/payment.api";
 import axiosInstance from "@/utils/axiosInstance";
 import { PaywayIframe } from "@/pages/PaywayIframe";
+import { useCart } from "@/contexts/cart.context";
 
 const Cart: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -22,82 +15,50 @@ const Cart: React.FC = () => {
     payload: Record<string, string>;
   }>(null);
 
-  // 1) Fetch cart
-  const {
-    data: cart,
-    isLoading: isCartLoading,
-    isError: isCartError
-  } = useGetCartQuery();
-  const items = cart?.items ?? [];
-  const cartId = cart?._id;
+  const { cart, addToCart, removeFromCart, clearCart } = useCart();
 
-  // 2) Cart mutations
-  const { mutate: removeFromCart, isPending: isRemoving } =
-    useRemoveFromCartMutation();
-  const { mutate: clearCart, isPending: isClearing } = useClearCartMutation();
-  const { mutate: updateCart, isPending: isUpdating } = useAddToCartMutation();
-
-  // 3) Order + Payment mutations
-  const { mutateAsync: createOrder, isPending: isCreatingOrder } =
-    useCreateOrder();
-  const { mutateAsync: purchasePayment, isPending: isPaying } =
-    usePurchasePayment();
-
-  // UI toggles
   const toggleSidebar = () => setIsSidebarOpen((o) => !o);
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  // Totals
-  const totalQty = items.reduce((sum, i) => sum + i.quantity, 0);
-  const subtotal = items.reduce(
-    (sum, i) => sum + i.quantity * i.product.price,
-    0
-  );
+  const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
+  const subtotal = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
 
-  // Handlers
-  const handleRemove = (id: string) =>
-    removeFromCart(id, {
-      onSuccess: () => toast({ description: "Item removed" }),
-      onError: () => toast({ description: "Failed", variant: "destructive" })
-    });
+  const handleRemove = (id: string) => {
+    removeFromCart(id);
+    toast({ description: "Item removed" });
+  };
 
-  const handleClear = () =>
-    clearCart(undefined, {
-      onSuccess: () => toast({ description: "Cart cleared" }),
-      onError: () => toast({ description: "Failed", variant: "destructive" })
-    });
+  const handleClear = () => {
+    clearCart();
+    toast({ description: "Cart cleared" });
+  };
 
-  const handleIncrement = (id: string) =>
-    updateCart(
-      { productId: id, quantity: 1 },
-      {
-        onError: () => toast({ description: "Failed", variant: "destructive" })
-      }
-    );
+  const handleIncrement = (id: string) => {
+    const item = cart.find((i) => i.id === id);
+    if (item) {
+      addToCart({ ...item, quantity: 1 });
+    }
+  };
 
   const handleDecrement = (id: string, qty: number) => {
     if (qty <= 1) return;
-    updateCart(
-      { productId: id, quantity: -1 },
-      {
-        onError: () => toast({ description: "Failed", variant: "destructive" })
-      }
-    );
+    const item = cart.find((i) => i.id === id);
+    if (item) {
+      addToCart({ ...item, quantity: -1 });
+    }
   };
 
-  const MAX_TRAN_ID = 20;
-  const rawTranId =
-    cartId?.length > MAX_TRAN_ID ? cartId.substring(0, MAX_TRAN_ID) : cartId;
-
-  // 4) Checkout → shadcn Dialog + iframe
   const handleCheckout = async () => {
+    const cartId = "local-cart";
+    const rawTranId = cartId.slice(0, 20);
+
     const payload = {
       orderId: rawTranId,
       amount: subtotal,
-      items: items.map((i) => ({
-        name: i.product.name,
+      items: cart.map((i) => ({
+        name: i.name,
         qty: i.quantity,
-        price: i.product.price
+        price: i.price
       })),
       customer: {
         firstname: "Theang",
@@ -105,8 +66,13 @@ const Cart: React.FC = () => {
         email: "theangdyna365@gmail.com"
       }
     };
-    const { data } = await axiosInstance.post("/payments/purchase", payload);
-    setConfig(data);
+
+    try {
+      const { data } = await axiosInstance.post("/payments/purchase", payload);
+      setConfig(data);
+    } catch {
+      toast({ description: "Checkout failed", variant: "destructive" });
+    }
   };
 
   return (
@@ -143,7 +109,7 @@ const Cart: React.FC = () => {
                   <Button
                     variant="ghost"
                     onClick={handleClear}
-                    disabled={isClearing || items.length === 0}
+                    disabled={cart.length === 0}
                   >
                     <TrashIcon className="w-5 h-5" />
                   </Button>
@@ -155,27 +121,21 @@ const Cart: React.FC = () => {
 
               {/* Items */}
               <div className="flex-grow overflow-y-auto p-4">
-                {isCartLoading ? (
-                  <div>Loading…</div>
-                ) : isCartError ? (
-                  <div className="text-red-500">Failed to load cart.</div>
-                ) : items.length === 0 ? (
+                {cart.length === 0 ? (
                   <EmptyCartSection />
                 ) : (
-                  items.map((it) => (
+                  cart.map((it) => (
                     <CardProductCart
-                      key={it.product._id}
-                      imageUrl={it.product.thumbnail}
-                      title={it.product.name}
-                      price={it.product.price}
+                      key={it.id}
+                      imageUrl={it.image}
+                      title={it.name}
+                      price={it.price}
                       quantity={it.quantity}
-                      onRemove={() => handleRemove(it.product._id)}
-                      onIncrement={() => handleIncrement(it.product._id)}
-                      onDecrement={() =>
-                        handleDecrement(it.product._id, it.quantity)
-                      }
-                      isRemoving={isRemoving}
-                      isUpdatingQuantity={isUpdating}
+                      onRemove={() => handleRemove(it.id)}
+                      onIncrement={() => handleIncrement(it.id)}
+                      onDecrement={() => handleDecrement(it.id, it.quantity)}
+                      isRemoving={false}
+                      isUpdatingQuantity={false}
                     />
                   ))
                 )}
@@ -189,20 +149,18 @@ const Cart: React.FC = () => {
                 </div>
                 <Button
                   onClick={handleCheckout}
-                  disabled={isCreatingOrder || isPaying || items.length === 0}
+                  disabled={cart.length === 0}
                   className="w-full"
                 >
-                  {isCreatingOrder
-                    ? "Creating Order…"
-                    : isPaying
-                      ? "Loading…"
-                      : "Proceed to Checkout"}
+                  Proceed to Checkout
                 </Button>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Payway Checkout iframe */}
       {config && (
         <PaywayIframe
           endpoint={config.endpoint}

@@ -1,4 +1,4 @@
-import SignIn from "@/pages/auth/SignIn";
+import SignIn from "@/components/commons/SignIn";
 import Cart from "@/pages/Cart";
 import SearchComponent from "../base/SearchComponent";
 

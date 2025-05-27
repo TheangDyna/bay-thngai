@@ -35,7 +35,7 @@ const Banner = () => {
                     placeholder="What are you looking..."
                     aria-label="Search"
                     autoComplete="off"
-                    value=""
+                    defaultValue=""
                   />
                 </label>
                 <button

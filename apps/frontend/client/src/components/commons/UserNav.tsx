@@ -1,4 +1,3 @@
-import { useGetMeQuery, useLogoutMutation } from "@/api/auth.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,43 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { toast } from "@/hooks/use-toast";
-import SignIn from "@/pages/auth/SignIn";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/auth.context";
+import SignIn from "@/components/commons/SignIn";
 
 export const UserNav: React.FC = () => {
-  const navigate = useNavigate();
-  const getMeQuery = useGetMeQuery();
-  const logoutMutation = useLogoutMutation();
-
-  if (getMeQuery.isPending) {
-    return <div>Loading</div>;
-  }
-
-  if (getMeQuery.isError) {
-    return <div>Error</div>;
-  }
-
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: (response) => {
-        toast({
-          description: response.message,
-          variant: "default"
-        });
-        navigate("/login", { replace: true });
-      },
-      onError: (error: any) => {
-        toast({
-          description: error.response?.data?.message || "An error occurred",
-          variant: "destructive"
-        });
-      }
-    });
-  };
-
-  const user = getMeQuery.data.data;
-  const initials = `${user.email[0]}`.toUpperCase();
+  const { user, logout } = useAuth();
+  const initials = user?.email[0].toUpperCase();
 
   return (
     <div>
@@ -72,7 +40,7 @@ export const UserNav: React.FC = () => {
               <DropdownMenuItem>Settings</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (

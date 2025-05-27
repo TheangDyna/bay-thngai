@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, LogIn } from "lucide-react";
@@ -12,8 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 
 import { LoginInput } from "@/types/auth.types";
-import { useLoginMutation, useGoogleLoginMutation } from "@/api/auth.api";
 import { LoginSchema } from "@/validators/auth.validators";
+import { useAuth } from "@/contexts/auth.context";
 
 const defaultValues: Partial<LoginInput> = {
   email: "",
@@ -21,52 +21,40 @@ const defaultValues: Partial<LoginInput> = {
 };
 
 const SignIn = () => {
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  const { login, googleLogin, isLoading } = useAuth();
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(LoginSchema),
     defaultValues
   });
 
-  const loginMutation = useLoginMutation();
-  const googleLoginMutation = useGoogleLoginMutation();
-
-  const onSubmit = (data: LoginInput) => {
-    loginMutation.mutate(data, {
-      onSuccess: (res) => {
-        toast({ description: res.message });
-        form.reset();
-        navigate("/dashboard", { replace: true });
-      },
-      onError: (err: any) => {
-        toast({
-          description:
-            err.response?.data?.message ||
-            "Something went wrong. Please try again.",
-          variant: "destructive"
-        });
-      }
-    });
+  const onSubmit = async (data: LoginInput) => {
+    try {
+      await login(data);
+      toast({ description: "Login successful!" });
+      form.reset();
+    } catch (err: any) {
+      toast({
+        description: err?.response?.data?.message || "Login failed.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleGoogleLogin = () => {
-    googleLoginMutation.mutate(undefined, {
-      onSuccess: (res) => {
-        // redirect to Google OAuth
-        window.location.href = res.data;
-      },
-      onError: (err: any) => {
-        toast({
-          description: err.response?.data?.message || "An error occurred",
-          variant: "destructive"
-        });
-      }
-    });
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+    } catch (err: any) {
+      toast({
+        description: err?.response?.data?.message || "Google login failed.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleFacebookLogin = () => {
-    // implement facebook login mutation if available
     toast({ description: "Facebook login not set up yet." });
   };
 
@@ -170,9 +158,9 @@ const SignIn = () => {
             <Button
               type="submit"
               className="w-full mt-4 rounded-full"
-              disabled={loginMutation.isPending}
+              disabled={isLoading}
             >
-              {loginMutation.isPending ? "Signing in..." : "Sign In"}
+              {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
 
@@ -182,7 +170,7 @@ const SignIn = () => {
               variant="outline"
               className="flex items-center space-x-2 rounded-full"
               onClick={handleGoogleLogin}
-              disabled={googleLoginMutation.isPending}
+              disabled={isLoading}
             >
               <img src="/google.webp" alt="Google" className="h-5 w-5" />
               <span>Google</span>

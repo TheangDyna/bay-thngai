@@ -8,7 +8,7 @@ import {
   NavigationMenuTrigger
 } from "@radix-ui/react-navigation-menu";
 import Cart from "@/pages/Cart";
-import { UserNav } from "@/components/UserNav";
+import { UserNav } from "@/components/commons/UserNav";
 
 const NavigationBar = () => {
   const location = useLocation(); // Hook to get the current path

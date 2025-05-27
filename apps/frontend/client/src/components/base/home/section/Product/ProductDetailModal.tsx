@@ -1,4 +1,3 @@
-// src/pages/GrocerySection/Product/ProductDetailModal.tsx
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Carousel,
@@ -10,12 +9,12 @@ import PrevButton from "@/components/base/PrevButton";
 import NextButton from "@/components/base/NextButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, Minus, Plus, Share, ShoppingBag, Tag } from "lucide-react";
+import { Heart, Minus, Plus, Share, ShoppingBag } from "lucide-react";
 import ShareLink from "@/components/base/ShareLink";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Product } from "@/types/product.types";
-import { useAddToCartMutation } from "@/api/cart.api";
 import { toast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/cart.context";
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -32,15 +31,22 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [qty, setQty] = useState(1);
   const [shareOpen, setShareOpen] = useState(false);
 
-  const { mutateAsync: addToCart, isPending: isAdding } =
-    useAddToCartMutation();
+  useEffect(() => {
+    if (product) {
+      setThumbIdx(0);
+      setQty(1);
+      setShareOpen(false);
+    }
+  }, [product]);
+
+  const { addToCart } = useCart();
 
   if (!product) return null;
 
   const { thumbnail, images, name, price, description, _id } = product;
   const thumbnails = [thumbnail, ...images];
 
-  // demo values—replace with real props if added to Product type
+  // demo values—replace with real props if needed
   const unit = "1 pc";
   const originalPrice = price + 100;
   const discount = 10;
@@ -50,18 +56,16 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const increment = () => setQty((q) => q + 1);
   const decrement = () => setQty((q) => Math.max(1, q - 1));
 
-  const handleAdd = async () => {
-    try {
-      // call the mutation
-      await addToCart({ productId: _id, quantity: qty });
-      toast({ description: `${name} (×${qty}) added to cart!` });
-      onClose();
-    } catch (err: any) {
-      toast({
-        description: err.response?.data?.message || "Failed to add to cart",
-        variant: "destructive"
-      });
-    }
+  const handleAdd = () => {
+    addToCart({
+      id: _id,
+      name,
+      price,
+      quantity: qty,
+      image: thumbnail
+    });
+    toast({ description: `${name} (×${qty}) added to cart!` });
+    onClose();
   };
 
   return (
@@ -159,16 +163,9 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <Button
                 className="flex items-center space-x-2 mt-4 w-full"
                 onClick={handleAdd}
-                disabled={isAdding}
               >
-                {isAdding ? (
-                  "Adding…"
-                ) : (
-                  <>
-                    <ShoppingBag />
-                    <span>Add to Cart</span>
-                  </>
-                )}
+                <ShoppingBag />
+                <span>Add to Cart</span>
               </Button>
 
               {/* Wishlist / Share */}

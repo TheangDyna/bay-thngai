@@ -1,77 +1,56 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  UseQueryResult,
-  UseMutationResult
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axiosInstance";
-import type { AxiosError } from "axios";
-import { ICart } from "@/types/cart.type";
+import { RawCart, CartItemDto } from "@/types/cart.types";
 
-export const useGetCartQuery = (): UseQueryResult<ICart, AxiosError> => {
-  return useQuery<ICart, AxiosError>({
-    queryKey: ["carts"],
+export const useGetCartQuery = () =>
+  useQuery<RawCart>({
+    queryKey: ["cart"],
     queryFn: async () => {
       const res = await axiosInstance.get("/carts");
-      return res.data.data as ICart;
+      return res.data.data as RawCart;
+    },
+    staleTime: 1000 * 60 * 5
+  });
+
+export const useAddCartItemMutation = () => {
+  const qc = useQueryClient();
+  return useMutation<RawCart, any, CartItemDto>({
+    mutationFn: (dto) =>
+      axiosInstance.post("/carts", dto).then((res) => res.data.data),
+    onSuccess: (data) => {
+      qc.setQueryData(["cart"], data);
     }
   });
 };
 
-export const useAddToCartMutation = (): UseMutationResult<
-  ICart[],
-  AxiosError,
-  { productId: string; quantity?: number }
-> => {
-  const queryClient = useQueryClient();
-
-  return useMutation<
-    ICart[],
-    AxiosError,
-    { productId: string; quantity?: number }
-  >({
-    mutationFn: async ({ productId, quantity = 1 }) => {
-      const res = await axiosInstance.post("/carts", { productId, quantity });
-      return res.data.data as ICart[];
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+export const useUpdateCartItemMutation = () => {
+  const qc = useQueryClient();
+  return useMutation<RawCart, any, CartItemDto>({
+    mutationFn: (dto) =>
+      axiosInstance.patch("/carts", dto).then((res) => res.data.data),
+    onSuccess: (data) => {
+      qc.setQueryData(["cart"], data);
     }
   });
 };
 
-export const useRemoveFromCartMutation = (): UseMutationResult<
-  ICart[],
-  AxiosError,
-  string
-> => {
-  const queryClient = useQueryClient();
-
-  return useMutation<ICart[], AxiosError, string>({
-    mutationFn: async (productId: string) => {
-      const res = await axiosInstance.delete(`/carts/${productId}`);
-      return res.data.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+export const useRemoveCartItemMutation = () => {
+  const qc = useQueryClient();
+  return useMutation<RawCart, any, { productId: string }>({
+    mutationFn: ({ productId }) =>
+      axiosInstance.delete(`/cart/${productId}`).then((res) => res.data.data),
+    onSuccess: (data) => {
+      qc.setQueryData(["cart"], data);
     }
   });
 };
 
-export const useClearCartMutation = (): UseMutationResult<
-  void,
-  AxiosError,
-  void
-> => {
-  const queryClient = useQueryClient();
-
-  return useMutation<void, AxiosError, void>({
-    mutationFn: async () => {
-      await axiosInstance.delete("/carts"); // assuming you have this endpoint
-    },
+export const useClearCartMutation = () => {
+  const qc = useQueryClient();
+  return useMutation<void, any>({
+    mutationFn: () => axiosInstance.delete("/cart/clear"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carts"] });
+      qc.setQueryData(["cart"], { items: [] });
     }
   });
 };

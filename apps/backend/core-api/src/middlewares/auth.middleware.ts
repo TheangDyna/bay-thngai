@@ -7,8 +7,12 @@ import { IUserDocument, UserRole } from "../types/user.types";
 import { AuthService } from "../services/auth.service";
 import { setAuthCookies } from "../utils/cookie";
 
-export interface AuthenticatedRequest extends Request {
-  user?: IUserDocument;
+declare global {
+  namespace Express {
+    interface Request {
+      user: IUserDocument;
+    }
+  }
 }
 
 const verifier = CognitoJwtVerifier.create({
@@ -18,7 +22,7 @@ const verifier = CognitoJwtVerifier.create({
 });
 
 export const protect = async (
-  req: AuthenticatedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -74,7 +78,7 @@ export const protect = async (
 
 export const restrictTo =
   (...roles: UserRole[]) =>
-  (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
+  (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user || !roles.includes(req.user.role)) {
       throw new AppError(
         "You do not have the necessary permissions to perform this action.",

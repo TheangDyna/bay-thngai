@@ -5,9 +5,12 @@ import BannerHeader from "../../BannerHeader";
 import ProductDetailModal from "./Product/ProductDetailModal";
 import { useProductsQuery } from "@/api/product.api";
 import type { Product } from "@/types/product.types";
+import { useCartStore } from "@/stores/cart.store";
+import { toast } from "@/hooks/use-toast";
 
 const GrocerySection: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const addItem = useCartStore((state) => state.addItem);
 
   // Fetch first page of 12 products
   const {
@@ -22,11 +25,20 @@ const GrocerySection: React.FC = () => {
 
   const products = productsResponse?.data || [];
 
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addItem(product._id, 1);
+      toast({ description: `${product.name} added to cart!` });
+    } catch (err: any) {
+      toast({ description: err.message || "Failed to add to cart" });
+    }
+  };
+
   return (
     <div className="px-10">
       <BannerHeader
-        title="Best seller grocery near you"
-        subTitle="We provide best quality & fresh grocery items near your location"
+        title="Best seller groceries near you"
+        subTitle="We provide the best quality & fresh grocery items near your location"
       />
 
       {isLoading ? (
@@ -45,20 +57,20 @@ const GrocerySection: React.FC = () => {
               price={product.price}
               originalPrice={product.originalPrice}
               unit={product.unit || "1 pc"}
-              onAddToCart={() => alert(`${product.name} added to cart!`)}
-              onViewDetails={() => alert(`Viewing details for ${product.name}`)}
-              onClickProductModalDetails={() => setSelectedProduct(product)}
+              onAddToCart={() => handleAddToCart(product)}
+              onViewDetails={() => setSelectedProduct(product)}
             />
           ))}
         </div>
       )}
 
-      {/* Pass the selectedProduct (or null) + a close handler */}
-      <ProductDetailModal
-        product={selectedProduct}
-        isOpen={!!selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
+      {selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          isOpen={true}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </div>
   );
 };

@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import { catchAsync } from "../utils/catchAsync";
 import { setAuthCookies, clearAllCookies } from "../utils/cookie";
-import { AuthenticatedRequest } from "../middlewares/auth.middleware";
 import { config } from "../configs/config";
 
 export class AuthController {
@@ -92,12 +91,10 @@ export class AuthController {
     });
   });
 
-  public getMe = catchAsync(
-    async (req: AuthenticatedRequest, res: Response) => {
-      res.status(200).json({
-        status: "success",
-        data: req.user
-      });
-    }
-  );
+  public getMe = catchAsync(async (req: Request, res: Response) => {
+    res.status(200).json({
+      status: "success",
+      data: req.user
+    });
+  });
 }

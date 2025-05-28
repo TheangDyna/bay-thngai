@@ -13,6 +13,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Loading from "@/pages/Loading";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
+import CheckoutPage from "@/pages/checkout/CheckoutPage";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const AppRoutes: React.FC = () => {
                       path="/shops/:slug"
                       element={<ShopProductDetailSlug />}
                     />
+                    <Route path="/checkout" element={<CheckoutPage />} />
                   </Route>
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />

@@ -13,6 +13,8 @@ import { cuisineRoutes } from "./routes/cuisine.routes";
 import { reviewRoutes } from "./routes/review.routes";
 import { config } from "./configs/config";
 import { paymentRoutes } from "@/src/routes/payment.routes";
+import { orderRoutes } from "@/src/routes/order.routes";
+import { cartRoutes } from "@/src/routes/cart.routes";
 
 const app = express();
 
@@ -27,6 +29,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 // API Documentation
 // if (config.nodeEnv === 'development') {
@@ -40,6 +43,8 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/v1/carts", cartRoutes);
+app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 
 // Error handling

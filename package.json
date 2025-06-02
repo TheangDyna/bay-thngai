@@ -2,23 +2,32 @@
   "name": "bay-thngai",
   "version": "1.0.0",
   "main": "index.js",
+  "repository": "git@github.com:TheangDyna/bay-thngai.git",
+  "author": "TheangDyna",
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "packages/*",
-    "apps/*",
-    "apps/backend/*",
-    "apps/frontend/*"
+    "apps/backends/*",
+    "apps/frontends/*"
   ],
   "scripts": {
-    "admin": "yarn workspace admin dev",
-    "client": "yarn workspace client dev",
-    "core-api": "yarn workspace core-api dev",
-    "core-api:prod": "yarn workspace core-api prod",
+    "dev": "turbo run dev",
+    "dev:core-api": "turbo run dev --filter=core-api",
+    "dev:admin": "turbo run dev --filter=admin",
+    "dev:client": "turbo run dev --filter=client",
+    "build": "turbo run build",
+    "build:core-api": "turbo run build --filter=core-api",
+    "build:admin": "turbo run build --filter=admin",
+    "build:client": "turbo run build --filter=client",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write ."
   },
+  "packageManager": "yarn@1.22.22",
   "devDependencies": {
-    "concurrently": "^9.0.1",
-    "prettier": "^3.3.3"
+    "prettier": "^3.5.1",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "turbo": "^2.4.0"
   }
 }

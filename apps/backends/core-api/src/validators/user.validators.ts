@@ -26,6 +26,15 @@ export const HealthGoalsSchema = z.enum([
   "improved health"
 ]);
 
+export const AddressSchema = z.object({
+  label: z.string().trim().min(1),
+  location: z.object({
+    type: z.literal("Point"),
+    coordinates: z.tuple([z.number(), z.number()]),
+    address: z.string().trim().optional()
+  })
+});
+
 export const UserSchema = z
   .object({
     email: z.string().trim().email(),
@@ -44,7 +53,8 @@ export const UserSchema = z
       .default([]),
     healthGoals: HealthGoalsSchema.optional().default("maintenance"),
     allergies: z.array(z.string().trim().min(1)).optional().default([]),
-    dailyCalorieTarget: z.number().positive().optional().default(2000)
+    dailyCalorieTarget: z.number().positive().optional().default(2000),
+    addresses: z.array(AddressSchema).optional().default([])
   })
   .strict();
 

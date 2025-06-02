@@ -3,13 +3,11 @@ import BannerHeader from "@/components/commons/BannerHeader";
 import CardProduct from "@/components/commons/CardProduct";
 import ProductDetailModal from "@/components/commons/ProductDetailModal";
 import { toast } from "@/hooks/use-toast";
-import { useCartStore } from "@/stores/cart.store";
 import type { Product } from "@/types/product.types";
 import React, { useState } from "react";
 
 export const GrocerySection: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const addItem = useCartStore((state) => state.addItem);
 
   const {
     data: productsResponse,
@@ -25,7 +23,6 @@ export const GrocerySection: React.FC = () => {
 
   const handleAddToCart = async (product: Product) => {
     try {
-      await addItem(product._id, 1);
       toast({ description: `${product.name} added to cart!` });
     } catch (err: any) {
       toast({ description: err.message || "Failed to add to cart" });

@@ -7,7 +7,9 @@ import CheckoutPage from "@/pages/checkout/CheckoutPage";
 import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
-import Search from "@/pages/Search";
+import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
+import ProfilePage from "@/pages/profile/ProfilePage";
+import Search from "@/pages/search/Search";
 import Shop from "@/pages/Shop";
 import ShopProductDetailSlug from "@/pages/shops/[ShopProductDetailSlug]";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -44,6 +46,8 @@ const AppRoutes: React.FC = () => {
                       element={<ShopProductDetailSlug />}
                     />
                     <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/address" element={<AddressSettingsPage />} />
                   </Route>
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />

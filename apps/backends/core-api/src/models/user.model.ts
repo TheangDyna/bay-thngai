@@ -1,6 +1,30 @@
 import mongoose, { Schema } from "mongoose";
-import { IUserDocument } from "../types/user.types";
+import { IAddress, IUserDocument } from "../types/user.types";
 import { defaultSchemaOptions } from "../utils/schemaOptions";
+
+const addressSchema = new Schema<IAddress>(
+  {
+    label: { type: String, required: true },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+        default: "Point"
+      },
+      coordinates: {
+        type: [Number],
+        required: true
+      },
+      address: {
+        type: String,
+        trim: true
+      }
+    }
+  },
+  { _id: true, timestamps: false }
+);
+addressSchema.index({ location: "2dsphere" });
 
 const userSchema = new Schema<IUserDocument>(
   {
@@ -17,17 +41,13 @@ const userSchema = new Schema<IUserDocument>(
     dietaryPreferences: [{ type: String }],
     healthGoals: { type: String },
     allergies: [{ type: String }],
-    dailyCalorieTarget: { type: Number }
+    dailyCalorieTarget: { type: Number },
+    addresses: {
+      type: [addressSchema],
+      default: []
+    }
   },
   defaultSchemaOptions
 );
-
-// userSchema.pre(
-//   /^find/,
-//   function (this: mongoose.Query<any, IUserDocument>, next) {
-//     this.populate({ path: "cart.product", select: "name price thumbnail" });
-//     next();
-//   }
-// );
 
 export const User = mongoose.model<IUserDocument>("User", userSchema);

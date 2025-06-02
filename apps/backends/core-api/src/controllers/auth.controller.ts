@@ -1,12 +1,19 @@
+import { UserService } from "@/src/services/user.service";
+import { IAddress } from "@/src/types/user.types";
 import { Request, Response } from "express";
+import { config } from "../configs/config";
 import { AuthService } from "../services/auth.service";
 import { catchAsync } from "../utils/catchAsync";
-import { setAuthCookies, clearAllCookies } from "../utils/cookie";
-import { config } from "../configs/config";
+import { clearAllCookies, setAuthCookies } from "../utils/cookie";
 
 export class AuthController {
-  private authService = new AuthService();
+  private authService: AuthService;
+  private userService: UserService;
 
+  constructor() {
+    this.authService = new AuthService();
+    this.userService = new UserService();
+  }
   public register = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       await this.authService.register(req.body);
@@ -97,4 +104,49 @@ export class AuthController {
       data: req.user
     });
   });
+
+  public getAllAddresses = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const addresses = await this.userService.getAllAddresses(req.user.id);
+      res.status(201).json({
+        status: "success",
+        data: addresses
+      });
+    }
+  );
+  public addAddress = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const addressData: IAddress = req.body;
+      const newAddress = await this.userService.addAddress(
+        req.user.id,
+        addressData
+      );
+      res.status(201).json({
+        status: "success",
+        data: newAddress
+      });
+    }
+  );
+
+  public updateAddress = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const addressData: Partial<IAddress> = req.body;
+      const updatedAddress = await this.userService.updateAddress(
+        req.user.id,
+        req.params.addressId,
+        addressData
+      );
+      res.status(200).json({
+        status: "success",
+        data: updatedAddress
+      });
+    }
+  );
+
+  public deleteAddress = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      await this.userService.deleteAddress(req.user.id, req.params.addressId);
+      res.status(204).json({ status: "success", data: null });
+    }
+  );
 }

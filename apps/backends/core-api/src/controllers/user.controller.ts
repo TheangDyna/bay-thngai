@@ -1,3 +1,4 @@
+// src/controllers/user.controller.ts
 import { UserService } from "@/src/services/user.service";
 import { catchAsync } from "@/src/utils/catchAsync";
 import { Request, Response } from "express";
@@ -53,8 +54,8 @@ export class UserController {
 
   public deleteUser = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      await this.service.deleteUser(req.params.userId);
-      res.status(204);
+      await this.service.deleteUser(req.params.id);
+      res.status(204).json({ status: "success", data: null });
     }
   );
 }

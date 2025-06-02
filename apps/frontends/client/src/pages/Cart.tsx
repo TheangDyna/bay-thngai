@@ -1,20 +1,16 @@
+// src/components/Cart.tsx
 import CardProductCart from "@/components/commons/CardProductCart";
 import EmptyCartSection from "@/components/commons/EmptyCartSection";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
-import { PaywayIframe } from "@/pages/PaywayIframe";
-import axiosInstance from "@/utils/axiosInstance";
 import { ShoppingCart, TrashIcon, X } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
+  const nevigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [config, setConfig] = useState<null | {
-    endpoint: string;
-    payload: Record<string, string>;
-  }>(null);
-
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
 
   const toggleSidebar = () => setIsSidebarOpen((o) => !o);
@@ -48,31 +44,13 @@ const Cart: React.FC = () => {
     }
   };
 
-  const handleCheckout = async () => {
-    const cartId = "local-cart";
-    const rawTranId = cartId.slice(0, 20);
-
-    const payload = {
-      orderId: rawTranId,
-      amount: subtotal,
-      items: cart.map((i) => ({
-        name: i.name,
-        qty: i.quantity,
-        price: i.price
-      })),
-      customer: {
-        firstname: "Theang",
-        lastname: "Dyna",
-        email: "theangdyna365@gmail.com"
-      }
-    };
-
-    try {
-      const { data } = await axiosInstance.post("/payments/purchase", payload);
-      setConfig(data);
-    } catch {
-      toast({ description: "Checkout failed", variant: "destructive" });
+  // ← Now simply push to "/checkout" instead of calling axios here
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      toast({ description: "Your cart is empty", variant: "destructive" });
+      return;
     }
+    nevigate("/checkout");
   };
 
   return (
@@ -159,15 +137,6 @@ const Cart: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Payway Checkout iframe */}
-      {config && (
-        <PaywayIframe
-          endpoint={config.endpoint}
-          payload={config.payload}
-          onClose={() => setConfig(null)}
-        />
-      )}
     </>
   );
 };

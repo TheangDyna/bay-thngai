@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
+import { protect } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validation.middleware";
 import {
   ConfirmRegisterSchema,
-  ResendConfirmCodeSchema,
   LoginSchema,
-  RegisterSchema
+  RegisterSchema,
+  ResendConfirmCodeSchema
 } from "../validators/auth.validators";
-import { protect } from "../middlewares/auth.middleware";
 
 const router = Router();
 const authController = new AuthController();
@@ -32,6 +32,12 @@ router.get("/google/callback", authController.googleCallback);
 router.use(protect);
 
 router.get("/me", authController.getMe);
+
+router.route("/me/addresses").get(authController.getAllAddresses);
+router.route("/me/addresses").post(authController.addAddress);
+router.route("/me/addresses/:addressId").put(authController.updateAddress);
+router.route("/me/addresses/:addressId").delete(authController.deleteAddress);
+
 router.post("/forgot-password"); // not yet
 router.patch("/update-my-password"); // not yet
 router.patch("/update-me"); // not yet

@@ -1,5 +1,6 @@
+// src/services/user.service.ts
 import { UserRepository } from "@/src/repositories/user.repository";
-import { IUserDocument } from "@/src/types/user.types";
+import { IAddress, IUserDocument } from "@/src/types/user.types";
 
 export class UserService {
   private repository: UserRepository;
@@ -39,5 +40,31 @@ export class UserService {
 
   public async deleteUser(id: string): Promise<void> {
     await this.repository.deleteUser(id);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Address-related service methods
+  // ─────────────────────────────────────────────────────────────────────────────
+  public async getAllAddresses(userId: string): Promise<IAddress[]> {
+    return await this.repository.getAllAddresses(userId);
+  }
+
+  public async addAddress(
+    userId: string,
+    addressData: IAddress
+  ): Promise<IAddress> {
+    return await this.repository.addAddress(userId, addressData);
+  }
+
+  public async updateAddress(
+    userId: string,
+    addressId: string,
+    addressData: Partial<IAddress>
+  ): Promise<IAddress> {
+    return await this.repository.updateAddress(userId, addressId, addressData);
+  }
+
+  public async deleteAddress(userId: string, addressId: string): Promise<void> {
+    await this.repository.deleteAddress(userId, addressId);
   }
 }

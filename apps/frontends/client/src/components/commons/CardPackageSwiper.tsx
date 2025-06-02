@@ -1,14 +1,17 @@
-import React, { useRef, useState, useEffect } from "react";
-import CardPackage from "./CardPackage";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import NextButton from "@/components/commons/NextButton";
+import PrevButton from "@/components/commons/PrevButton";
+import React, { useEffect, useRef, useState } from "react";
 import { Swiper as SwiperClass } from "swiper"; // Import Swiper class for typing
-import NextButton from "../../NextButton";
-import PrevButton from "../../PrevButton";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import CardPackage from "./CardPackage";
 
+// @ts-ignore
 import "swiper/css";
-import "swiper/css/pagination";
+// @ts-ignore
 import "swiper/css/navigation";
+// @ts-ignore
+import "swiper/css/pagination";
 
 const CardPackageSwiper: React.FC = () => {
   const swiperRef = useRef<SwiperClass | null>(null);

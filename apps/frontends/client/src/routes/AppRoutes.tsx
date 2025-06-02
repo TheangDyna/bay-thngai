@@ -1,19 +1,19 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Home from "@/pages/Home";
+import ProtectedRoute from "@/components/commons/ProtectedRoute";
 import BaseLayout from "@/components/layouts/BaseLayout";
+import { AuthProvider } from "@/contexts/auth.context";
+import { CartProvider } from "@/contexts/cart.context";
+import { ThemeProvider } from "@/contexts/theme.context";
+import CheckoutPage from "@/pages/checkout/CheckoutPage";
+import Home from "@/pages/Home";
+import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
 import Search from "@/pages/Search";
 import Shop from "@/pages/Shop";
 import ShopProductDetailSlug from "@/pages/shops/[ShopProductDetailSlug]";
-import { ThemeProvider } from "@/contexts/theme.context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import Loading from "@/pages/Loading";
-import { AuthProvider } from "@/contexts/auth.context";
-import { CartProvider } from "@/contexts/cart.context";
-import CheckoutPage from "@/pages/checkout/CheckoutPage";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
 const queryClient = new QueryClient();
 

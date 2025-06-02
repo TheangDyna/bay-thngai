@@ -1,8 +1,5 @@
-import NavigationBar from "./NavigationBar";
-import Footer from "./Footer";
-import { Toaster } from "../ui/toaster";
-import NavigationBarSearch from "./NavigationBarSearch";
-import { useLocation } from "react-router-dom";
+import NavigationBar from "@/components/layouts/NavigationBar";
+import NavigationBarSearch from "@/components/layouts/NavigationBarSearch";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,6 +7,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import { useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -86,31 +85,13 @@ const BaseLayout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navigation Bar */}
       <header className="sticky top-0 z-50">
-        {isShowSearchNavigatorBar()}
+        <NavigationBar />
       </header>
-
-      {/* Main Content */}
       <main className="flex-grow relative">
-        {/* Breadcrumbs */}
-        <div
-          className={`${
-            location.pathname !== "/"
-              ? "py-8 px-8 bg-white border-b text-md"
-              : ""
-          }`}
-        >
-          {generateBreadcrumbs()}
-        </div>
         {children}
         <Toaster />
       </main>
-
-      {/* Footer */}
-      <footer>
-        <Footer />
-      </footer>
     </div>
   );
 };

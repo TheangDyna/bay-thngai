@@ -1,6 +1,7 @@
-import CardProduct from "@/components/base/CardProduct";
-import ProductDetailModal from "@/components/base/home/section/Product/ProductDetailModal";
-import { categories, products } from "@/utils/data/constants/data";
+import CardProduct from "@/components/commons/CardProduct";
+import DownloadBanner from "@/components/commons/DownloadBanner";
+import ProductDetailModal from "@/components/commons/ProductDetailModal";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,11 +10,10 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Product } from "@/interface/product";
-import DownloadBanner from "@/components/DownloadBanner";
+import { categories, products } from "@/utils/data/constants/data";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 

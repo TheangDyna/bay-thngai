@@ -1,15 +1,18 @@
+import BannerHeader from "@/components/commons/BannerHeader";
+import CardCollections from "@/components/commons/CardCollections";
+import NextButton from "@/components/commons/NextButton";
+import PrevButton from "@/components/commons/PrevButton";
 import { useEffect, useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import BannerHeader from "../../BannerHeader";
-import CardCollections from "../card/CardCollections";
-import PrevButton from "../../PrevButton";
-import NextButton from "../../NextButton";
-import { Pagination, Navigation } from "swiper/modules";
 import { Swiper as SwiperClass } from "swiper";
+import { Navigation, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
+// @ts-ignore
 import "swiper/css";
-import "swiper/css/pagination";
+// @ts-ignore
 import "swiper/css/navigation";
+// @ts-ignore
+import "swiper/css/pagination";
 
 const CollectionSection = () => {
   const swiperRef = useRef<SwiperClass | null>(null);

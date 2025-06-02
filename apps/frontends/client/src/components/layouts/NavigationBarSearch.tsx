@@ -1,6 +1,6 @@
+import SearchComponent from "@/components/commons/SearchComponent";
 import SignIn from "@/components/commons/SignIn";
 import Cart from "@/pages/Cart";
-import SearchComponent from "../base/SearchComponent";
 
 const NavigationBarSearch = () => {
   return (

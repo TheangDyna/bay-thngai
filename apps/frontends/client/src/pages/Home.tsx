@@ -1,13 +1,13 @@
-import Banner from "@/components/base/home/Banner";
-import CategorySection from "@/components/base/home/section/CategorySection";
-import GrocerySection from "@/components/base/home/section/GrocerySection";
-import ProductSection from "@/components/base/home/section/Product/ProductSection";
-import Promotion from "@/components/base/home/Promotion";
-import CardPackageSwiper from "@/components/base/home/card/CardPackageSwiper";
-import CollectionSection from "@/components/base/home/section/CollectionSection";
-import DownloadBanner from "@/components/DownloadBanner";
+import Banner from "@/components/commons/Banner";
+import CardPackageSwiper from "@/components/commons/CardPackageSwiper";
+import CategorySection from "@/components/commons/CategorySection";
+import CollectionSection from "@/components/commons/CollectionSection";
+import DownloadBanner from "@/components/commons/DownloadBanner";
+import { GrocerySection } from "@/components/commons/GrocerySection";
+import ProductSection from "@/components/commons/ProductSection";
+import Promotion from "@/components/commons/Promotion";
 
-const Home = () => {
+const Home: React.FC = () => {
   return (
     <div className="flex justify-center flex-col space-y-10">
       <Banner />

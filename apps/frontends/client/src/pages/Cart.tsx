@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { ShoppingCart, TrashIcon, X } from "lucide-react";
+import CardProductCart from "@/components/commons/CardProductCart";
+import EmptyCartSection from "@/components/commons/EmptyCartSection";
 import { Button } from "@/components/ui/button";
-import CardProductCart from "@/components/base/home/card/CardProductCart";
-import EmptyCartSection from "@/components/base/home/section/EmptyCartSection";
-import { toast } from "@/hooks/use-toast";
-import axiosInstance from "@/utils/axiosInstance";
-import { PaywayIframe } from "@/pages/PaywayIframe";
 import { useCart } from "@/contexts/cart.context";
+import { toast } from "@/hooks/use-toast";
+import { PaywayIframe } from "@/pages/PaywayIframe";
+import axiosInstance from "@/utils/axiosInstance";
+import { ShoppingCart, TrashIcon, X } from "lucide-react";
+import React, { useState } from "react";
 
 const Cart: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

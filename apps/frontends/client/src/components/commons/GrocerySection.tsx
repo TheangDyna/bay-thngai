@@ -1,18 +1,16 @@
-// src/pages/GrocerySection.tsx
-import React, { useState } from "react";
-import CardProduct from "../../CardProduct";
-import BannerHeader from "../../BannerHeader";
-import ProductDetailModal from "./Product/ProductDetailModal";
 import { useProductsQuery } from "@/api/product.api";
-import type { Product } from "@/types/product.types";
-import { useCartStore } from "@/stores/cart.store";
+import BannerHeader from "@/components/commons/BannerHeader";
+import CardProduct from "@/components/commons/CardProduct";
+import ProductDetailModal from "@/components/commons/ProductDetailModal";
 import { toast } from "@/hooks/use-toast";
+import { useCartStore } from "@/stores/cart.store";
+import type { Product } from "@/types/product.types";
+import React, { useState } from "react";
 
-const GrocerySection: React.FC = () => {
+export const GrocerySection: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const addItem = useCartStore((state) => state.addItem);
 
-  // Fetch first page of 12 products
   const {
     data: productsResponse,
     isLoading,
@@ -74,5 +72,3 @@ const GrocerySection: React.FC = () => {
     </div>
   );
 };
-
-export default GrocerySection;

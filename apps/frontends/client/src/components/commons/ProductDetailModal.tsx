@@ -1,20 +1,20 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import NextButton from "@/components/commons/NextButton";
+import PrevButton from "@/components/commons/PrevButton";
+import ShareLink from "@/components/commons/ShareLink";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem
 } from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
-import PrevButton from "@/components/base/PrevButton";
-import NextButton from "@/components/base/NextButton";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Heart, Minus, Plus, Share, ShoppingBag } from "lucide-react";
-import ShareLink from "@/components/base/ShareLink";
-import { useEffect, useState } from "react";
-import type { Product } from "@/types/product.types";
-import { toast } from "@/hooks/use-toast";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useCart } from "@/contexts/cart.context";
+import { toast } from "@/hooks/use-toast";
+import type { Product } from "@/types/product.types";
+import { Heart, Minus, Plus, Share, ShoppingBag } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ProductDetailModalProps {
   product: Product | null;

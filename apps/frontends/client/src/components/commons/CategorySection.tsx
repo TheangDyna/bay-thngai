@@ -1,15 +1,18 @@
+import BannerHeader from "@/components/commons/BannerHeader";
+import CardCategory from "@/components/commons/CardCategory";
+import NextButton from "@/components/commons/NextButton";
+import PrevButton from "@/components/commons/PrevButton";
 import { useEffect, useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import NextButton from "../../NextButton";
-import PrevButton from "../../PrevButton";
-import CardCategory from "../card/CardCategory";
+import { Swiper as SwiperClass } from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
-import BannerHeader from "../../BannerHeader";
-import { Swiper as SwiperClass } from "swiper"; // Import Swiper class for typing
+import { Swiper, SwiperSlide } from "swiper/react";
 
+// @ts-ignore
 import "swiper/css";
-import "swiper/css/pagination";
+// @ts-ignore
 import "swiper/css/navigation";
+// @ts-ignore
+import "swiper/css/pagination";
 
 const CategorySection = () => {
   const swiperRef = useRef<SwiperClass | null>(null);

@@ -1,29 +1,24 @@
-// src/pages/CheckoutTestPage.tsx
-
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/utils/axiosInstance";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
-interface Item {
-  name: string;
+interface CartItem {
+  productId: string;
   quantity: number;
   price: number;
 }
 
-export const CheckoutTestPage: React.FC = () => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const CheckoutPage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
-  const handleCheckout = async () => {
-    setError(null);
-    setIsProcessing(true);
+  const handlePlaceOrder = async () => {
+    setIsLoading(true);
 
     try {
-      // ──────────────────────────────────────
-      // 1) Build mock order data (for testing)
-      const amount = 15000; // e.g., 15,000 KHR
-      const items: Item[] = [
-        { name: "Sample Product", quantity: 1, price: 15000 }
+      const cartItems: CartItem[] = [
+        { productId: "ABC123", quantity: 1, price: 14700 }
+        // ...any other items...
       ];
       const customer = {
         firstName: "John",
@@ -31,74 +26,78 @@ export const CheckoutTestPage: React.FC = () => {
         email: "john@example.com",
         phone: "012345678"
       };
+      const shipping = 0;
 
-      // ──────────────────────────────────────
-      // 2) Ask backend for PayWay endpoint + payload
-      const resp = await axiosInstance.post("/payments/purchase", {
-        amount,
-        items,
-        customer
+      const resp = await axiosInstance.post("/orders", {
+        items: cartItems.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          price: i.price
+        })),
+        customer,
+        shipping
       });
 
-      const { endpoint, payload } = resp.data as {
-        endpoint: string;
-        payload: Record<string, string | number>;
+      const { order, paymentConfig } = resp.data as {
+        order: any;
+        paymentConfig: { endpoint: string; payload: Record<string, string> };
       };
 
-      // ──────────────────────────────────────
-      // 3) Open (or reuse) a named window/tab called "PayWayWindow"
-      //    This must happen synchronously inside the click handler to avoid popup blockers.
-      const paywayWindow = window.open("", "PayWayWindow");
-      if (!paywayWindow) {
-        throw new Error("Popup blocked. Please allow popups for this site.");
+      console.log("order: ", order);
+      console.log("paymentConfig: ", paymentConfig);
+
+      const { endpoint, payload } = paymentConfig;
+
+      if (!formRef.current) {
+        throw new Error("Form ref is not mounted");
+      }
+      const f = formRef.current;
+
+      while (f.firstChild) {
+        f.removeChild(f.firstChild);
       }
 
-      // ──────────────────────────────────────
-      // 4) Build a hidden <form> targeting that named window
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = endpoint;
-      form.target = "PayWayWindow"; // ← ensures the form submission goes to (or reuses) our new tab
-      form.style.display = "none";
-
-      // 5) Add all signed payload fields as hidden inputs
       Object.entries(payload).forEach(([key, value]) => {
         const input = document.createElement("input");
         input.type = "hidden";
         input.name = key;
         input.value = String(value);
-        form.appendChild(input);
+        f.appendChild(input);
       });
 
-      document.body.appendChild(form);
+      const viewTypeInput = document.createElement("input");
+      viewTypeInput.type = "hidden";
+      viewTypeInput.name = "view_type";
+      viewTypeInput.value = "hosted_view";
+      f.appendChild(viewTypeInput);
 
-      // ──────────────────────────────────────
-      // 6) Submit the form, which navigates PayWayWindow to PayWay’s hosted checkout
-      form.submit();
+      f.method = "POST";
+      f.action = endpoint;
+      f.submit();
 
-      // Optionally clean up after a short delay
-      setTimeout(() => {
-        document.body.removeChild(form);
-      }, 1000);
+      //  Once PayWay’s modal is open, the user enters payment details. When they finish:
+      //    1) PayWay’s server sends a callback to your BACKEND_CALLBACK_URL → you mark order “PAID” in your DB.
+      //    2) PayWay’s JS automatically closes the modal AND redirects the parent window to your
+      //       FRONTEND_RETURN_SUCCESS_URL (e.g. https://your-frontend.com/payment-success?tran_id=...)
+      //       or FRONTEND_RETURN_CANCEL_URL (if they cancelled) with `?tran_id=<yourTranId>`.
+      //    At that point, the browser will navigate to /payment-success or /payment-cancel in your React app.
     } catch (err: any) {
       console.error("Checkout error:", err);
-      setError(err.response?.data?.error || "Failed to initialize payment.");
+      alert(err.response?.data?.error || "Failed to place order.");
     } finally {
-      setIsProcessing(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <div style={{ padding: "2rem" }}>
-      {error && (
-        <div style={{ color: "red", marginBottom: "1rem" }}>{error}</div>
-      )}
-
-      <Button onClick={handleCheckout} disabled={isProcessing}>
-        {isProcessing ? "Processing…" : "Check Out"}
+      <Button onClick={handlePlaceOrder} disabled={isLoading}>
+        {isLoading ? "Processing..." : "Place Order"}
       </Button>
+
+      <form ref={formRef} style={{ display: "none" }} />
     </div>
   );
 };
 
-export default CheckoutTestPage;
+export default CheckoutPage;

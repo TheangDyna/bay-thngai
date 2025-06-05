@@ -1,10 +1,10 @@
 import ProtectedRoute from "@/components/commons/ProtectedRoute";
-import BaseLayout from "@/components/layouts/BaseLayout";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
 import CheckoutPage from "@/pages/checkout/CheckoutPage";
 import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
+import PaymentCancel from "@/pages/checkout/PaymentCancel";
 import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
@@ -33,9 +33,9 @@ const AppRoutes: React.FC = () => {
                     path="/"
                     element={
                       <ProtectedRoute>
-                        <BaseLayout>
-                          <Outlet />
-                        </BaseLayout>
+                        {/* <BaseLayout> */}
+                        <Outlet />
+                        {/* </BaseLayout> */}
                       </ProtectedRoute>
                     }
                   >
@@ -51,6 +51,7 @@ const AppRoutes: React.FC = () => {
                       path="/checkout-test"
                       element={<CheckoutTestPage />}
                     />
+                    <Route path="/payment-cancel" element={<PaymentCancel />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/address" element={<AddressSettingsPage />} />
                   </Route>

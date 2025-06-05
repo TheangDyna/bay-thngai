@@ -1,56 +1,50 @@
-import { Schema, model, Document, Types } from "mongoose";
+// src/models/order.model.ts
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IOrder extends Document {
-  userId: Types.ObjectId;
-  items: { productId: Types.ObjectId; qty: number; price: number }[];
-  address: string;
-  addressNotes?: string;
-  label?: "Home" | "Work" | "Partner" | "Other";
-  contactless: boolean;
-  deliveryOption: "standard" | "priority";
-  paymentMethod: "cod" | "card" | "aba";
-  tip: number;
-  status: "pending" | "paid" | "failed";
+  tranId: string;
+  items: Array<{
+    productId: string;
+    quantity: number;
+    price: number;
+  }>;
+  customer: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone?: string;
+  };
+  amount: number;
+  shipping: number;
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const OrderSchema = new Schema<IOrder>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    tranId: { type: String, required: true, unique: true, maxlength: 20 },
     items: [
       {
-        productId: {
-          type: Schema.Types.ObjectId,
-          ref: "Product",
-          required: true
-        },
-        qty: { type: Number, required: true },
+        productId: { type: String, required: true },
+        quantity: { type: Number, required: true },
         price: { type: Number, required: true }
       }
     ],
-    address: { type: String, required: true },
-    addressNotes: String,
-    label: String,
-    contactless: { type: Boolean, default: false },
-    deliveryOption: {
-      type: String,
-      enum: ["standard", "priority"],
-      default: "standard"
+    customer: {
+      firstName: { type: String, required: true },
+      lastName: { type: String, required: true },
+      email: { type: String },
+      phone: { type: String }
     },
-    paymentMethod: {
-      type: String,
-      enum: ["cod", "card", "aba"],
-      default: "cod"
-    },
-    tip: { type: Number, default: 0 },
+    amount: { type: Number, required: true },
+    shipping: { type: Number, required: true, default: 0 },
     status: {
       type: String,
-      enum: ["pending", "paid", "failed"],
-      default: "pending"
+      default: "PENDING"
     }
   },
   { timestamps: true }
 );
 
-export const Order = model<IOrder>("Order", OrderSchema);
+export const OrderModel = mongoose.model<IOrder>("Order", OrderSchema);

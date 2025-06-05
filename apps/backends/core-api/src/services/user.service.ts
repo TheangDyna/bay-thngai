@@ -1,6 +1,6 @@
 // src/services/user.service.ts
 import { UserRepository } from "@/src/repositories/user.repository";
-import { IAddress, IUserDocument } from "@/src/types/user.types";
+import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
 
 export class UserService {
   private repository: UserRepository;
@@ -42,9 +42,7 @@ export class UserService {
     await this.repository.deleteUser(id);
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Address-related service methods
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ADDRESS
   public async getAllAddresses(userId: string): Promise<IAddress[]> {
     return await this.repository.getAllAddresses(userId);
   }
@@ -66,5 +64,28 @@ export class UserService {
 
   public async deleteAddress(userId: string, addressId: string): Promise<void> {
     await this.repository.deleteAddress(userId, addressId);
+  }
+
+  public async getAllContacts(userId: string): Promise<IContact[]> {
+    return await this.repository.getAllContacts(userId);
+  }
+
+  public async addContact(
+    userId: string,
+    contactData: IContact
+  ): Promise<IContact> {
+    return await this.repository.addContact(userId, contactData);
+  }
+
+  public async updateContact(
+    userId: string,
+    contactId: string,
+    contactData: Partial<IContact>
+  ): Promise<IContact> {
+    return await this.repository.updateContact(userId, contactId, contactData);
+  }
+
+  public async deleteContact(userId: string, contactId: string): Promise<void> {
+    await this.repository.deleteContact(userId, contactId);
   }
 }

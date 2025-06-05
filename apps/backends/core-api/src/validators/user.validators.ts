@@ -35,6 +35,11 @@ export const AddressSchema = z.object({
   })
 });
 
+export const ContactSchema = z.object({
+  label: z.string().trim().min(1),
+  value: z.string().trim().min(1)
+});
+
 export const UserSchema = z
   .object({
     email: z.string().trim().email(),
@@ -54,7 +59,8 @@ export const UserSchema = z
     healthGoals: HealthGoalsSchema.optional().default("maintenance"),
     allergies: z.array(z.string().trim().min(1)).optional().default([]),
     dailyCalorieTarget: z.number().positive().optional().default(2000),
-    addresses: z.array(AddressSchema).optional().default([])
+    addresses: z.array(AddressSchema).optional().default([]),
+    contacts: z.array(ContactSchema).optional().default([])
   })
   .strict();
 

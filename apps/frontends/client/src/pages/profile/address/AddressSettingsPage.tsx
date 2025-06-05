@@ -39,9 +39,6 @@ interface AddressFormValues {
 }
 
 export default function AddressSettingsPage() {
-  // TODO: Replace with actual authenticated user ID
-  const userId = "CURRENT_USER_ID";
-
   // Fetch all addresses for this user
   const {
     data: addresses = [],

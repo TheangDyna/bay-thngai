@@ -1,5 +1,5 @@
 import { UserService } from "@/src/services/user.service";
-import { IAddress } from "@/src/types/user.types";
+import { IAddress, IContact } from "@/src/types/user.types";
 import { Request, Response } from "express";
 import { config } from "../configs/config";
 import { AuthService } from "../services/auth.service";
@@ -146,6 +146,56 @@ export class AuthController {
   public deleteAddress = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       await this.userService.deleteAddress(req.user.id, req.params.addressId);
+      res.status(204).json({ status: "success", data: null });
+    }
+  );
+
+  public getAllContacts = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const contacts = await this.userService.getAllContacts(req.user.id);
+      res.status(200).json({
+        status: "success",
+        data: contacts
+      });
+    }
+  );
+
+  public addContact = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const { label, value } = req.body as IContact;
+      if (!label || !value) {
+        throw new Error("Both label and value are required");
+      }
+      const newContact = await this.userService.addContact(req.user.id, {
+        label,
+        value
+      });
+      res.status(201).json({
+        status: "success",
+        data: newContact
+      });
+    }
+  );
+
+  public updateContact = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const contactId = req.params.contactId;
+      const updates = req.body as Partial<IContact>;
+      const updatedContact = await this.userService.updateContact(
+        req.user.id,
+        contactId,
+        updates
+      );
+      res.status(200).json({
+        status: "success",
+        data: updatedContact
+      });
+    }
+  );
+
+  public deleteContact = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      await this.userService.deleteContact(req.user.id, req.params.contactId);
       res.status(204).json({ status: "success", data: null });
     }
   );

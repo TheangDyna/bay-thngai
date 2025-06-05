@@ -1,16 +1,21 @@
-import { AddressSelector } from "@/components/commons/AddressSelector";
+// src/pages/CheckoutPage.tsx
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // assume shadcn/ui radio
-import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
-import { PaywayIframe } from "@/pages/PaywayIframe";
 import axiosInstance from "@/utils/axiosInstance";
 import { CreditCard, Tag } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { useAddAddressMutation, useGetAddressesQuery } from "@/api/auth.api";
+import { ContactRecord, useGetContactsQuery } from "@/api/contact";
+import { Input } from "@/components/ui/input";
+import { DeliveryAddressSelector } from "@/pages/checkout/DeliveryAddressSelector";
+import { PaywayIframe } from "@/pages/PaywayIframe";
+import { Coordinates } from "@/types/Coordinates";
 
 interface PaymentConfig {
   endpoint: string;
@@ -23,40 +28,63 @@ const Checkout: React.FC = () => {
   const [config, setConfig] = useState<PaymentConfig | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // --- STEP STATES ---
-  // 1. Delivery Address
-  const [addressLine1, setAddressLine1] = useState("");
-  const [addressLine2, setAddressLine2] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
+  // ─── FETCH EXISTING ADDRESSES & CONTACTS ─────────────────────────────────
+  const {
+    data: addresses = [],
+    isLoading: addressesLoading,
+    isError: addressesError,
+    error: addressesFetchError
+  } = useGetAddressesQuery();
+  const addAddressMutation = useAddAddressMutation();
 
-  // 2. Delivery Schedule
-  const [deliveryDate, setDeliveryDate] = useState(""); // e.g. "2025-06-10"
-  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState(""); // e.g. "10:00 AM – 12:00 PM"
+  const {
+    data: contacts = [],
+    isLoading: contactsLoading,
+    isError: contactsError,
+    error: contactsFetchError
+  } = useGetContactsQuery();
 
-  // 3. Contact Number
-  const [contactNumber, setContactNumber] = useState("");
+  // ─── DELIVERY ADDRESS STATE ───────────────────────────────────────────────
+  const [addressInfo, setAddressInfo] = useState<{
+    id: string;
+    coords: Coordinates | null;
+  }>({ id: "current", coords: null });
 
-  // 4. Payment Option
+  // ─── DELIVERY SCHEDULE STATE ─────────────────────────────────────────────
+  const [deliveryDate, setDeliveryDate] = useState<string>("");
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>("");
+
+  // ─── CONTACT STATE ───────────────────────────────────────────────────────
+  const [selectedContactId, setSelectedContactId] = useState<string>("");
+  const [contactNumber, setContactNumber] = useState<string>("");
+
+  useEffect(() => {
+    if (selectedContactId) {
+      const ct = contacts.find((c) => c._id === selectedContactId);
+      if (ct) {
+        setContactNumber(ct.value);
+      }
+    } else {
+      setContactNumber("");
+    }
+  }, [selectedContactId, contacts]);
+
+  // ─── PAYMENT & TIP STATE ─────────────────────────────────────────────────
   const [paymentMethod, setPaymentMethod] = useState<"card" | "cod">("card");
-
-  // 5. Delivery Instructions (optional)
-  const [instructions, setInstructions] = useState("");
-
-  // 6. Delivery Tip
+  const [instructions, setInstructions] = useState<string>("");
   const tipOptions = [5, 10, 15, 20, 25];
   const [selectedTip, setSelectedTip] = useState<number>(5);
 
-  // Compute subtotal & total
+  // ─── COMPUTE TOTALS ───────────────────────────────────────────────────────
   const subtotal = cart.reduce(
     (sum, item) => sum + item.quantity * item.price,
     0
   );
-  const shippingFee = 0; // assume 0 for simplicity
+  const shippingFee = 0;
   const tipAmount = selectedTip;
   const total = subtotal + shippingFee + tipAmount;
 
-  // Redirect to shop if cart is empty
+  // redirect if cart empty
   useEffect(() => {
     if (cart.length === 0) {
       toast({ description: "Your cart is empty. Redirecting to shop…" });
@@ -65,50 +93,47 @@ const Checkout: React.FC = () => {
   }, [cart, navigate]);
 
   const handlePlaceOrder = async () => {
-    // Simple validation for required fields
+    // Validate required fields
     if (
-      !addressLine1 ||
-      !city ||
-      !postalCode ||
+      !addressInfo.coords ||
       !deliveryDate ||
       !deliveryTimeSlot ||
       !contactNumber
     ) {
       toast({
-        description: "Please fill in all required fields",
+        description: "Please complete all required fields.",
         variant: "destructive"
       });
       return;
     }
 
-    // Build payload for payment
+    let finalAddressId = addressInfo.id;
+
     const cartId = "local-cart";
     const rawTranId = cartId.slice(0, 20);
     const items = cart.map((i) => ({
       name: i.name,
       qty: i.quantity,
-      price: i.price
+      price: i.price.toString()
     }));
 
     const payload = {
       orderId: rawTranId,
-      amount: total,
+      amount: total.toString(),
       items,
       customer: {
-        firstname: "Theang", // replace with dynamic data if available
+        firstname: "Theang",
         lastname: "Dyna",
         email: "theangdyna365@gmail.com"
       },
       delivery: {
-        addressLine1,
-        addressLine2,
-        city,
-        postalCode,
+        addressId: finalAddressId,
+        coords: addressInfo.coords,
         deliveryDate,
         deliveryTimeSlot,
         contactNumber,
         instructions,
-        tip: tipAmount
+        tip: tipAmount.toString()
       },
       payment: {
         method: paymentMethod
@@ -137,10 +162,9 @@ const Checkout: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* LEFT COLUMN: Checkout Steps */}
+      {/* LEFT COLUMN */}
       <div className="lg:col-span-2 space-y-8">
         {/* 1. Delivery Address */}
-        <AddressSelector />
         <section className="border rounded-md p-6 shadow-sm">
           <div className="flex items-center mb-4">
             <span className="text-green-600 font-semibold text-lg mr-2">
@@ -148,44 +172,13 @@ const Checkout: React.FC = () => {
             </span>
             <h2 className="text-xl font-semibold">Delivery Address</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="addressLine1">Address Line 1</Label>
-              <Input
-                id="addressLine1"
-                placeholder="123 Main St"
-                value={addressLine1}
-                onChange={(e) => setAddressLine1(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="addressLine2">Address Line 2</Label>
-              <Input
-                id="addressLine2"
-                placeholder="Apt, suite, etc. (optional)"
-                value={addressLine2}
-                onChange={(e) => setAddressLine2(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                placeholder="City"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="postalCode">Postal Code</Label>
-              <Input
-                id="postalCode"
-                placeholder="12345"
-                value={postalCode}
-                onChange={(e) => setPostalCode(e.target.value)}
-              />
-            </div>
-          </div>
+          <DeliveryAddressSelector
+            addresses={addresses}
+            addressesLoading={addressesLoading}
+            addressesError={!!addressesError}
+            addressesFetchError={addressesFetchError || null}
+            onAddressChange={(info) => setAddressInfo(info)}
+          />
         </section>
 
         {/* 2. Delivery Schedule */}
@@ -210,7 +203,7 @@ const Checkout: React.FC = () => {
               <Label htmlFor="deliveryTimeSlot">Time Slot</Label>
               <select
                 id="deliveryTimeSlot"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 mt-1"
                 value={deliveryTimeSlot}
                 onChange={(e) => setDeliveryTimeSlot(e.target.value)}
               >
@@ -233,15 +226,60 @@ const Checkout: React.FC = () => {
             </span>
             <h2 className="text-xl font-semibold">Contact Number</h2>
           </div>
-          <div>
-            <Label htmlFor="contactNumber">Phone / Mobile</Label>
-            <Input
-              id="contactNumber"
-              type="tel"
-              placeholder="+855 12 345 678"
-              value={contactNumber}
-              onChange={(e) => setContactNumber(e.target.value)}
-            />
+          <div className="space-y-4">
+            <RadioGroup
+              value={selectedContactId}
+              onValueChange={setSelectedContactId}
+              className="space-y-3"
+            >
+              {contactsLoading ? (
+                <p>Loading contacts…</p>
+              ) : contactsError ? (
+                <p className="text-red-500">
+                  Error:{" "}
+                  {contactsFetchError instanceof Error
+                    ? contactsFetchError.message
+                    : ""}
+                </p>
+              ) : (
+                contacts.map((ct: ContactRecord) => {
+                  const isSelected = ct._id === selectedContactId;
+                  return (
+                    <div
+                      key={ct._id}
+                      className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer ${
+                        isSelected
+                          ? "border-green-600 bg-green-50"
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                      onClick={() => setSelectedContactId(ct._id)}
+                    >
+                      <RadioGroupItem value={ct._id} id={`contact_${ct._id}`} />
+                      <div className="flex-1">
+                        <p
+                          className={`font-medium ${isSelected ? "text-green-800" : "text-gray-800"}`}
+                        >
+                          {ct.label}
+                        </p>
+                        <p className="text-gray-600">{ct.value}</p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </RadioGroup>
+
+            <div>
+              <Label htmlFor="contactNumber">Or enter new number</Label>
+              <Input
+                id="contactNumber"
+                type="tel"
+                placeholder="+855XXXXXXXX"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                className="mt-1"
+              />
+            </div>
           </div>
         </section>
 
@@ -256,7 +294,7 @@ const Checkout: React.FC = () => {
           <RadioGroup
             value={paymentMethod}
             onValueChange={(val: "card" | "cod") => setPaymentMethod(val)}
-            className="space-y-2"
+            className="space-y-4"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="card" id="pay_card" />
@@ -285,11 +323,11 @@ const Checkout: React.FC = () => {
               Delivery Instructions (optional)
             </h2>
           </div>
-          <Textarea
+          <textarea
             placeholder="Any specific instructions for the driver?"
             value={instructions}
             onChange={(e) => setInstructions(e.target.value)}
-            className="w-full resize-none h-24"
+            className="w-full border rounded-md p-2 resize-none h-24"
           />
         </section>
 
@@ -302,7 +340,7 @@ const Checkout: React.FC = () => {
             <h2 className="text-xl font-semibold">Delivery Tip</h2>
           </div>
           <div className="flex space-x-3">
-            {tipOptions.map((tip) => (
+            {[5, 10, 15, 20, 25].map((tip) => (
               <button
                 key={tip}
                 onClick={() => setSelectedTip(tip)}
@@ -378,7 +416,6 @@ const Checkout: React.FC = () => {
         </div>
       </aside>
 
-      {/* Payway Iframe Overlay */}
       {config && (
         <PaywayIframe
           endpoint={config.endpoint}

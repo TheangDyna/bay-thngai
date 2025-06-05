@@ -1,20 +1,22 @@
 import "dotenv/config";
-import express from "express";
-import { productRoutes } from "./routes/product.routes";
-import { authRoutes } from "./routes/auth.routes";
-import { errorHandler } from "./middlewares/error.middleware";
-import { routeNotFound } from "./middlewares/route.middleware";
-import cookieParser from "cookie-parser";
-import { rateLimiter } from "./middlewares/rateLimiter.middleware";
-import helmet from "helmet";
-import cors from "cors";
-import { userRoutes } from "./routes/user.routes";
-import { cuisineRoutes } from "./routes/cuisine.routes";
-import { reviewRoutes } from "./routes/review.routes";
-import { config } from "./configs/config";
-import { paymentRoutes } from "@/src/routes/payment.routes";
-import { orderRoutes } from "@/src/routes/order.routes";
+
+// import "dotenv/config"; always on the top
 import { cartRoutes } from "@/src/routes/cart.routes";
+import { orderRoutes } from "@/src/routes/order.routes";
+import { paymentRoutes } from "@/src/routes/payment.routes";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import { config } from "./configs/config";
+import { errorHandler } from "./middlewares/error.middleware";
+import { rateLimiter } from "./middlewares/rateLimiter.middleware";
+import { routeNotFound } from "./middlewares/route.middleware";
+import { authRoutes } from "./routes/auth.routes";
+import { cuisineRoutes } from "./routes/cuisine.routes";
+import { productRoutes } from "./routes/product.routes";
+import { reviewRoutes } from "./routes/review.routes";
+import { userRoutes } from "./routes/user.routes";
 
 const app = express();
 

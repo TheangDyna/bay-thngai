@@ -1,6 +1,5 @@
-// src/repositories/user.repository.ts
 import { User } from "@/src/models/user.model";
-import { IAddress, IUserDocument } from "@/src/types/user.types";
+import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
 import { APIFeatures } from "@/src/utils/apiFeatures";
 import { AppError } from "@/src/utils/appError";
 
@@ -72,13 +71,7 @@ export class UserRepository {
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Address-related methods:
-  // ─────────────────────────────────────────────────────────────────────────────
-
-  /**
-   * Fetch the addresses array for a specific user.
-   */
+  // ADDRESS
   public async getAllAddresses(userId: string): Promise<IAddress[]> {
     const user = await User.findById(userId).select("addresses");
     if (!user) {
@@ -87,9 +80,6 @@ export class UserRepository {
     return user.addresses;
   }
 
-  /**
-   * Add a new address subdocument to a user.
-   */
   public async addAddress(
     userId: string,
     addressData: IAddress
@@ -98,16 +88,11 @@ export class UserRepository {
     if (!user) {
       throw new AppError("User not found.", 404);
     }
-    // Push into addresses array
     user.addresses.push(addressData);
     await user.save();
-    // Return the newly added address (last element)
     return user.addresses[user.addresses.length - 1];
   }
 
-  /**
-   * Update an existing address subdocument by its _id.
-   */
   public async updateAddress(
     userId: string,
     addressId: string,
@@ -123,15 +108,11 @@ export class UserRepository {
     if (!address) {
       throw new AppError("Address not found.", 404);
     }
-    // Update fields
     Object.assign(address, addressData);
     await user.save();
     return address;
   }
 
-  /**
-   * Delete an address subdocument by its _id.
-   */
   public async deleteAddress(userId: string, addressId: string): Promise<void> {
     const user = await User.findById(userId);
     if (!user) {
@@ -144,6 +125,56 @@ export class UserRepository {
       throw new AppError("Address not found.", 404);
     }
     user.addresses.splice(addressIndex, 1);
+    await user.save();
+  }
+
+  // CONTACT
+  public async getAllContacts(userId: string): Promise<IContact[]> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+    return user.contacts;
+  }
+
+  public async addContact(
+    userId: string,
+    contactData: IContact
+  ): Promise<IContact> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+
+    user.contacts.push(contactData);
+    await user.save();
+    return user.contacts[user.contacts.length - 1];
+  }
+
+  public async updateContact(
+    userId: string,
+    contactId: string,
+    contactData: Partial<IContact>
+  ): Promise<IContact> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+
+    const idx = user.contacts.findIndex(
+      (c: any) => c._id?.toString() === contactId
+    );
+    if (idx === -1) throw new AppError("Contact not found.", 404);
+
+    Object.assign(user.contacts[idx], contactData);
+    await user.save();
+    return user.contacts[idx];
+  }
+
+  public async deleteContact(userId: string, contactId: string): Promise<void> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+
+    const idx = user.contacts.findIndex(
+      (c: any) => c._id?.toString() === contactId
+    );
+    if (idx === -1) throw new AppError("Contact not found.", 404);
+
+    user.contacts.splice(idx, 1);
     await user.save();
   }
 }

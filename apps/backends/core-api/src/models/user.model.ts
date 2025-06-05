@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IAddress, IUserDocument } from "../types/user.types";
+import { IAddress, IContact, IUserDocument } from "../types/user.types";
 import { defaultSchemaOptions } from "../utils/schemaOptions";
 
 const addressSchema = new Schema<IAddress>(
@@ -26,6 +26,14 @@ const addressSchema = new Schema<IAddress>(
 );
 addressSchema.index({ location: "2dsphere" });
 
+const contactSchema = new Schema<IContact>(
+  {
+    label: { type: String, required: true },
+    value: { type: String, required: true }
+  },
+  { _id: true }
+);
+
 const userSchema = new Schema<IUserDocument>(
   {
     email: { type: String },
@@ -44,6 +52,10 @@ const userSchema = new Schema<IUserDocument>(
     dailyCalorieTarget: { type: Number },
     addresses: {
       type: [addressSchema],
+      default: []
+    },
+    contacts: {
+      type: [contactSchema],
       default: []
     }
   },

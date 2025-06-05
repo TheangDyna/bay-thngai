@@ -4,6 +4,7 @@ import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
 import CheckoutPage from "@/pages/checkout/CheckoutPage";
+import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
 import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
@@ -46,6 +47,10 @@ const AppRoutes: React.FC = () => {
                       element={<ShopProductDetailSlug />}
                     />
                     <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route
+                      path="/checkout-test"
+                      element={<CheckoutTestPage />}
+                    />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/address" element={<AddressSettingsPage />} />
                   </Route>

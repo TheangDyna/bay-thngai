@@ -2,7 +2,7 @@ import { LocationButton } from "@/components/commons/LocationButton";
 import { LocationMarker } from "@/components/commons/LocationMarker";
 import { Coordinates } from "@/types/Coordinates";
 import "leaflet/dist/leaflet.css";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 
 interface MapProps {
@@ -19,15 +19,24 @@ export const Map: React.FC<MapProps> = ({
 
   const handleCurrentLocation = useCallback(
     (lat: number, lng: number) => {
-      if (!mapRef.current) return;
-      mapRef.current.setView([lat, lng], 16, {
-        animate: true,
-        duration: 0.5
-      });
-      onLocationSelect(lat, lng);
+      if (mapRef.current) {
+        mapRef.current.setView([lat, lng], 16, {
+          animate: true,
+          duration: 0.5
+        });
+      }
     },
     [onLocationSelect]
   );
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.setView([coordinates.lat, coordinates.lng], 16, {
+        animate: true,
+        duration: 0.5
+      });
+    }
+  }, [coordinates.lat, coordinates.lng]);
 
   return (
     <div className="space-y-4">

@@ -33,16 +33,23 @@ router.use(protect);
 
 router.get("/me", authController.getMe);
 
-router.route("/me/addresses").get(authController.getAllAddresses);
-router.route("/me/addresses").post(authController.addAddress);
-router.route("/me/addresses/:addressId").put(authController.updateAddress);
-router.route("/me/addresses/:addressId").delete(authController.deleteAddress);
-
 router.post("/forgot-password"); // not yet
 router.patch("/update-my-password"); // not yet
 router.patch("/update-me"); // not yet
 router.delete("/delete-me"); // not yet
 
 router.post("/logout", authController.logOut);
+
+// ─── ADDRESS ROUTES ──────────────────────────────────────────────────────
+router.route("/me/addresses").get(authController.getAllAddresses);
+router.route("/me/addresses").post(authController.addAddress);
+router.route("/me/addresses/:addressId").put(authController.updateAddress);
+router.route("/me/addresses/:addressId").delete(authController.deleteAddress);
+
+// ─── CONTACT ROUTES ──────────────────────────────────────────────────────
+router.route("/me/contacts").get(authController.getAllContacts);
+router.route("/me/contacts").post(authController.addContact);
+router.route("/me/contacts/:contactId").put(authController.updateContact);
+router.route("/me/contacts/:contactId").delete(authController.deleteContact);
 
 export const authRoutes = router;

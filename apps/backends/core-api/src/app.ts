@@ -4,10 +4,12 @@ import "dotenv/config";
 import { cartRoutes } from "@/src/routes/cart.routes";
 import { orderRoutes } from "@/src/routes/order.routes";
 import { paymentRoutes } from "@/src/routes/payment.routes";
+import { pushSubscriptionRoutes } from "@/src/routes/pushSubscription.routes";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import webpush from "web-push";
 import { config } from "./configs/config";
 import { errorHandler } from "./middlewares/error.middleware";
 import { rateLimiter } from "./middlewares/rateLimiter.middleware";
@@ -19,6 +21,12 @@ import { reviewRoutes } from "./routes/review.routes";
 import { userRoutes } from "./routes/user.routes";
 
 const app = express();
+
+webpush.setVapidDetails(
+  "mailto:your-support@yourdomain.com",
+  process.env.VAPID_PUBLIC_KEY!,
+  process.env.VAPID_PRIVATE_KEY!
+);
 
 // Security middleware
 app.use(rateLimiter);
@@ -48,6 +56,7 @@ app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/carts", cartRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/push", pushSubscriptionRoutes);
 
 // Error handling
 app.use(routeNotFound);

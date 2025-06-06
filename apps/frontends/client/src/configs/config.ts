@@ -1,11 +1,13 @@
 interface Config {
   nodeEnv: string;
   apiUrl: string;
+  vapidPublicKey: string;
 }
 
 const envMapping: Record<keyof Config, string> = {
   nodeEnv: "VITE_NODE_ENV",
-  apiUrl: "VITE_API_URL"
+  apiUrl: "VITE_API_URL",
+  vapidPublicKey: "VITE_VAPID_PUBLIC_KEY"
 };
 
 const ensureEnv = (envMapping: Record<keyof Config, string>): Config => {

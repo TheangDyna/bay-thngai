@@ -1,3 +1,4 @@
+import PushNotification from "@/components/commons/PushNotification";
 import { Button } from "@/components/ui/button";
 import axiosInstance from "@/utils/axiosInstance";
 import React, { useRef, useState } from "react";
@@ -91,6 +92,7 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <PushNotification />
       <Button onClick={handlePlaceOrder} disabled={isLoading}>
         {isLoading ? "Processing..." : "Place Order"}
       </Button>

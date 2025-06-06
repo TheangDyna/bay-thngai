@@ -30,8 +30,6 @@ export class PaymentController {
    * We verify the HMAC, then update the order’s status.
    */
   public handleCallback = async (req: Request, res: Response) => {
-    console.log(req);
-
     const payload = req.body;
 
     const tranId: string = payload.tran_id;
@@ -59,5 +57,9 @@ export class PaymentController {
       console.error("❌ Error during check-transaction or DB update:", err);
       return res.status(500).send("Server error");
     }
+  };
+
+  public getCallback = async (_req: Request, res: Response) => {
+    return res.status(200).send("OK");
   };
 }

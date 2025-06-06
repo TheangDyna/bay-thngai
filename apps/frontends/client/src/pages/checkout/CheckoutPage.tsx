@@ -10,11 +10,10 @@ import { CreditCard, Tag } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useAddAddressMutation, useGetAddressesQuery } from "@/api/auth.api";
+import { useGetAddressesQuery } from "@/api/auth.api";
 import { ContactRecord, useGetContactsQuery } from "@/api/contact";
 import { Input } from "@/components/ui/input";
 import { DeliveryAddressSelector } from "@/pages/checkout/DeliveryAddressSelector";
-import { PaywayIframe } from "@/pages/PaywayIframe";
 import { Coordinates } from "@/types/Coordinates";
 
 interface PaymentConfig {
@@ -35,7 +34,6 @@ const Checkout: React.FC = () => {
     isError: addressesError,
     error: addressesFetchError
   } = useGetAddressesQuery();
-  const addAddressMutation = useAddAddressMutation();
 
   const {
     data: contacts = [],
@@ -415,14 +413,6 @@ const Checkout: React.FC = () => {
           </div>
         </div>
       </aside>
-
-      {config && (
-        <PaywayIframe
-          endpoint={config.endpoint}
-          payload={config.payload}
-          onClose={handleCloseIframe}
-        />
-      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ const controller = new PaymentController();
 router.post("/purchase", controller.createTransaction);
 
 // 2) PayWay’s server‐to‐server callback:
+router.get("/callback", controller.getCallback);
 router.post("/callback", controller.handleCallback);
 
 export const paymentRoutes = router;

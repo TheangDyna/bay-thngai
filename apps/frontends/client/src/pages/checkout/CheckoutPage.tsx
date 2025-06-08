@@ -1,11 +1,6 @@
 // src/pages/CheckoutPage.tsx
 import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
-import { Coordinates } from "@/types/Coordinates";
-import axiosInstance from "@/utils/axiosInstance";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { ContactSelector } from "@/pages/checkout/ContactSelector";
 import { DeliveryAddressSelector } from "@/pages/checkout/DeliveryAddressSelector";
 import { DeliveryInstructions } from "@/pages/checkout/DeliveryInstructions";
@@ -13,34 +8,31 @@ import { DeliverySchedule } from "@/pages/checkout/DeliverySchedule";
 import { DeliveryTip } from "@/pages/checkout/DeliveryTip";
 import { OrderSummary } from "@/pages/checkout/OrderSummary";
 import { PaymentOptions } from "@/pages/checkout/PaymentOptions";
-
-interface PaymentConfig {
-  endpoint: string;
-  payload: Record<string, any>;
-}
+import { SectionCard } from "@/pages/checkout/SectionCard";
+import { Coordinates } from "@/types/Coordinates";
+import axiosInstance from "@/utils/axiosInstance";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
   const { cart, clearCart } = useCart();
 
+  // form state
   const [loading, setLoading] = useState(false);
-  const [config, setConfig] = useState<PaymentConfig | null>(null);
-
   const [addressInfo, setAddressInfo] = useState<{
     id: string;
     coords: Coordinates | null;
-  }>({
-    id: "current",
-    coords: null
-  });
-  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>("");
-  const [selectedContactId, setSelectedContactId] = useState<string>("");
-  const [contactNumber, setContactNumber] = useState<string>("");
+  }>({ id: "current", coords: null });
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState("");
+  const [selectedContactId, setSelectedContactId] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"khqr" | "card" | "cod">(
     "khqr"
   );
   const [instructions, setInstructions] = useState<string>("");
-  const [selectedTip, setSelectedTip] = useState<number>(5);
+  const [leaveAtDoor, setLeaveAtDoor] = useState<boolean>(false);
+  const [selectedTip, setSelectedTip] = useState(5);
 
   const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shippingFee = 0;
@@ -60,30 +52,27 @@ const Checkout: React.FC = () => {
         variant: "destructive"
       });
     }
-
-    const payload = {
-      orderId: `local-${Date.now()}`,
-      amount: total.toString(),
-      items: cart.map((i) => ({
-        name: i.name,
-        qty: i.quantity,
-        price: i.price.toString()
-      })),
-      delivery: {
-        addressId: addressInfo.id,
-        coords: addressInfo.coords,
-        timeSlot: deliveryTimeSlot,
-        contactNumber,
-        instructions,
-        tip: selectedTip.toString()
-      },
-      payment: { method: paymentMethod }
-    };
-
+    setLoading(true);
     try {
-      setLoading(true);
+      const payload = {
+        orderId: `local-${Date.now()}`,
+        amount: total.toString(),
+        items: cart.map((i) => ({
+          name: i.name,
+          qty: i.quantity,
+          price: i.price.toString()
+        })),
+        delivery: {
+          addressId: addressInfo.id,
+          coords: addressInfo.coords,
+          timeSlot: deliveryTimeSlot,
+          contactNumber,
+          instructions,
+          tip: selectedTip.toString()
+        },
+        payment: { method: paymentMethod }
+      };
       const { data } = await axiosInstance.post("/payments/purchase", payload);
-      setConfig(data);
       clearCart();
       navigate("/order-success");
     } catch {
@@ -96,61 +85,47 @@ const Checkout: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div className="lg:col-span-2 space-y-8">
-        <section className="border rounded-md p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">1. Delivery Address</h2>
+        <SectionCard title="1. Delivery Address">
           <DeliveryAddressSelector onAddressChange={setAddressInfo} />
-        </section>
+        </SectionCard>
 
-        <section className="border rounded-md p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">2. Delivery Schedule</h2>
+        <SectionCard title="2. Delivery Schedule">
           <DeliverySchedule
             deliveryTimeSlot={deliveryTimeSlot}
             onTimeSlotChange={setDeliveryTimeSlot}
             slotCount={5}
             slotStepMins={30}
           />
-        </section>
+        </SectionCard>
 
-        <section className="border rounded-md p-6 shadow-sm">
-          <div className="flex items-center mb-4">
-            <h2 className="text-xl font-semibold">3. Contact Number</h2>
-          </div>
+        <SectionCard title="3. Contact Number">
           <ContactSelector
             selectedContactId={selectedContactId}
             contactNumber={contactNumber}
             onSelectContact={setSelectedContactId}
             onEnterNumber={setContactNumber}
           />
-        </section>
+        </SectionCard>
 
-        <section className="border rounded-md p-6 shadow-sm">
-          <div className="flex items-center mb-4">
-            <h2 className="text-xl font-semibold"> 4. Payment Option</h2>
-          </div>
+        <SectionCard title="4. Payment Option">
           <PaymentOptions
             paymentMethod={paymentMethod}
             onChange={setPaymentMethod}
           />
-        </section>
+        </SectionCard>
 
-        <section className="border rounded-md p-6 shadow-sm">
-          <div className="flex items-center mb-4">
-            <h2 className="text-xl font-semibold">
-              5. Delivery Instructions (optional)
-            </h2>
-          </div>
+        <SectionCard title="5. Delivery Instructions (optional)">
           <DeliveryInstructions
             instructions={instructions}
             onChange={setInstructions}
+            leaveAtDoor={leaveAtDoor}
+            onToggleLeaveAtDoor={setLeaveAtDoor}
           />
-        </section>
+        </SectionCard>
 
-        <section className="border rounded-md p-6 shadow-sm">
-          <div className="flex items-center mb-4">
-            <h2 className="text-xl font-semibold"> 6. Delivery Tip</h2>
-          </div>
+        <SectionCard title="6. Delivery Tip">
           <DeliveryTip selectedTip={selectedTip} onTipSelect={setSelectedTip} />
-        </section>
+        </SectionCard>
       </div>
 
       <OrderSummary

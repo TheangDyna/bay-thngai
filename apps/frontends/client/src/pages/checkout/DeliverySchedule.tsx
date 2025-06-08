@@ -1,13 +1,11 @@
 // src/components/DeliverySchedule.tsx
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Button } from "@/components/ui/button";
 import React, { useEffect, useMemo } from "react";
 
 interface DeliveryScheduleProps {
   deliveryTimeSlot: string;
   onTimeSlotChange: (slot: string) => void;
-  /** how many future slots to show after “Now” */
   slotCount?: number;
-  /** minutes between slots */
   slotStepMins?: number;
 }
 
@@ -17,51 +15,41 @@ export const DeliverySchedule: React.FC<DeliveryScheduleProps> = ({
   slotCount = 4,
   slotStepMins = 30
 }) => {
-  // compute rounded-up next slots
-  const slots = useMemo(() => {
+  const options = useMemo(() => {
     const now = new Date();
     const mins = now.getMinutes();
-    const remainder = mins % slotStepMins;
-    const delta = remainder === 0 ? 0 : slotStepMins - remainder;
-    const first = new Date(now.getTime() + delta * 60000);
-    const arr: Date[] = [first];
+    const rem = mins % slotStepMins;
+    const first = new Date(
+      now.getTime() + (rem === 0 ? 0 : slotStepMins - rem) * 60000
+    );
+    const arr = [first];
     for (let i = 1; i < slotCount; i++) {
       arr.push(new Date(arr[i - 1].getTime() + slotStepMins * 60000));
     }
-    return arr.map((d) =>
-      d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    );
+    return [
+      "Now",
+      ...arr.map((d) =>
+        d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+      )
+    ];
   }, [slotCount, slotStepMins]);
 
-  // on mount, if nothing selected yet, default to Now
+  // default to "Now" on first render
   useEffect(() => {
-    if (!deliveryTimeSlot) {
-      onTimeSlotChange("Now");
-    }
+    if (!deliveryTimeSlot) onTimeSlotChange("Now");
   }, [deliveryTimeSlot, onTimeSlotChange]);
 
-  const options = ["Now", ...slots];
-
   return (
-    <ToggleGroup
-      type="single"
-      value={deliveryTimeSlot}
-      onValueChange={(v) => onTimeSlotChange(v)}
-      className="grid grid-cols-3 sm:grid-cols-5 gap-2"
-    >
+    <div className="flex flex-wrap gap-3">
       {options.map((opt) => (
-        <ToggleGroupItem
+        <Button
           key={opt}
-          value={opt}
-          className={`px-3 py-2 text-sm rounded-md border ${
-            deliveryTimeSlot === opt
-              ? "bg-green-600 text-white border-green-600"
-              : "bg-white text-gray-800 border-gray-300 hover:border-gray-400"
-          }`}
+          variant={deliveryTimeSlot === opt ? "default" : "outline"}
+          onClick={() => onTimeSlotChange(opt)}
         >
           {opt}
-        </ToggleGroupItem>
+        </Button>
       ))}
-    </ToggleGroup>
+    </div>
   );
 };

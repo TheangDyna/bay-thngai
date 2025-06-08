@@ -11,35 +11,63 @@ interface PaymentOptionsProps {
   onChange: (method: PaymentMethod) => void;
 }
 
+const OPTIONS: {
+  value: PaymentMethod;
+  id: string;
+  label: string;
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}[] = [
+  { value: "khqr", id: "pay_khqr", label: "KHQR", Icon: QrCode },
+  {
+    value: "card",
+    id: "pay_card",
+    label: "Credit / Debit Card",
+    Icon: CreditCard
+  },
+  { value: "cod", id: "pay_cod", label: "Cash on Delivery", Icon: Tag }
+];
+
 export const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   paymentMethod,
   onChange
-}) => (
-  <RadioGroup
-    value={paymentMethod}
-    onValueChange={(val) => onChange(val as PaymentMethod)}
-    className="space-y-4"
-  >
-    <div className="flex items-center space-x-2">
-      <RadioGroupItem value="khqr" id="pay_khqr" />
-      <Label htmlFor="pay_khqr" className="flex items-center space-x-1">
-        <QrCode className="w-4 h-4 text-gray-600" />
-        <span>KHQR</span>
-      </Label>
-    </div>
-    <div className="flex items-center space-x-2">
-      <RadioGroupItem value="card" id="pay_card" />
-      <Label htmlFor="pay_card" className="flex items-center space-x-1">
-        <CreditCard className="w-4 h-4 text-gray-600" />
-        <span>Credit / Debit Card</span>
-      </Label>
-    </div>
-    <div className="flex items-center space-x-2">
-      <RadioGroupItem value="cod" id="pay_cod" />
-      <Label htmlFor="pay_cod" className="flex items-center space-x-1">
-        <Tag className="w-4 h-4 text-gray-600" />
-        <span>Cash on Delivery</span>
-      </Label>
-    </div>
-  </RadioGroup>
-);
+}) => {
+  return (
+    <RadioGroup
+      value={paymentMethod}
+      onValueChange={(val) => onChange(val as PaymentMethod)}
+      className="space-y-3"
+    >
+      {OPTIONS.map(({ value, id, label, Icon }) => {
+        const isSelected = paymentMethod === value;
+        return (
+          <div
+            key={value}
+            className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+              isSelected
+                ? "border-green-600 bg-green-50"
+                : "border-gray-200 hover:border-gray-300 bg-white"
+            }`}
+            onClick={() => onChange(value)}
+          >
+            <RadioGroupItem value={value} id={id} />
+            <div className="flex items-center space-x-2">
+              <Icon
+                className={`w-5 h-5 ${
+                  isSelected ? "text-green-600" : "text-gray-600"
+                }`}
+              />
+              <Label
+                htmlFor={id}
+                className={`font-medium ${
+                  isSelected ? "text-green-800" : "text-gray-800"
+                }`}
+              >
+                {label}
+              </Label>
+            </div>
+          </div>
+        );
+      })}
+    </RadioGroup>
+  );
+};

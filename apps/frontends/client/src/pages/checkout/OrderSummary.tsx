@@ -1,6 +1,7 @@
 // src/pages/checkout/OrderSummary.tsx
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/contexts/cart.context";
+import { SectionCard } from "@/pages/checkout/SectionCard";
 import React from "react";
 
 interface OrderSummaryProps {
@@ -22,33 +23,30 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   onPlaceOrder,
   loading
 }) => (
-  <aside className="space-y-6 lg:col-span-1">
-    <div className="border rounded-md p-6 shadow-sm flex flex-col">
-      <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-      <div className="divide-y flex-1">
-        {cart.map((item) => (
-          <div key={item.id} className="flex items-center py-3">
-            <div className="w-16 h-16 flex-shrink-0">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="object-cover w-full h-full rounded"
-              />
-            </div>
-            <div className="ml-4 flex-1">
+  <SectionCard title="Order Summary">
+    <div className="space-y-4">
+      {cart.map((item) => (
+        <div key={item.id} className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-16 h-16 rounded"
+            />
+            <div>
               <p className="font-medium">{item.name}</p>
               <p className="text-sm text-gray-500">
                 {item.quantity} × ${item.price.toFixed(2)}
               </p>
             </div>
-            <p className="font-semibold">
-              ${(item.quantity * item.price).toFixed(2)}
-            </p>
           </div>
-        ))}
-      </div>
+          <p className="font-semibold">
+            ${(item.quantity * item.price).toFixed(2)}
+          </p>
+        </div>
+      ))}
 
-      <div className="mt-4 space-y-2">
+      <div className="border-t pt-4 space-y-2">
         <div className="flex justify-between">
           <span>Subtotal</span>
           <span>${subtotal.toFixed(2)}</span>
@@ -71,5 +69,5 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
         {loading ? "Processing…" : "Place Order"}
       </Button>
     </div>
-  </aside>
+  </SectionCard>
 );

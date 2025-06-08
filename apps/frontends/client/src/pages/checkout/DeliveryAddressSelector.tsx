@@ -1,8 +1,16 @@
 // src/components/DeliveryAddressSelector.tsx
-
 import { useGetAddressQuery } from "@/api/address";
 import { useGetAddressesQuery } from "@/api/auth.api";
 import { Map } from "@/components/commons/Map";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "@/hooks/use-toast";
@@ -30,10 +38,7 @@ type AddressRecord = {
 export const DeliveryAddressSelector: React.FC<
   DeliveryAddressSelectorProps
 > = ({ onAddressChange }) => {
-  // 📍 Default center (Phnom Penh) — used only for initial map region
   const DEFAULT_COORDS: Coordinates = { lat: 11.5564, lng: 104.9327 };
-
-  // 1) fetch saved addresses
   const {
     data: addrsResp = [],
     isLoading: addrsLoading,
@@ -46,19 +51,16 @@ export const DeliveryAddressSelector: React.FC<
       ? (addrsResp as { data: AddressRecord[] }).data
       : [];
 
-  // 2) local state
   const [selectedId, setSelectedId] = useState("current");
   const [currentCoords, setCurrentCoords] =
     useState<Coordinates>(DEFAULT_COORDS);
   const [savedCoords, setSavedCoords] = useState<Coordinates | null>(null);
-
-  // track when real GPS has arrived
   const [locationLoaded, setLocationLoaded] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
 
   const isCurrent = selectedId === "current";
   const CURRENT_LABEL = "Current Location";
 
-  // 3) get browser location on mount (and again if re-select “current”)
   const fetchBrowserLocation = useCallback(async () => {
     try {
       const pos = await getCurrentPosition();
@@ -86,14 +88,12 @@ export const DeliveryAddressSelector: React.FC<
     fetchBrowserLocation();
   }, []);
 
-  // 4) reverse-geocode whenever currentCoords changes
   const {
     data: fetchedAddress,
     isLoading: addrLoading,
     error
   } = useGetAddressQuery(currentCoords);
 
-  // inform parent once we finally have a real address
   useEffect(() => {
     if (isCurrent && locationLoaded && !addrLoading) {
       onAddressChange({
@@ -112,7 +112,6 @@ export const DeliveryAddressSelector: React.FC<
     onAddressChange
   ]);
 
-  // 6) handle saved-address selection
   useEffect(() => {
     if (!isCurrent) {
       const found = addresses.find((a) => a._id === selectedId);
@@ -129,7 +128,6 @@ export const DeliveryAddressSelector: React.FC<
     }
   }, [isCurrent, selectedId, addresses, onAddressChange]);
 
-  // 7) helper to re-center the saved-address map
   const RecenterMap: React.FC<{ coords: Coordinates }> = ({ coords }) => {
     const map = useMap();
     useEffect(() => {
@@ -188,75 +186,84 @@ export const DeliveryAddressSelector: React.FC<
         ) : addresses.length === 0 ? (
           <p className="text-gray-600">No saved addresses</p>
         ) : (
-          addresses.map((a) => {
-            const sel = a._id === selectedId;
-            const [lng, lat] = a.location.coordinates;
-            return (
-              <div
-                key={a._id}
-                className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer ${
-                  sel
-                    ? "border-green-600 bg-green-50"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-                onClick={() => setSelectedId(a._id)}
-              >
-                <RadioGroupItem value={a._id} id={`addr_${a._id}`} />
-                <div className="flex-1">
-                  <h3 className={`font-medium ${sel ? "text-green-800" : ""}`}>
-                    {a.label}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {a.location.address ||
-                      `${lat.toFixed(5)}, ${lng.toFixed(5)}`}
-                  </p>
-                </div>
+          addresses.map((a) => (
+            <div
+              key={a._id}
+              className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer ${
+                a._id === selectedId
+                  ? "border-green-600 bg-green-50"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setSelectedId(a._id)}
+            >
+              <RadioGroupItem value={a._id} id={`addr_${a._id}`} />
+              <div className="flex-1">
+                <h3
+                  className={`font-medium ${a._id === selectedId ? "text-green-800" : ""}`}
+                >
+                  {a.label}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {a.location.address ||
+                    `${a.location.coordinates[1].toFixed(5)}, ${a.location.coordinates[0].toFixed(5)}`}
+                </p>
               </div>
-            );
-          })
+            </div>
+          ))
         )}
       </RadioGroup>
 
-      {/* ─── Map & Details for Current Location ──────────────── */}
-      {isCurrent && locationLoaded && (
-        <div className="space-y-4">
-          <p className="font-medium">Select location on map</p>
-          <Map
-            coordinates={currentCoords}
-            onLocationSelect={(lat, lng) => {
-              setCurrentCoords({ lat, lng });
-            }}
-          />
-          <p className="text-sm">
-            <span className="font-medium">Coords:</span>{" "}
-            {currentCoords.lat.toFixed(6)}, {currentCoords.lng.toFixed(6)}
-          </p>
-        </div>
-      )}
-
-      {/* ─── Read-only Preview for Saved Address ─────────────── */}
-      {!isCurrent && savedCoords && (
-        <div className="space-y-2">
-          <p className="font-medium">Location preview</p>
-          <MapContainer
-            center={[savedCoords.lat, savedCoords.lng]}
-            zoom={16}
-            className="h-64 w-full rounded-md border"
-            minZoom={3}
-            maxZoom={18}
-            zoomControl={false}
-            dragging={false}
-            scrollWheelZoom={false}
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <RecenterMap coords={savedCoords} />
-            <Marker position={[savedCoords.lat, savedCoords.lng]} />
-          </MapContainer>
-          <p className="text-sm">
-            <span className="font-medium">Coords:</span>{" "}
-            {savedCoords.lat.toFixed(6)}, {savedCoords.lng.toFixed(6)}
-          </p>
-        </div>
+      {/* ─── Map Dialog ────────────────────────────────────────── */}
+      {locationLoaded && (
+        <Dialog open={mapOpen} onOpenChange={setMapOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full">
+              {isCurrent ? "Select location on map" : "View location"}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                {isCurrent ? "Select location" : "Location preview"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="h-80">
+              {isCurrent ? (
+                <Map
+                  coordinates={currentCoords}
+                  onLocationSelect={(lat, lng) =>
+                    setCurrentCoords({ lat, lng })
+                  }
+                />
+              ) : (
+                savedCoords && (
+                  <MapContainer
+                    center={[savedCoords.lat, savedCoords.lng]}
+                    zoom={16}
+                    className="h-full w-full rounded-md border"
+                    dragging={false}
+                    scrollWheelZoom={false}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <RecenterMap coords={savedCoords} />
+                    <Marker position={[savedCoords.lat, savedCoords.lng]} />
+                  </MapContainer>
+                )
+              )}
+            </div>
+            <p className="mt-4 text-sm">
+              <span className="font-medium">Coords:</span>{" "}
+              {isCurrent
+                ? `${currentCoords.lat.toFixed(6)}, ${currentCoords.lng.toFixed(6)}`
+                : savedCoords
+                  ? `${savedCoords.lat.toFixed(6)}, ${savedCoords.lng.toFixed(6)}`
+                  : ""}
+            </p>
+            <DialogClose asChild>
+              <Button className="mt-4 w-full">Close</Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

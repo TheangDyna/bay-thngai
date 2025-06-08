@@ -1,132 +1,214 @@
-import { AddressRecord } from "@/api/auth.api";
+// src/components/DeliveryAddressSelector.tsx
+
+import { useGetAddressQuery } from "@/api/address";
+import { useGetAddressesQuery } from "@/api/auth.api";
 import { Map } from "@/components/commons/Map";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "@/hooks/use-toast";
 import { Coordinates } from "@/types/Coordinates";
+import { getCurrentPosition } from "@/utils/location";
+import "leaflet/dist/leaflet.css";
 import React, { useCallback, useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
 interface DeliveryAddressSelectorProps {
-  addresses: AddressRecord[];
-  addressesLoading: boolean;
-  addressesError: boolean;
-  addressesFetchError: Error | null;
   onAddressChange: (info: {
     id: string;
     label: string;
     coords: Coordinates | null;
+    address?: string;
   }) => void;
 }
 
+type AddressRecord = {
+  _id: string;
+  label: string;
+  location: { coordinates: [number, number]; address?: string };
+};
+
 export const DeliveryAddressSelector: React.FC<
   DeliveryAddressSelectorProps
-> = ({
-  addresses,
-  addressesLoading,
-  addressesError,
-  addressesFetchError,
-  onAddressChange
-}) => {
-  const [selectedAddressId, setSelectedAddressId] = useState<string>("current");
-  const [newAddressLabel, setNewAddressLabel] =
-    useState<string>("Current Location");
-  const [selectedCoords, setSelectedCoords] = useState<Coordinates | null>(
-    null
-  );
+> = ({ onAddressChange }) => {
+  // 📍 Default center (Phnom Penh) — used only for initial map region
+  const DEFAULT_COORDS: Coordinates = { lat: 11.5564, lng: 104.9327 };
 
-  // On mount (and whenever selectedAddressId changes), fetch geolocation if "current"
+  // 1) fetch saved addresses
+  const {
+    data: addrsResp = [],
+    isLoading: addrsLoading,
+    isError: addrsError,
+    error: addrsFetchError
+  } = useGetAddressesQuery();
+  const addresses: AddressRecord[] = Array.isArray(addrsResp)
+    ? addrsResp
+    : addrsResp && "data" in addrsResp
+      ? (addrsResp as { data: AddressRecord[] }).data
+      : [];
+
+  // 2) local state
+  const [selectedId, setSelectedId] = useState("current");
+  const [currentCoords, setCurrentCoords] =
+    useState<Coordinates>(DEFAULT_COORDS);
+  const [savedCoords, setSavedCoords] = useState<Coordinates | null>(null);
+
+  // track when real GPS has arrived
+  const [locationLoaded, setLocationLoaded] = useState(false);
+
+  const isCurrent = selectedId === "current";
+  const CURRENT_LABEL = "Current Location";
+
+  // 3) get browser location on mount (and again if re-select “current”)
+  const fetchBrowserLocation = useCallback(async () => {
+    try {
+      const pos = await getCurrentPosition();
+      const { latitude: lat, longitude: lng } = pos.coords;
+      if (isNaN(lat) || isNaN(lng)) throw new Error("Invalid coords");
+      setCurrentCoords({ lat, lng });
+      onAddressChange({
+        id: "current",
+        label: CURRENT_LABEL,
+        coords: { lat, lng }
+      });
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        description: err.message || "Enable location services."
+      });
+      setCurrentCoords(DEFAULT_COORDS);
+      onAddressChange({ id: "current", label: CURRENT_LABEL, coords: null });
+    } finally {
+      setLocationLoaded(true);
+    }
+  }, [onAddressChange]);
+
   useEffect(() => {
-    if (selectedAddressId === "current") {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude
-          };
-          setSelectedCoords(coords);
-          onAddressChange({ id: "current", label: newAddressLabel, coords });
-        },
-        () => {
-          setSelectedCoords(null);
-          onAddressChange({
-            id: "current",
-            label: newAddressLabel,
-            coords: null
-          });
-        }
-      );
-    } else {
-      const addr = addresses.find((a) => a._id === selectedAddressId);
-      if (addr) {
-        const [lng, lat] = addr.location.coordinates;
-        const coords = { lat, lng };
-        setSelectedCoords(coords);
-        onAddressChange({ id: addr._id, label: addr.label, coords });
+    fetchBrowserLocation();
+  }, []);
+
+  // 4) reverse-geocode whenever currentCoords changes
+  const {
+    data: fetchedAddress,
+    isLoading: addrLoading,
+    error
+  } = useGetAddressQuery(currentCoords);
+
+  // inform parent once we finally have a real address
+  useEffect(() => {
+    if (isCurrent && locationLoaded && !addrLoading) {
+      onAddressChange({
+        id: "current",
+        label: CURRENT_LABEL,
+        coords: currentCoords,
+        address: fetchedAddress
+      });
+    }
+  }, [
+    isCurrent,
+    locationLoaded,
+    addrLoading,
+    fetchedAddress,
+    currentCoords,
+    onAddressChange
+  ]);
+
+  // 6) handle saved-address selection
+  useEffect(() => {
+    if (!isCurrent) {
+      const found = addresses.find((a) => a._id === selectedId);
+      if (found) {
+        const [lng, lat] = found.location.coordinates;
+        setSavedCoords({ lat, lng });
+        onAddressChange({
+          id: found._id,
+          label: found.label,
+          coords: { lat, lng },
+          address: found.location.address
+        });
       }
     }
-  }, [selectedAddressId, addresses, newAddressLabel, onAddressChange]);
+  }, [isCurrent, selectedId, addresses, onAddressChange]);
 
-  const handleLocationSelect = useCallback(
-    (lat: number, lng: number) => {
-      const coords = { lat, lng };
-      setSelectedCoords(coords);
-      onAddressChange({ id: "current", label: newAddressLabel, coords });
-    },
-    [newAddressLabel, onAddressChange]
-  );
+  // 7) helper to re-center the saved-address map
+  const RecenterMap: React.FC<{ coords: Coordinates }> = ({ coords }) => {
+    const map = useMap();
+    useEffect(() => {
+      map.setView([coords.lat, coords.lng], map.getZoom(), { animate: false });
+    }, [coords, map]);
+    return null;
+  };
 
   return (
     <div className="space-y-6">
+      {/* ─── Choice List ───────────────────────────────────────── */}
       <RadioGroup
-        value={selectedAddressId}
-        onValueChange={(val) => setSelectedAddressId(val)}
+        value={selectedId}
+        onValueChange={(val) => {
+          setSelectedId(val);
+          if (val === "current") {
+            setLocationLoaded(false);
+            fetchBrowserLocation();
+          }
+        }}
         className="space-y-4"
       >
-        {/* Option: Current Location */}
+        {/* Current Location */}
         <div
           className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer ${
-            selectedAddressId === "current"
+            isCurrent
               ? "border-green-600 bg-green-50"
-              : "border-gray-200 hover:border-gray-300 bg-white"
+              : "border-gray-200 hover:border-gray-300"
           }`}
-          onClick={() => setSelectedAddressId("current")}
+          onClick={() => {
+            setSelectedId("current");
+            setLocationLoaded(false);
+            fetchBrowserLocation();
+          }}
         >
           <RadioGroupItem value="current" id="addr_current" />
-          <Label htmlFor="addr_current" className="font-medium text-gray-800">
-            Use Current Location
-          </Label>
+          <div className="flex-1">
+            <Label htmlFor="addr_current" className="font-medium">
+              {CURRENT_LABEL}
+            </Label>
+            <p className="text-sm text-gray-500">
+              {addrLoading
+                ? "Loading address..."
+                : error
+                  ? `Error: ${(error as Error).message}`
+                  : fetchedAddress || "No address available"}
+            </p>
+          </div>
         </div>
 
-        {/* Existing addresses */}
-        {addressesLoading ? (
+        {/* Saved Addresses */}
+        {addrsLoading ? (
           <p>Loading saved addresses…</p>
-        ) : addressesError ? (
-          <p className="text-red-500">Error: {addressesFetchError?.message}</p>
+        ) : addrsError ? (
+          <p className="text-red-500">{(addrsFetchError as Error).message}</p>
+        ) : addresses.length === 0 ? (
+          <p className="text-gray-600">No saved addresses</p>
         ) : (
-          addresses.map((addr) => {
-            const isSelected = addr._id === selectedAddressId;
+          addresses.map((a) => {
+            const sel = a._id === selectedId;
+            const [lng, lat] = a.location.coordinates;
             return (
               <div
-                key={addr._id}
+                key={a._id}
                 className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer ${
-                  isSelected
+                  sel
                     ? "border-green-600 bg-green-50"
-                    : "border-gray-200 hover:border-gray-300 bg-white"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
-                onClick={() => setSelectedAddressId(addr._id)}
+                onClick={() => setSelectedId(a._id)}
               >
-                <RadioGroupItem value={addr._id} id={`addr_${addr._id}`} />
+                <RadioGroupItem value={a._id} id={`addr_${a._id}`} />
                 <div className="flex-1">
-                  <h3
-                    className={`font-medium ${
-                      isSelected ? "text-green-800" : "text-gray-800"
-                    }`}
-                  >
-                    {addr.label}
+                  <h3 className={`font-medium ${sel ? "text-green-800" : ""}`}>
+                    {a.label}
                   </h3>
-                  <p className="text-gray-600">
-                    {addr.location.address ||
-                      `${addr.location.coordinates[1].toFixed(5)}, ${addr.location.coordinates[0].toFixed(5)}`}
+                  <p className="text-sm text-gray-600">
+                    {a.location.address ||
+                      `${lat.toFixed(5)}, ${lng.toFixed(5)}`}
                   </p>
                 </div>
               </div>
@@ -135,56 +217,44 @@ export const DeliveryAddressSelector: React.FC<
         )}
       </RadioGroup>
 
-      {/* If "current" is selected, show label input + map */}
-      {selectedAddressId === "current" && (
+      {/* ─── Map & Details for Current Location ──────────────── */}
+      {isCurrent && locationLoaded && (
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="newAddressLabel">Label for this location</Label>
-            <Input
-              id="newAddressLabel"
-              value={newAddressLabel}
-              onChange={(e) => {
-                setNewAddressLabel(e.target.value);
-                onAddressChange({
-                  id: "current",
-                  label: e.target.value,
-                  coords: selectedCoords
-                });
-              }}
-              placeholder="e.g. Home, Office"
-              className="mt-1"
-            />
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">
-              Select location on map
-            </p>
-            <div className="h-64 w-full rounded-md overflow-hidden border border-gray-200">
-              <Map
-                coordinates={selectedCoords || { lat: 11.5564, lng: 104.9327 }}
-                onLocationSelect={handleLocationSelect}
-              />
-            </div>
-            {selectedCoords && (
-              <p className="text-sm">
-                Coordinates: {selectedCoords.lat.toFixed(6)},{" "}
-                {selectedCoords.lng.toFixed(6)}
-              </p>
-            )}
-          </div>
+          <p className="font-medium">Select location on map</p>
+          <Map
+            coordinates={currentCoords}
+            onLocationSelect={(lat, lng) => {
+              setCurrentCoords({ lat, lng });
+            }}
+          />
+          <p className="text-sm">
+            <span className="font-medium">Coords:</span>{" "}
+            {currentCoords.lat.toFixed(6)}, {currentCoords.lng.toFixed(6)}
+          </p>
         </div>
       )}
 
-      {/* If an existing address is selected, show read-only map preview */}
-      {selectedAddressId !== "current" && selectedCoords && (
+      {/* ─── Read-only Preview for Saved Address ─────────────── */}
+      {!isCurrent && savedCoords && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700">Location preview</p>
-          <div className="h-64 w-full rounded-md overflow-hidden border border-gray-200">
-            <Map coordinates={selectedCoords} onLocationSelect={() => {}} />
-          </div>
+          <p className="font-medium">Location preview</p>
+          <MapContainer
+            center={[savedCoords.lat, savedCoords.lng]}
+            zoom={16}
+            className="h-64 w-full rounded-md border"
+            minZoom={3}
+            maxZoom={18}
+            zoomControl={false}
+            dragging={false}
+            scrollWheelZoom={false}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <RecenterMap coords={savedCoords} />
+            <Marker position={[savedCoords.lat, savedCoords.lng]} />
+          </MapContainer>
           <p className="text-sm">
-            Coordinates: {selectedCoords.lat.toFixed(6)},{" "}
-            {selectedCoords.lng.toFixed(6)}
+            <span className="font-medium">Coords:</span>{" "}
+            {savedCoords.lat.toFixed(6)}, {savedCoords.lng.toFixed(6)}
           </p>
         </div>
       )}

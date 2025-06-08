@@ -1,20 +1,18 @@
 // src/pages/CheckoutPage.tsx
 
+import { ContactRecord, useGetContactsQuery } from "@/api/contact";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
+import { DeliveryAddressSelector } from "@/pages/checkout/DeliveryAddressSelector";
+import { Coordinates } from "@/types/Coordinates";
 import axiosInstance from "@/utils/axiosInstance";
 import { CreditCard, Tag } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useGetAddressesQuery } from "@/api/auth.api";
-import { ContactRecord, useGetContactsQuery } from "@/api/contact";
-import { Input } from "@/components/ui/input";
-import { DeliveryAddressSelector } from "@/pages/checkout/DeliveryAddressSelector";
-import { Coordinates } from "@/types/Coordinates";
 
 interface PaymentConfig {
   endpoint: string;
@@ -28,12 +26,6 @@ const Checkout: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   // ─── FETCH EXISTING ADDRESSES & CONTACTS ─────────────────────────────────
-  const {
-    data: addresses = [],
-    isLoading: addressesLoading,
-    isError: addressesError,
-    error: addressesFetchError
-  } = useGetAddressesQuery();
 
   const {
     data: contacts = [],
@@ -152,12 +144,6 @@ const Checkout: React.FC = () => {
     }
   };
 
-  const handleCloseIframe = () => {
-    clearCart();
-    setConfig(null);
-    navigate("/", { replace: true });
-  };
-
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* LEFT COLUMN */}
@@ -171,10 +157,6 @@ const Checkout: React.FC = () => {
             <h2 className="text-xl font-semibold">Delivery Address</h2>
           </div>
           <DeliveryAddressSelector
-            addresses={addresses}
-            addressesLoading={addressesLoading}
-            addressesError={!!addressesError}
-            addressesFetchError={addressesFetchError || null}
             onAddressChange={(info) => setAddressInfo(info)}
           />
         </section>

@@ -27,9 +27,8 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Coordinates } from "@/types/Coordinates";
 import { Edit, MapPin, Plus } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 interface AddressFormValues {
@@ -39,7 +38,7 @@ interface AddressFormValues {
 }
 
 export default function AddressSettingsPage() {
-  // Fetch all addresses for this user
+  // 1) Fetch all addresses for this user
   const {
     data: addresses = [],
     isLoading: addressesLoading,
@@ -56,12 +55,7 @@ export default function AddressSettingsPage() {
     null
   );
 
-  // Default map coords (Cambodia)
-  const [mapCoords, setMapCoords] = useState<Coordinates>({
-    lat: 11.5564,
-    lng: 104.9327
-  });
-
+  // 2) Initialize form (with default lat/lng somewhere in Cambodia)
   const form = useForm<AddressFormValues>({
     defaultValues: {
       label: "",
@@ -69,13 +63,13 @@ export default function AddressSettingsPage() {
       lng: 104.9327
     }
   });
-  const { reset, control, handleSubmit, setValue, watch } = form;
+  const { control, register, handleSubmit, setValue, watch, reset } = form;
 
-  // Watch lat/lng for reverse-geocoding
+  // 3) Watch lat/lng so we can reverse‐geocode & re‐center the map
   const watchedLat = watch("lat");
   const watchedLng = watch("lng");
 
-  // Reverse-geocode address string
+  // 4) Reverse‐geocode into a human‐readable string
   const {
     data: fetchedAddress,
     isLoading: addressLoading,
@@ -88,37 +82,16 @@ export default function AddressSettingsPage() {
       ? addressError.message
       : fetchedAddress || "No address available";
 
-  // Populate form when editing
-  useEffect(() => {
-    if (currentAddress) {
-      reset({
-        label: currentAddress.label,
-        lat: currentAddress.location.coordinates[1],
-        lng: currentAddress.location.coordinates[0]
-      });
-      setMapCoords({
-        lat: currentAddress.location.coordinates[1],
-        lng: currentAddress.location.coordinates[0]
-      });
-    } else {
-      reset({
-        label: "",
-        lat: 11.5564,
-        lng: 104.9327
-      });
-      setMapCoords({ lat: 11.5564, lng: 104.9327 });
-    }
-  }, [currentAddress, reset]);
-
+  // 5) Whenever the user clicks on the map, update form's lat/lng
   const handleLocationSelect = useCallback(
     (lat: number, lng: number) => {
       setValue("lat", lat);
       setValue("lng", lng);
-      setMapCoords({ lat, lng });
     },
     [setValue]
   );
 
+  // 6) On form submit, either add or update
   const onSubmit: SubmitHandler<AddressFormValues> = async (values) => {
     const payload = {
       label: values.label,
@@ -145,16 +118,35 @@ export default function AddressSettingsPage() {
     }
   };
 
+  // 7) Open “Add New” dialog → reset everything to defaults
   const openAddDialog = () => {
     setCurrentAddress(null);
+    reset({
+      label: "",
+      lat: 11.5564,
+      lng: 104.9327
+    });
     setFormDialogOpen(true);
   };
 
+  // 8) Open “Edit” dialog → populate with existing values
   const openEditDialog = (addr: AddressRecord) => {
     setCurrentAddress(addr);
+
+    // GeoJSON stores as [lng, lat], so flip them
+    const existingLat = addr.location.coordinates[1];
+    const existingLng = addr.location.coordinates[0];
+
+    reset({
+      label: addr.label,
+      lat: existingLat,
+      lng: existingLng
+    });
+
     setFormDialogOpen(true);
   };
 
+  // 9) Delete handler
   const handleDelete = async (id: string) => {
     try {
       await deleteAddressMutation.mutateAsync({ id });
@@ -179,8 +171,8 @@ export default function AddressSettingsPage() {
           </p>
         ) : (
           <div className="space-y-4">
-            {addresses.map((addr, index) => (
-              <Card key={index} className="border">
+            {addresses.map((addr, idx) => (
+              <Card key={idx} className="border">
                 <CardContent className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-6 w-6 text-blue-600" />
@@ -246,9 +238,10 @@ export default function AddressSettingsPage() {
               {currentAddress ? "Edit Address" : "Add New Address"}
             </DialogTitle>
           </DialogHeader>
+
           <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
-              {/* Label Input */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Label */}
               <FormField
                 control={control}
                 name="label"
@@ -264,11 +257,11 @@ export default function AddressSettingsPage() {
                 )}
               />
 
-              {/* Hidden lat & lng */}
-              <input type="hidden" {...form.register("lat")} />
-              <input type="hidden" {...form.register("lng")} />
+              {/* Hidden lat & lng inputs (registered via `register`) */}
+              <input type="hidden" {...register("lat")} />
+              <input type="hidden" {...register("lng")} />
 
-              {/* Read-only address display */}
+              {/* Read‐only address string */}
               <FormItem>
                 <FormLabel>Selected Address</FormLabel>
                 <FormControl>
@@ -276,7 +269,7 @@ export default function AddressSettingsPage() {
                 </FormControl>
               </FormItem>
 
-              {/* Inline Map Selector */}
+              {/* Inline Map Selector (fixed height container) */}
               <div className="space-y-2">
                 <p className="text-sm font-medium text-gray-700">
                   Select Location

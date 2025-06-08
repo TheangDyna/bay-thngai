@@ -1,4 +1,5 @@
 import ProtectedRoute from "@/components/commons/ProtectedRoute";
+import BaseLayout from "@/components/layouts/BaseLayout";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
@@ -33,9 +34,9 @@ const AppRoutes: React.FC = () => {
                     path="/"
                     element={
                       <ProtectedRoute>
-                        {/* <BaseLayout> */}
-                        <Outlet />
-                        {/* </BaseLayout> */}
+                        <BaseLayout>
+                          <Outlet />
+                        </BaseLayout>
                       </ProtectedRoute>
                     }
                   >

@@ -1,5 +1,8 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useCuisinesQuery } from "@/api/cuisine";
+import { useCreateProductMutation } from "@/api/product";
+import { ImagesInput } from "@/components/ImagesInput";
+import { MultiSelect } from "@/components/MultiSelect";
+import { ThumbnailInput } from "@/components/ThumbnailInput";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -10,21 +13,18 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { MultiSelect } from "@/components/MultiSelect";
-import { useCreateProductMutation } from "@/api/product.api";
-import { useCuisinesQuery } from "@/api/cuisine.api";
-import { ImagesInput } from "@/components/ImagesInput";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
-import { ThumbnailInput } from "@/components/ThumbnailInput";
+import { Textarea } from "@/components/ui/textarea";
+import { useUploadDialog } from "@/hooks/useUploadDialog";
+import Error from "@/pages/Error";
+import { ProductInput } from "@/types/product.types";
 import {
   ProductDefaultValue,
   ProductSchema
 } from "@/validators/product.validators";
-import { ProductInput } from "@/types/product.types";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useUploadDialog } from "@/hooks/useUploadDialog";
-import Error from "@/pages/Error";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 const ProductCreate: React.FC = () => {
   const { mutation: createProductMutation, progress } =

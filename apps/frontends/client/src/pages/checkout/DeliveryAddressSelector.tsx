@@ -1,6 +1,6 @@
 // src/components/DeliveryAddressSelector.tsx
 import { useGetAddressQuery } from "@/api/address";
-import { useGetAddressesQuery } from "@/api/auth.api";
+import { useGetAddressesQuery } from "@/api/auth";
 import { Map } from "@/components/commons/Map";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,7 +1,7 @@
+import { useGetMeQuery } from "@/api/auth";
+import Loading from "@/pages/Loading";
 import { ReactElement } from "react";
 import { Navigate } from "react-router-dom";
-import { useGetMeQuery } from "@/api/auth.api";
-import Loading from "@/pages/Loading";
 
 interface ProtectedRouteProps {
   children: ReactElement;

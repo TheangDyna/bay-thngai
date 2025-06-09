@@ -1,13 +1,13 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useDeleteProductMutation, useProductQuery } from "@/api/product";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CircleDot, Clock, DollarSign, Pencil, Trash2 } from "lucide-react";
-import { formatDistance } from "date-fns";
-import { useDeleteProductMutation, useProductQuery } from "@/api/product.api";
-import Error from "@/pages/Error";
 import { useDeleteDialog } from "@/hooks/useDeleteDialog";
+import Error from "@/pages/Error";
+import { formatDistance } from "date-fns";
+import { CircleDot, Clock, DollarSign, Pencil, Trash2 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ProductDetail: React.FC = () => {
   const { productId } = useParams();

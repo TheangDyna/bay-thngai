@@ -1,31 +1,27 @@
-import { useParams } from "react-router-dom";
+import { useProductQuery } from "@/api/product";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { formatDistance } from "date-fns";
 import {
   ArrowLeft,
-  ChefHat,
-  Clock,
   DollarSign,
   ImagePlus,
   Images,
   Pencil,
   Plus,
   Save,
-  ShoppingCart,
-  Tag,
   Trash2
 } from "lucide-react";
-import { formatDistance } from "date-fns";
-import { useProductQuery } from "@/api/product.api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Switch } from "@/components/ui/switch";
+import { useParams } from "react-router-dom";
 
 function ProductSkeleton() {
   return (

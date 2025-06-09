@@ -7,13 +7,6 @@ import { Swiper as SwiperClass } from "swiper";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-// @ts-ignore
-import "swiper/css";
-// @ts-ignore
-import "swiper/css/navigation";
-// @ts-ignore
-import "swiper/css/pagination";
-
 const CollectionSection = () => {
   const swiperRef = useRef<SwiperClass | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);

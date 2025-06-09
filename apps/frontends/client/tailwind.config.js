@@ -1,45 +1,54 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)"
+      },
       colors: {
-        text: "#1D1616", // Text color
-        primary: {
-          DEFAULT: "#16C47F", // Primary color
-          foreground: "#FFFFFF" // Text color for primary
-        },
-        secondary: "#FFD65A", // Secondary color
-        accent: "#FF9D23", // Accent color
-        error: "#F93827", // Error color (you can replace this or keep it as is)
-        background: "#ffffff",
-        foreground: "#000000",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         card: {
-          DEFAULT: "#f8f9fa",
-          foreground: "#212529"
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))"
         },
         popover: {
-          DEFAULT: "#f1f3f5",
-          foreground: "#343a40"
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))"
         },
-        success: {
-          DEFAULT: "#28A745",
-          foreground: "#FFFFFF"
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))"
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))"
         },
         muted: {
-          DEFAULT: "#6C757D",
-          foreground: "#E9ECEF"
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))"
         },
-        border: "#DEE2E6",
-        input: "#E9ECEF",
-        ring: "#B8DAFF",
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))"
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))"
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
         chart: {
-          1: "#007BFF",
-          2: "#FFC107",
-          3: "#28A745",
-          4: "#6F42C1",
-          5: "#DC3545"
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))"
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -49,13 +58,8 @@ module.exports = {
           accent: "hsl(var(--sidebar-accent))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))"
+          ring: "hsl(var(--ring))"
         }
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)"
       }
     }
   },

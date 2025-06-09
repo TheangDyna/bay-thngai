@@ -7,7 +7,7 @@ import {
   useDeleteAddressMutation,
   useGetAddressesQuery,
   useUpdateAddressMutation
-} from "@/api/auth.api";
+} from "@/api/auth";
 import { Map } from "@/components/commons/Map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

@@ -1,12 +1,12 @@
-import { X } from "lucide-react";
 import { Table } from "@tanstack/react-table";
+import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useCuisinesQuery } from "@/api/cuisine";
 import { DataTableViewOptions } from "@/components/DataTableViewOptions";
 import { DataTableFacetedFilter } from "../../components/DataTableFacetedFilter";
-import { useCuisinesQuery } from "@/api/cuisine.api";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;

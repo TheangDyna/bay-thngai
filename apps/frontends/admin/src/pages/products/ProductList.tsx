@@ -16,12 +16,12 @@ import {
   TableRow
 } from "@/components/ui/table";
 
-import { useState } from "react";
+import { useProductsQuery } from "@/api/product";
 import { DataTablePagination } from "@/components/DataTablePagination";
-import { DataTableToolbar } from "@/pages/products/DataTableToolbar";
-import { useProductsQuery } from "@/api/product.api";
 import { DataTableSkeleton } from "@/components/DataTableSkeleton";
 import { columns } from "@/pages/products/columns";
+import { DataTableToolbar } from "@/pages/products/DataTableToolbar";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ProductList: React.FC = () => {

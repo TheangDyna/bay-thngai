@@ -1,6 +1,7 @@
-import { EllipsisVertical } from "lucide-react";
 import { Row } from "@tanstack/react-table";
+import { EllipsisVertical } from "lucide-react";
 
+import { useDeleteProductMutation } from "@/api/product";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,9 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
 import { useDeleteDialog } from "@/hooks/useDeleteDialog";
-import { useDeleteProductMutation } from "@/api/product.api";
+import { useNavigate } from "react-router-dom";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

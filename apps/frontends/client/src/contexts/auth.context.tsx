@@ -3,7 +3,7 @@ import {
   useGoogleLoginMutation,
   useLoginMutation,
   useLogoutMutation
-} from "@/api/auth.api";
+} from "@/api/auth";
 import { User } from "@/types/User";
 import React, { createContext, useContext, useEffect, useState } from "react";
 

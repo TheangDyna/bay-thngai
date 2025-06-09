@@ -24,7 +24,7 @@ const queryClient = new QueryClient();
 const AppRoutes: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <CartProvider>
           <AuthProvider>
             <BrowserRouter>

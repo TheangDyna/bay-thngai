@@ -16,12 +16,12 @@ import {
   TableRow
 } from "@/components/ui/table";
 
-import { useState } from "react";
+import { useCuisinesQuery } from "@/api/cuisine";
 import { DataTablePagination } from "@/components/DataTablePagination";
 import { DataTableSkeleton } from "@/components/DataTableSkeleton";
-import { useCuisinesQuery } from "@/api/cuisine.api";
 import { DataTableToolbar } from "@/pages/cuisines/DataTableToolbar";
 import { columns } from "@/pages/cuisines/columns";
+import { useState } from "react";
 
 const CuisineList: React.FC = () => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

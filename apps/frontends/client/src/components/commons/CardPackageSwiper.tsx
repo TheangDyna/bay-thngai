@@ -6,13 +6,6 @@ import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CardPackage from "./CardPackage";
 
-// @ts-ignore
-import "swiper/css";
-// @ts-ignore
-import "swiper/css/navigation";
-// @ts-ignore
-import "swiper/css/pagination";
-
 const CardPackageSwiper: React.FC = () => {
   const swiperRef = useRef<SwiperClass | null>(null);
   const [isBeginning, setIsBeginning] = useState(true);

@@ -1,4 +1,4 @@
-import { useGetMeQuery, useLogoutMutation } from "@/api/auth.api";
+import { useGetMeQuery, useLogoutMutation } from "@/api/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

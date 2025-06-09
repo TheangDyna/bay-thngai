@@ -1,4 +1,4 @@
-import { useProductsQuery } from "@/api/product.api";
+import { useProductsQuery } from "@/api/product";
 import BannerHeader from "@/components/commons/BannerHeader";
 import CardProduct from "@/components/commons/CardProduct";
 import ProductDetailModal from "@/components/commons/ProductDetailModal";

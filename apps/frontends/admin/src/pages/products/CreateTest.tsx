@@ -1,35 +1,10 @@
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { useCuisinesQuery } from "@/api/cuisine";
+import { useCreateProductMutation } from "@/api/product";
+import { ImagesInput } from "@/components/ImagesInput";
+import { MultiSelect } from "@/components/MultiSelect";
+import { ThumbnailInput } from "@/components/ThumbnailInput";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  ArrowLeft,
-  DollarSign,
-  ImagePlus,
-  Images,
-  Pencil,
-  Plus,
-  Save,
-  Trash2
-} from "lucide-react";
-import { formatDistance } from "date-fns";
-import { useCreateProductMutation, useProductQuery } from "@/api/product.api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Switch } from "@/components/ui/switch";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ProductDefaultValue,
-  ProductSchema
-} from "@/validators/product.validators";
-import { ProductInput } from "@/types/product.types";
-import { useCuisinesQuery } from "@/api/cuisine.api";
-import { useUploadDialog } from "@/hooks/useUploadDialog";
+import { Card } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -38,9 +13,20 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { ThumbnailInput } from "@/components/ThumbnailInput";
-import { ImagesInput } from "@/components/ImagesInput";
-import { MultiSelect } from "@/components/MultiSelect";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useUploadDialog } from "@/hooks/useUploadDialog";
+import { ProductInput } from "@/types/product.types";
+import {
+  ProductDefaultValue,
+  ProductSchema
+} from "@/validators/product.validators";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 function ProductSkeleton() {
   return (

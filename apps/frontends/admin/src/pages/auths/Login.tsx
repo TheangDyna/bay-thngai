@@ -1,13 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useGoogleLoginMutation, useLoginMutation } from "@/api/auth";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { CardSpotlight } from "@/components/ui/card-spotlight";
-import { Input } from "@/components/ui/input";
-import { LoaderCircle, Soup } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { useGoogleLoginMutation, useLoginMutation } from "@/api/auth.api";
 import {
   Form,
   FormControl,
@@ -16,8 +10,14 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 import { LoginInput } from "@/types/auth.types";
 import { LoginSchema } from "@/validators/auth.validators";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle, Soup } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const defaultValues: Partial<LoginInput> = {
   email: "",

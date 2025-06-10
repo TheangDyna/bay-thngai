@@ -143,9 +143,6 @@ const ProductCreate: React.FC = () => {
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              {/* <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-5 w-5" />
-              </Button> */}
               <div>
                 <h1 className="text-2xl font-bold">Create Product</h1>
               </div>

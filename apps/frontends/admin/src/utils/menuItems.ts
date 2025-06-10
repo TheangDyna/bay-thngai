@@ -1,20 +1,20 @@
 import {
-  Gauge,
-  ChartPie,
-  Boxes,
-  Box,
-  Users,
-  Inbox,
-  Undo2,
   ArrowRightLeft,
-  History,
-  Settings2,
   Bell,
-  MessageSquareWarning,
+  Box,
+  Boxes,
+  ChartPie,
+  Gauge,
+  History,
+  Inbox,
   LogOut,
+  MessageSquareWarning,
   Percent,
   Puzzle,
-  User
+  Settings2,
+  Undo2,
+  User,
+  Users
 } from "lucide-react";
 
 type MenuSection = {
@@ -84,6 +84,12 @@ export const menuItems: MenuSection[] = [
         title: "Create Cuisine",
         icon: Boxes,
         path: "/cuisines/new"
+      },
+      {
+        title: "Edit Cuisine",
+        path: "/cuisines/:id/edit",
+        icon: Boxes,
+        disabled: true
       }
     ]
   },

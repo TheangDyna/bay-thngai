@@ -5,7 +5,8 @@ import { defaultSchemaOptions } from "../utils/schemaOptions";
 const cuisineSchema = new Schema<ICuisineDocument>(
   {
     name: { type: String, unique: true },
-    description: { type: String }
+    description: { type: String },
+    thumbnail: { type: String }
   },
   defaultSchemaOptions
 );

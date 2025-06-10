@@ -1,7 +1,7 @@
-import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { DataTableRowActions } from "@/pages/cuisines/DataTableRowActions";
 import { Cuisine } from "@/types/cuisine.types";
+import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: (
   currentPage: number,
@@ -27,7 +27,7 @@ export const columns: (
       return (
         <div className="flex items-center space-x-2">
           <img
-            src={"/logo.png"}
+            src={row.original.thumbnail}
             alt={row.original.name}
             className="w-8 h-8 rounded-md"
           />

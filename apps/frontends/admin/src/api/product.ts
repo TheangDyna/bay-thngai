@@ -1,17 +1,17 @@
+import { Pagination } from "@/types/pagination.types";
+import { Product } from "@/types/product.types";
+import { Sorting } from "@/types/sort.types";
+import axiosInstance from "@/utils/axiosInstance";
 import {
   useMutation,
   UseMutationResult,
   useQuery,
-  UseQueryResult,
-  useQueryClient
+  useQueryClient,
+  UseQueryResult
 } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axiosInstance";
-import { useState } from "react";
-import { AxiosError } from "axios";
-import { Product } from "@/types/product.types";
-import { Pagination } from "@/types/pagination.types";
-import { Sorting } from "@/types/sort.types";
 import { ColumnFilter } from "@tanstack/react-table";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
 // Mutation to Create Product
 export const useCreateProductMutation = (): {
@@ -83,7 +83,7 @@ export const useProductsQuery = ({
 // Query to Fetch a Single Product
 export const useProductQuery = (
   id?: string
-): UseQueryResult<Product, AxiosError> => {
+): UseQueryResult<{ data: Product }, AxiosError> => {
   return useQuery({
     queryKey: ["products", id],
     queryFn: async () => {

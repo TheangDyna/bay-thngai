@@ -1,4 +1,4 @@
-import { useCreateCuisineMutation } from "@/api/cuisine";
+import { useCuisineQuery, useUpdateCuisineMutation } from "@/api/cuisine";
 import { ThumbnailInput } from "@/components/ThumbnailInput";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,67 +10,100 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useUploadDialog } from "@/hooks/useUploadDialog";
+import Error from "@/pages/Error";
 import { CuisineInput } from "@/types/cuisine.types";
 import {
   cuisineDefaultValues,
   CuisineSchema
 } from "@/validators/cuisine.validators";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { z } from "zod";
 
-const CuisineCreate: React.FC = () => {
-  const form = useForm<CuisineInput & { thumbnail?: File }>({
+const CuisineEdit: React.FC = () => {
+  const { cuisineId } = useParams<{ cuisineId: string }>();
+  const { data: cuisineResp, isLoading, isError } = useCuisineQuery(cuisineId!);
+  const { mutation: updateCuisine, progress } = useUpdateCuisineMutation(
+    cuisineId!
+  );
+  const uploadDialog = useUploadDialog();
+
+  const form = useForm<CuisineInput & { thumbnail?: File | string }>({
     resolver: zodResolver(
       CuisineSchema.extend({ thumbnail: z.any().optional() })
     ),
     defaultValues: { ...cuisineDefaultValues, thumbnail: undefined }
   });
 
-  const { mutation: createCuisineMutation, progress } =
-    useCreateCuisineMutation();
-  const uploadDialog = useUploadDialog();
+  useEffect(() => {
+    if (cuisineResp?.data) {
+      const { name, description, thumbnail } = cuisineResp.data;
+      form.reset({ name, description, thumbnail: thumbnail });
+    }
+  }, [cuisineResp?.data, form]);
 
-  const onSubmit = (data: CuisineInput & { thumbnail?: File }) => {
+  if (isError) return <Error />;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <Skeleton className="h-8 w-[200px]" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-24" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
+          <div className="lg:col-span-3 space-y-5">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+          <div className="lg:col-span-2 space-y-5">
+            <Skeleton className="h-40 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const onSubmit = (data: CuisineInput & { thumbnail?: string | File }) => {
     uploadDialog.openDialog({
       status: "uploading",
-      message: "Creating cuisine..."
+      message: "Updating cuisine…"
     });
 
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    if (data.thumbnail) {
+    if (data.thumbnail && data.thumbnail instanceof File) {
       formData.append("thumbnail", data.thumbnail);
     }
 
-    createCuisineMutation.mutate(formData, {
+    updateCuisine.mutate(formData, {
       onSuccess: () => {
         uploadDialog.openDialog({
           status: "success",
-          message: "Cuisine created successfully!"
+          message: "Cuisine updated!"
         });
-        form.reset();
         setTimeout(uploadDialog.closeDialog, 3000);
       },
-      onError: (error: any) => {
+      onError: (err: any) => {
         uploadDialog.openDialog({
           status: "error",
-          message:
-            "There was an issue creating the cuisine. Please check the form for errors."
+          message: "Failed to update cuisine."
         });
-        // duplicate‐value handling as before
-        const serverMessage = error.response?.data?.message || "";
-        if (serverMessage.includes("Duplicate value")) {
-          const match = serverMessage.match(/Duplicate value "(.*?)"/);
-          const duplicateValue = match ? match[1] : "value";
-          const fieldMatch = serverMessage.match(/field "(.*?)"/);
-          const fieldName = fieldMatch ? fieldMatch[1] : "field";
-          form.setError(fieldName as any, {
+        const msg = err.response?.data?.message || "";
+        if (msg.includes("Duplicate value")) {
+          const match = msg.match(/Duplicate value "(.*?)"/);
+          const dup = match?.[1] ?? "";
+          form.setError("name", {
             type: "server",
-            message: `The ${fieldName} "${duplicateValue}" is already in use.`
+            message: `Name "${dup}" is already taken.`
           });
         }
         setTimeout(uploadDialog.closeDialog, 5000);
@@ -81,27 +114,24 @@ const CuisineCreate: React.FC = () => {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div>
-                <h1 className="text-2xl font-bold">Create Cuisine</h1>
-              </div>
-            </div>
-            {/* Submit screen lg */}
+            <h1 className="text-2xl font-bold">Edit Cuisine</h1>
             <Button type="submit" className="hidden md:inline-flex">
-              Create Product
+              Update Cuisine
             </Button>
           </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 lg:gap-6">
+            {/* Left fields */}
             <div className="lg:col-span-3 space-y-3">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cuisine Name</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Cuisine Name" />
                     </FormControl>
@@ -109,6 +139,7 @@ const CuisineCreate: React.FC = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="description"
@@ -116,12 +147,7 @@ const CuisineCreate: React.FC = () => {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Description"
-                        rows={5}
-                        className="resize-none"
-                      />
+                      <Textarea {...field} placeholder="Description" rows={5} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,6 +155,7 @@ const CuisineCreate: React.FC = () => {
               />
             </div>
 
+            {/* Right fields */}
             <div className="lg:col-span-2 space-y-3">
               <FormField
                 control={form.control}
@@ -149,9 +176,9 @@ const CuisineCreate: React.FC = () => {
             </div>
           </div>
 
-          {/* Submit screen sm */}
-          <Button type="submit" className="md:hidden">
-            Create Product
+          {/* Submit (sm) */}
+          <Button type="submit" className="md:hidden w-full">
+            Update Cuisine
           </Button>
         </form>
       </Form>
@@ -161,4 +188,4 @@ const CuisineCreate: React.FC = () => {
   );
 };
 
-export default CuisineCreate;
+export default CuisineEdit;

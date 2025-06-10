@@ -10,7 +10,7 @@ export interface Product {
   price: number;
   inStock: boolean;
   description: string;
-  cuisines: Cuisine[];
+  cuisines: Cuisine[] | String[];
   dietaries?: string[];
   ingredients?: string[];
   thumbnail: string;

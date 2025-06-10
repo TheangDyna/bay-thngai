@@ -1,46 +1,52 @@
+import { Cuisine } from "@/types/cuisine.types";
+import { Pagination } from "@/types/pagination.types";
+import { Sorting } from "@/types/sort.types";
+import axiosInstance from "@/utils/axiosInstance";
 import {
   useMutation,
   UseMutationResult,
   useQuery,
+  useQueryClient,
   UseQueryResult
 } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axiosInstance";
-import { Cuisine, CuisineInput } from "@/types/cuisine.types";
+import { ColumnFilter } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { Pagination } from "@/types/pagination.types";
-import { Sorting } from "@/types/sort.types";
-import { ColumnFilter } from "@tanstack/react-table";
 
-// Create Cuisine Mutation
+// ───── Create Cuisine (with thumbnail) ───────────────────────────────────────
 export const useCreateCuisineMutation = (): {
-  mutation: UseMutationResult<Cuisine, AxiosError, CuisineInput>;
+  mutation: UseMutationResult<Cuisine, AxiosError, FormData>;
   progress: number;
 } => {
   const [progress, setProgress] = useState<number>(0);
+  const queryClient = useQueryClient();
 
-  const mutation = useMutation<Cuisine, AxiosError, CuisineInput>({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.post("/cuisines", data, {
-        onUploadProgress: (progressEvent) => {
-          const percentage = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 1)
-          );
-          setProgress(percentage);
+  const mutation = useMutation<Cuisine, AxiosError, FormData>({
+    mutationFn: async (formData) => {
+      const res = await axiosInstance.post("/cuisines", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000,
+        onUploadProgress: (e) => {
+          const pct = Math.round((e.loaded * 100) / (e.total ?? 1));
+          setProgress(pct);
         }
       });
-      return response.data;
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cuisines"] });
     },
     onSettled: () => {
       setProgress(0);
     }
   });
+
   return { mutation, progress };
 };
 
-// Get All Cuisines Query
+// ───── Fetch All Cuisines ────────────────────────────────────────────────────
 export const useCuisinesQuery = ({
-  pagination = { pageIndex: 0, pageSize: 100 },
+  pagination,
   sorting = [],
   columnFilters = []
 }: {
@@ -51,56 +57,83 @@ export const useCuisinesQuery = ({
   return useQuery({
     queryKey: ["cuisines", { pagination, sorting, columnFilters }],
     queryFn: async () => {
-      const params = {
-        page: pagination.pageIndex + 1,
-        limit: pagination.pageSize,
+      const params: any = {
+        page:
+          pagination?.pageIndex != null ? pagination.pageIndex + 1 : undefined,
+        limit: pagination?.pageSize,
         sort: sorting[0]
           ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
           : undefined,
-        ...columnFilters.reduce((acc, filter) => {
-          (acc as any)[filter.id] = filter.value;
+        ...columnFilters.reduce((acc, f) => {
+          (acc as any)[f.id] = f.value;
           return acc;
         }, {})
       };
-      const response = await axiosInstance.get("/cuisines", { params });
-      return response.data;
+      const res = await axiosInstance.get("/cuisines", { params });
+      return res.data;
     }
   });
 };
 
-// Get Single Cuisine Query
+// ───── Fetch Single Cuisine ─────────────────────────────────────────────────
 export const useCuisineQuery = (
   id: string
-): UseQueryResult<Cuisine, AxiosError> => {
+): UseQueryResult<{ data: Cuisine }, AxiosError> => {
   return useQuery({
     queryKey: ["cuisines", id],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/cuisines/${id}`);
-      return response.data;
+      const res = await axiosInstance.get(`/cuisines/${id}`);
+      return res.data;
     },
     enabled: !!id
   });
 };
 
-// Update Cuisine Mutation
+// ───── Update Cuisine (with thumbnail) ──────────────────────────────────────
 export const useUpdateCuisineMutation = (
   id: string
-): UseMutationResult<Cuisine, AxiosError, Partial<CuisineInput>> => {
-  return useMutation({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.patch(`/cuisines/${id}`, data);
-      return response.data;
+): {
+  mutation: UseMutationResult<Cuisine, AxiosError, FormData>;
+  progress: number;
+} => {
+  const [progress, setProgress] = useState<number>(0);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<Cuisine, AxiosError, FormData>({
+    mutationFn: async (formData) => {
+      const res = await axiosInstance.patch(`/cuisines/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000,
+        onUploadProgress: (e) => {
+          const pct = Math.round((e.loaded * 100) / (e.total ?? 1));
+          setProgress(pct);
+        }
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cuisines"] });
+      queryClient.invalidateQueries({ queryKey: ["cuisines", id] });
+    },
+    onSettled: () => {
+      setProgress(0);
     }
   });
+
+  return { mutation, progress };
 };
 
-// Delete Cuisine Mutation
+// ───── Delete Cuisine ────────────────────────────────────────────────────────
 export const useDeleteCuisineMutation = (
   id: string
-): UseMutationResult<void, AxiosError> => {
-  return useMutation({
+): UseMutationResult<void, AxiosError, void, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation<void, AxiosError, void, unknown>({
     mutationFn: async () => {
       await axiosInstance.delete(`/cuisines/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cuisines"] });
     }
   });
 };

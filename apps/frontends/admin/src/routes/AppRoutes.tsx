@@ -1,18 +1,19 @@
+import { DashboardLayout } from "@/components/DashboardLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/contexts/theme/ThemeContext";
+import CuisineEdit from "@/pages/cuisines/CuisineEdit";
+import Loading from "@/pages/Loading";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter,
-  Routes,
-  Route,
+  Navigate,
   Outlet,
-  Navigate
+  Route,
+  Routes
 } from "react-router-dom";
-import { DashboardLayout } from "@/components/DashboardLayout";
-import { ThemeProvider } from "@/contexts/theme/ThemeContext";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { Toaster } from "@/components/ui/toaster";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Loading from "@/pages/Loading";
 
 // Lazy-loaded components
 const Login = lazy(() => import("@/pages/auths/Login"));
@@ -68,10 +69,7 @@ const AppRoutes: React.FC = () => {
                     element={<div>Cuisine Detail</div>}
                   />
                   <Route path="new" element={<CuisineCreate />} />
-                  <Route
-                    path=":cuisineId/edit"
-                    element={<div>Cuisine Edit</div>}
-                  />
+                  <Route path=":cuisineId/edit" element={<CuisineEdit />} />
                 </Route>
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />

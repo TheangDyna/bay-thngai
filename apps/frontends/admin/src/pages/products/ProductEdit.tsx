@@ -52,9 +52,30 @@ export const ProductEdit: React.FC = () => {
 
   useEffect(() => {
     if (productQuery.data?.data) {
-      const product = { ...productQuery.data.data };
-      product.cuisines = product.cuisines.map((cuisine) => cuisine._id);
-      form.reset(product);
+      const {
+        name,
+        price,
+        inStock,
+        description,
+        cuisines,
+        dietaries,
+        ingredients,
+        thumbnail,
+        images
+      } = productQuery.data.data;
+      form.reset({
+        name,
+        price,
+        inStock,
+        description,
+        cuisines: cuisines.map((cuisine: any) =>
+          typeof cuisine === "string" ? cuisine : cuisine._id
+        ),
+        dietaries,
+        ingredients,
+        thumbnail,
+        images
+      });
     }
   }, [productQuery.data, form]);
 

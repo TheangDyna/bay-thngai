@@ -1,5 +1,6 @@
 import { Row } from "@tanstack/react-table";
 import { EllipsisVertical } from "lucide-react";
+import React from "react";
 
 import { useDeleteProductMutation } from "@/api/product";
 import { Button } from "@/components/ui/button";

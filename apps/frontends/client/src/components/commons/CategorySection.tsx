@@ -67,11 +67,11 @@ const CategorySection: React.FC = () => {
           className="mySwiper"
         >
           {data.data.map((cuisine) => (
-            <SwiperSlide key={cuisine.id}>
+            <SwiperSlide key={cuisine._id}>
               <CardCategory
-                imageUrl={cuisine.imageUrl || "/logo.png"}
+                imageUrl={"/logo.png"}
                 title={cuisine.name}
-                path={`/category/${cuisine.id}`}
+                path={`/category/${cuisine._id}`}
               />
             </SwiperSlide>
           ))}

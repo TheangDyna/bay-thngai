@@ -1,6 +1,6 @@
 import { useProductsQuery } from "@/api/product";
 import BannerHeader from "@/components/commons/BannerHeader";
-import CardProduct from "@/components/commons/CardProduct";
+import { CardProduct } from "@/components/commons/CardProduct";
 import ProductDetailModal from "@/components/commons/ProductDetailModal";
 import { toast } from "@/hooks/use-toast";
 import type { Product } from "@/types/product.types";

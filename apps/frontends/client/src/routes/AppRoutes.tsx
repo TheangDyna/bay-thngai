@@ -1,4 +1,3 @@
-import ProtectedRoute from "@/components/commons/ProtectedRoute";
 import BaseLayout from "@/components/layouts/BaseLayout";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
@@ -13,7 +12,6 @@ import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import Search from "@/pages/search/Search";
 import Shop from "@/pages/Shop";
-import ShopProductDetailSlug from "@/pages/shops/[ShopProductDetailSlug]";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
@@ -33,20 +31,14 @@ const AppRoutes: React.FC = () => {
                   <Route
                     path="/"
                     element={
-                      <ProtectedRoute>
-                        <BaseLayout>
-                          <Outlet />
-                        </BaseLayout>
-                      </ProtectedRoute>
+                      <BaseLayout>
+                        <Outlet />
+                      </BaseLayout>
                     }
                   >
                     <Route path="/" element={<Home />} />
                     <Route path="/search" element={<Search />} />
                     <Route path="/shops" element={<Shop />} />
-                    <Route
-                      path="/shops/:slug"
-                      element={<ShopProductDetailSlug />}
-                    />
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route
                       path="/checkout-test"

@@ -61,8 +61,8 @@ const Cart: React.FC = () => {
           onClick={toggleSidebar}
           className="relative flex items-center space-x-2 cursor-pointer"
         >
-          <ShoppingCart className="w-6 h-6" />
-          <span>Cart</span>
+          <ShoppingCart />
+          <span className="text-sm">Cart</span>
           {totalQty > 0 && (
             <span className="absolute -top-1 right-8 flex h-4 w-4 items-center justify-center bg-emerald-500 text-white text-xs rounded-full">
               {totalQty}

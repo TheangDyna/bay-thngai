@@ -1,5 +1,5 @@
-import React from "react";
-import { Eye, ShoppingCart } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
+import React, { useCallback } from "react";
 
 interface ProductCardProps {
   image: string;
@@ -7,84 +7,113 @@ interface ProductCardProps {
   price: string;
   originalPrice?: string;
   unit: string;
-  onAddToCart?: () => void;
-  onViewDetails?: () => void;
-  onClickProductModalDetails?: () => void;
-  className?: string;
+  cartQty?: number;
+  onAddToCart: (qty: number) => void;
+  onViewDetails: () => void;
+  onClickProductModalDetails: () => void;
 }
 
-const CardProduct: React.FC<ProductCardProps> = ({
+export const CardProduct: React.FC<ProductCardProps> = ({
   image,
   title,
   price,
   originalPrice,
   unit,
+  cartQty = 0,
   onAddToCart,
-  onViewDetails,
-  onClickProductModalDetails,
-  className
+  onClickProductModalDetails
 }) => {
+  const isInCart = cartQty > 0;
+
+  const handleAdd = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onAddToCart(1);
+    },
+    [onAddToCart]
+  );
+
+  const handleIncrement = handleAdd;
+
+  const handleDecrement = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onAddToCart(-1);
+    },
+    [onAddToCart]
+  );
+
+  const handleOpenModal = useCallback(
+    () => onClickProductModalDetails(),
+    [onClickProductModalDetails]
+  );
+
   return (
     <div
-      onClick={onClickProductModalDetails}
-      className={`relative cursor-pointer bg-white shadow-sm rounded-lg p-4 w-full max-w-[300px] h-[350px] shrink-0 group hover:shadow-md transition-shadow duration-300 ${className}`}
+      onClick={handleOpenModal}
+      className="relative cursor-pointer bg-white shadow-sm rounded-lg p-4 w-full max-w-[300px] h-[350px] group hover:shadow-md transition-shadow duration-300"
     >
-      {/* Product Image */}
-      <div className="relative flex justify-center items-center overflow-hidden rounded-md h-[200px] bg-gray-100 group">
+      {originalPrice && (
+        <span className="absolute top-4 left-4 bg-green-300 text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
+          On Sale
+        </span>
+      )}
+
+      <div className="relative flex justify-center items-center overflow-hidden rounded-md h-[200px] bg-gray-100">
         <img
           src={image}
           alt={title}
-          className="object-cover w-[200px] transition-transform duration-300 group-hover:scale-105"
+          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
         />
-        {/* Eye Icon */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering the parent onClick
-            onViewDetails();
-          }}
-          className="absolute bottom-4 right-4 bg-primary text-white p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-300"
-          aria-label="View Details"
-        >
-          <Eye className="w-5 h-5" />
-        </button>
+
+        {isInCart ? (
+          <div className="absolute bottom-4 flex justify-center items-center">
+            <div className="bg-white shadow px-4 py-2 rounded-full flex items-center space-x-10">
+              <button
+                onClick={handleDecrement}
+                aria-label="Decrease quantity"
+                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full"
+              >
+                <Minus className="w-4 h-4 text-gray-600" />
+              </button>
+              <span className="font-medium">{cartQty}</span>
+              <button
+                onClick={handleIncrement}
+                aria-label="Increase quantity"
+                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full"
+              >
+                <Plus className="w-4 h-4 text-gray-600" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={handleAdd}
+              aria-label="Add to cart"
+              className="absolute bottom-4 right-4 bg-green-500 text-white p-2 rounded-full shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </>
+        )}
       </div>
 
-      {/* Product Details */}
       <div className="mt-4">
-        {/* Price */}
         <div className="flex items-center space-x-2">
           <span className="text-lg font-semibold text-black">{price}</span>
           {originalPrice && (
-            <del className="text-sm text-gray-500">${originalPrice}</del>
+            <del className="text-sm text-gray-500">{originalPrice}</del>
           )}
         </div>
-
-        {/* Title */}
         <h3 className="text-sm font-medium text-gray-800 mt-2 truncate">
           {title}
         </h3>
       </div>
 
-      {/* Unit */}
       <div className="absolute bottom-4 left-4 text-sm text-gray-500">
         {unit}
-      </div>
-
-      {/* Add to Cart Button */}
-      <div className="mb-4 flex justify-end">
-        <button
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering the parent onClick
-            onAddToCart();
-          }}
-          className="flex items-center gap-2 justify-center w-10 h-10 rounded-full bg-green-500 text-white hover:bg-green-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-          aria-label="Add to Cart"
-        >
-          <ShoppingCart className="w-5 h-5" />
-        </button>
       </div>
     </div>
   );
 };
-
-export default CardProduct;

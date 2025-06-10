@@ -29,7 +29,7 @@ export class CuisineRepository {
 
     const total = await Cuisine.countDocuments(features.getQuery().getFilter());
 
-    features.sort().select().paginate();
+    features.sort().select();
 
     const cuisines = await features.getQuery();
     return { total, cuisines };

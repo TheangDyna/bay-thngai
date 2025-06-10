@@ -45,6 +45,7 @@ export const DeliveryInstructions: React.FC<DeliveryInstructionsProps> = ({
         id="leaveAtDoor"
         checked={leaveAtDoor}
         onCheckedChange={(checked) => onToggleLeaveAtDoor(!!checked)}
+        className="mt-1 w-4 h-4"
       />
       <div className="space-y-1">
         <Label htmlFor="leaveAtDoor" className="font-medium">

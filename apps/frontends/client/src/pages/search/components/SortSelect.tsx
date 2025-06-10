@@ -1,4 +1,10 @@
-// src/components/filters/SortSelect.tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import React from "react";
 
 export interface SortSelectProps {
@@ -10,25 +16,30 @@ const OPTIONS = [
   { value: "lowest-price", label: "Lowest Price" },
   { value: "highest-price", label: "Highest Price" },
   { value: "newest", label: "Newest" },
-  { value: "oldest", label: "Oldest" }
+  { value: "oldest", label: "Oldest" },
+  { value: "clear", label: "Clear selection" }
 ];
 
-const SortSelect: React.FC<SortSelectProps> = ({ value, onChange }) => (
-  <div className="flex items-center space-x-2">
-    <label className="text-sm">Sort by:</label>
-    <select
-      className="border px-2 py-1 rounded text-sm"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="">Relevance</option>
+export const SortSelect: React.FC<SortSelectProps> = ({ value, onChange }) => (
+  <Select
+    value={value}
+    onValueChange={(v) => {
+      if (v === "clear") {
+        onChange("");
+      } else {
+        onChange(v);
+      }
+    }}
+  >
+    <SelectTrigger className="w-[150px]">
+      <SelectValue placeholder="Sort by..." />
+    </SelectTrigger>
+    <SelectContent>
       {OPTIONS.map((o) => (
-        <option key={o.value} value={o.value}>
+        <SelectItem key={o.value} value={o.value}>
           {o.label}
-        </option>
+        </SelectItem>
       ))}
-    </select>
-  </div>
+    </SelectContent>
+  </Select>
 );
-
-export default SortSelect;

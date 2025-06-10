@@ -2,7 +2,7 @@ import BannerHeader from "@/components/commons/BannerHeader";
 import { CardProduct } from "@/components/commons/CardProduct";
 import { products } from "@/utils/data/constants/data";
 import React, { useState } from "react";
-import ProductDetailModal from "./ProductDetailModal";
+import { ProductDetailModal } from "./ProductDetailModal";
 
 const ProductSection: React.FC = () => {
   const [isOpenProductDetails, setIsOpenProductDetails] = useState(false);

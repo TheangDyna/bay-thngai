@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { Minus, Plus } from "lucide-react";
 import React, { useCallback } from "react";
 
@@ -17,7 +18,6 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   image,
   title,
   price,
-  originalPrice,
   unit,
   cartQty = 0,
   onAddToCart,
@@ -49,40 +49,36 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   );
 
   return (
-    <div
+    <Card
       onClick={handleOpenModal}
-      className="relative cursor-pointer bg-white shadow-sm rounded-lg p-4 w-full max-w-[300px] h-[350px] group hover:shadow-md transition-shadow duration-300"
+      className="cursor-pointer rounded-lg w-full max-w-[300px] h-[320px]  transition-shadow duration-300 mx-auto"
     >
-      {originalPrice && (
-        <span className="absolute top-4 left-4 bg-green-300 text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
-          On Sale
-        </span>
-      )}
-
-      <div className="relative flex justify-center items-center overflow-hidden rounded-md h-[200px] bg-gray-100">
+      <div className="relative flex justify-center items-center overflow-hidden rounded-md group h-[200px] bg-muted">
         <img
           src={image}
           alt={title}
-          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+          className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
         />
-
+        <span className="absolute top-4 left-4 bg-primary text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
+          On Sale
+        </span>
         {isInCart ? (
           <div className="absolute bottom-4 flex justify-center items-center">
             <div className="bg-white shadow px-4 py-2 rounded-full flex items-center space-x-10">
               <button
                 onClick={handleDecrement}
                 aria-label="Decrease quantity"
-                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full"
+                className="w-6 h-6 flex items-center justify-center hover:bg-muted rounded-full"
               >
-                <Minus className="w-4 h-4 text-gray-600" />
+                <Minus className="w-4 h-4 text-muted-foreground" />
               </button>
               <span className="font-medium">{cartQty}</span>
               <button
                 onClick={handleIncrement}
                 aria-label="Increase quantity"
-                className="w-6 h-6 flex items-center justify-center hover:bg-gray-100 rounded-full"
+                className="w-6 h-6 flex items-center justify-center hover:bg-muted rounded-full"
               >
-                <Plus className="w-4 h-4 text-gray-600" />
+                <Plus className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
           </div>
@@ -99,21 +95,14 @@ export const CardProduct: React.FC<ProductCardProps> = ({
         )}
       </div>
 
-      <div className="mt-4">
+      <div className="p-4 space-y-2">
         <div className="flex items-center space-x-2">
-          <span className="text-lg font-semibold text-black">{price}</span>
-          {originalPrice && (
-            <del className="text-sm text-gray-500">{originalPrice}</del>
-          )}
+          <span className="text-lg font-semibold">{price}</span>
+          <del className="text-sm text-muted-foreground">$100.00</del>
         </div>
-        <h3 className="text-sm font-medium text-gray-800 mt-2 truncate">
-          {title}
-        </h3>
+        <h3 className="text-sm font-medium truncate">{title}</h3>
+        <div className="text-sm text-muted-foreground">{unit}</div>
       </div>
-
-      <div className="absolute bottom-4 left-4 text-sm text-gray-500">
-        {unit}
-      </div>
-    </div>
+    </Card>
   );
 };

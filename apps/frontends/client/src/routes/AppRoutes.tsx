@@ -10,7 +10,7 @@ import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
 import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
-import Search from "@/pages/search/Search";
+import Search from "@/pages/search/SearchPage";
 import Shop from "@/pages/Shop";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

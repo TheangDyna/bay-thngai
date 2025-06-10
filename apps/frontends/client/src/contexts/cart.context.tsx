@@ -21,7 +21,6 @@ interface CartContextValue {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
-  updateQuantity: (id: string, newQty: number) => void;
 }
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -30,7 +29,7 @@ const LS_KEY = "my_app_cart";
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children
 }) => {
-  // 1️⃣ Initialize state from localStorage (lazy initializer)
+  // 1️⃣ Initialize from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
@@ -40,48 +39,54 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     }
   });
 
-  // 2️⃣ Whenever `cart` changes, write it back to localStorage
+  // 2️⃣ Persist on change
   useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify(cart));
   }, [cart]);
 
-  // 3️⃣ addToCart: if item exists, bump quantity; else push new
+  // 3️⃣ addToCart: bump existing or add new; if qty ≤ 0, remove
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
       const idx = prev.findIndex((i) => i.id === item.id);
+
+      // existing item
       if (idx !== -1) {
+        const existing = prev[idx];
+        const newQty = existing.quantity + item.quantity;
+
+        // auto-remove if zero or less
+        if (newQty <= 0) {
+          return prev.filter((i) => i.id !== item.id);
+        }
+
         const newCart = [...prev];
-        newCart[idx] = {
-          ...newCart[idx],
-          quantity: newCart[idx].quantity + item.quantity
-        };
+        newCart[idx] = { ...existing, quantity: newQty };
         return newCart;
-      } else {
+      }
+
+      // new item: only add if positive quantity
+      if (item.quantity > 0) {
         return [...prev, { ...item }];
       }
+
+      // ignore attempts to add zero or negative qty
+      return prev;
     });
   };
 
-  // 4️⃣ removeFromCart: drop item by id
+  // 4️⃣ removeFromCart: explicit removal
   const removeFromCart = (id: string) => {
     setCart((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // 5️⃣ clearCart: empty array
+  // 5️⃣ clearCart: empty out
   const clearCart = () => {
     setCart([]);
   };
 
-  // 6️⃣ updateQuantity: set absolute quantity (not delta)
-  const updateQuantity = (id: string, newQty: number) => {
-    setCart((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity: newQty } : i))
-    );
-  };
-
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart, updateQuantity }}
+      value={{ cart, addToCart, removeFromCart, clearCart }}
     >
       {children}
     </CartContext.Provider>

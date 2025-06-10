@@ -217,7 +217,7 @@ export const DeliveryAddressSelector: React.FC<
       {locationLoaded && (
         <Dialog open={mapOpen} onOpenChange={setMapOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full">
+            <Button variant="secondary" className="w-full">
               {isCurrent ? "Select location on map" : "View location"}
             </Button>
           </DialogTrigger>
@@ -227,7 +227,7 @@ export const DeliveryAddressSelector: React.FC<
                 {isCurrent ? "Select location" : "Location preview"}
               </DialogTitle>
             </DialogHeader>
-            <div className="h-80">
+            <div>
               {isCurrent ? (
                 <Map
                   coordinates={currentCoords}
@@ -240,7 +240,7 @@ export const DeliveryAddressSelector: React.FC<
                   <MapContainer
                     center={[savedCoords.lat, savedCoords.lng]}
                     zoom={16}
-                    className="h-full w-full rounded-md border"
+                    className="h-80 w-full rounded-md border"
                     dragging={false}
                     scrollWheelZoom={false}
                   >
@@ -251,7 +251,7 @@ export const DeliveryAddressSelector: React.FC<
                 )
               )}
             </div>
-            <p className="mt-4 text-sm">
+            <p className="text-sm">
               <span className="font-medium">Coords:</span>{" "}
               {isCurrent
                 ? `${currentCoords.lat.toFixed(6)}, ${currentCoords.lng.toFixed(6)}`
@@ -260,7 +260,7 @@ export const DeliveryAddressSelector: React.FC<
                   : ""}
             </p>
             <DialogClose asChild>
-              <Button className="mt-4 w-full">Close</Button>
+              <Button className="w-full">Close</Button>
             </DialogClose>
           </DialogContent>
         </Dialog>

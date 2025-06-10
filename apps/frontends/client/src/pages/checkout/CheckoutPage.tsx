@@ -11,12 +11,13 @@ import { PaymentOptions } from "@/pages/checkout/PaymentOptions";
 import { SectionCard } from "@/pages/checkout/SectionCard";
 import { Coordinates } from "@/types/Coordinates";
 import axiosInstance from "@/utils/axiosInstance";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Checkout: React.FC = () => {
   const navigate = useNavigate();
-  const { cart, clearCart } = useCart();
+  const { cart } = useCart();
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   // form state
   const [loading, setLoading] = useState(false);
@@ -54,37 +55,71 @@ const Checkout: React.FC = () => {
     }
     setLoading(true);
     try {
-      const payload = {
-        orderId: `local-${Date.now()}`,
-        amount: total.toString(),
-        items: cart.map((i) => ({
-          name: i.name,
-          qty: i.quantity,
-          price: i.price.toString()
-        })),
-        delivery: {
-          addressId: addressInfo.id,
-          coords: addressInfo.coords,
-          timeSlot: deliveryTimeSlot,
-          contactNumber,
-          instructions,
-          tip: selectedTip.toString()
-        },
-        payment: { method: paymentMethod }
+      // **1. Build the payload just like in your test page**
+      const cartItems = cart.map((item) => ({
+        productId: item.id, // ← adjust if your cart item uses a different ID field
+        quantity: item.quantity,
+        price: item.price
+      }));
+      const customer = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@example.com",
+        phone: contactNumber
       };
-      const { data } = await axiosInstance.post("/payments/purchase", payload);
-      clearCart();
-      navigate("/order-success");
-    } catch {
-      toast({ description: "Failed to place order.", variant: "destructive" });
+      const shipping = shippingFee;
+
+      // **2. Hit your `/orders` endpoint**
+      const resp = await axiosInstance.post("/orders", {
+        items: cartItems,
+        customer,
+        shipping
+      });
+      const { order, paymentConfig } = resp.data as {
+        order: any;
+        paymentConfig: { endpoint: string; payload: Record<string, string> };
+      };
+
+      // **3. Dynamically build & submit the hidden form to the gateway**
+      const { endpoint, payload } = paymentConfig;
+      if (!formRef.current) throw new Error("Form ref is not mounted");
+      const f = formRef.current;
+      // clear old inputs
+      while (f.firstChild) f.removeChild(f.firstChild);
+      // add new ones
+      Object.entries(payload).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = String(value);
+        f.appendChild(input);
+      });
+      // hosted_view flag
+      const viewTypeInput = document.createElement("input");
+      viewTypeInput.type = "hidden";
+      viewTypeInput.name = "view_type";
+      viewTypeInput.value = "hosted_view";
+      f.appendChild(viewTypeInput);
+
+      f.method = "POST";
+      f.action = endpoint;
+      f.submit();
+
+      // note: your backend callback + return URLs will handle marking PAID, clearing cart, etc.
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast({
+        description: err.response?.data?.error || "Failed to place order.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 space-y-8">
+    <main className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 space-y-6">
         <SectionCard title="1. Delivery Address">
           <DeliveryAddressSelector onAddressChange={setAddressInfo} />
         </SectionCard>
@@ -128,16 +163,20 @@ const Checkout: React.FC = () => {
         </SectionCard>
       </div>
 
-      <OrderSummary
-        cart={cart}
-        subtotal={subtotal}
-        shippingFee={shippingFee}
-        tipAmount={selectedTip}
-        total={total}
-        onPlaceOrder={handlePlaceOrder}
-        loading={loading}
-      />
-    </div>
+      <div className="sticky top-20">
+        <OrderSummary
+          cart={cart}
+          subtotal={subtotal}
+          shippingFee={shippingFee}
+          tipAmount={selectedTip}
+          total={total}
+          onPlaceOrder={handlePlaceOrder}
+          loading={loading}
+        />
+      </div>
+
+      <form ref={formRef} style={{ display: "none" }} />
+    </main>
   );
 };
 

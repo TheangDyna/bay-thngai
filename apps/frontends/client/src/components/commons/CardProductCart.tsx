@@ -1,5 +1,5 @@
-import React from "react";
 import { MinusIcon, Plus, X } from "lucide-react";
+import React from "react";
 
 interface CardProductCartProps {
   imageUrl: string;
@@ -9,8 +9,6 @@ interface CardProductCartProps {
   onRemove: () => void;
   onIncrement: () => void;
   onDecrement: () => void;
-  isRemoving?: boolean;
-  isUpdatingQuantity?: boolean;
 }
 
 const CardProductCart: React.FC<CardProductCartProps> = ({
@@ -20,67 +18,54 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
   quantity,
   onRemove,
   onIncrement,
-  onDecrement,
-  isRemoving = false,
-  isUpdatingQuantity = false
+  onDecrement
 }) => {
   return (
-    <div className="w-full px-5 md:px-7">
-      <div className="group w-full flex items-center gap-4 py-4 md:py-7 border-b border-border-one border-opacity-70 relative last:border-b-0">
-        {/* Image & Remove */}
-        <div className="relative shrink-0 w-[90px] md:w-[100px] h-[90px] md:h-[100px] rounded-[16px] overflow-hidden">
-          <img
-            src={imageUrl}
-            alt={title}
-            loading="eager"
-            className="object-cover p-2 w-full h-full"
-          />
-          <button
-            onClick={onRemove}
-            disabled={isRemoving}
-            className="absolute top-1 right-1 p-1 bg-black bg-opacity-30 rounded-full opacity-0 group-hover:opacity-100 transition"
-          >
-            <X className="w-5 h-5 text-white" />
-          </button>
+    <div className="group w-full h-20 relative flex items-center gap-2 border-b last:border-b-0">
+      <div className="w-20 h-w-20 bg-muted">
+        <img
+          src={imageUrl}
+          alt={title}
+          className="object-cover rounded-sm w-full h-full"
+        />
+      </div>
+
+      <button
+        onClick={onRemove}
+        className="absolute top-0 right-2 p-1 rounded-full bg-destructive/25 opacity-0 group-hover:opacity-100 transition"
+      >
+        <X className="w-4 h-4" />
+      </button>
+
+      <div className="flex items-start justify-between h-full w-full p-2">
+        <div className="h-full flex flex-col flex-1">
+          <a href="#" className="font-medium">
+            {title}
+          </a>
+
+          {/* Quantity Controls */}
+          <div className="flex items-center gap-2 mt-auto">
+            <button
+              onClick={onDecrement}
+              disabled={quantity <= 1}
+              className="flex items-center justify-center w-6 h-6 border border-border-three rounded-full transition disabled:opacity-50"
+            >
+              <MinusIcon className="w-4 h-4" />
+            </button>
+            <span className="w-9 text-center font-semibold">{quantity}</span>
+            <button
+              onClick={onIncrement}
+              className="flex items-center justify-center w-6 h-6 border border-border-three rounded-full transition disabled:opacity-50"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        {/* Details */}
-        <div className="flex items-start justify-between w-full overflow-hidden">
-          <div className="pl-3 md:pl-4 flex-1">
-            <a
-              href="#"
-              className="block leading-5 text-13px sm:text-sm lg:text-15px hover:text-brand transition"
-            >
-              {title}
-            </a>
-            <div className="text-13px sm:text-sm text-gray-500 mt-1.5 mb-2">
-              1 kg × {quantity}
-            </div>
-
-            {/* Quantity Controls */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onDecrement}
-                disabled={isUpdatingQuantity || quantity <= 1}
-                className="flex items-center justify-center w-6 h-6 border border-border-three rounded-full hover:bg-brand hover:text-white transition disabled:opacity-50"
-              >
-                <MinusIcon className="w-4 h-4" />
-              </button>
-              <span className="w-9 text-center font-semibold">{quantity}</span>
-              <button
-                onClick={onIncrement}
-                disabled={isUpdatingQuantity}
-                className="flex items-center justify-center w-6 h-6 border border-border-three rounded-full hover:bg-brand hover:text-white transition disabled:opacity-50"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Price */}
-          <div className="font-semibold text-sm md:text-base leading-5 shrink-0 min-w-[65px] md:min-w-[80px] text-right">
-            ${price.toFixed(2)}
-          </div>
+        {/* Price */}
+        <div className="h-full flex flex-col items-end justify-end">
+          <p className="text-sm text-muted-foreground">${price.toFixed(2)}</p>
+          <p className="font-semibold">${(price * quantity).toFixed(2)}</p>
         </div>
       </div>
     </div>

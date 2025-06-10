@@ -7,7 +7,7 @@ export class ProductRepository {
   private searchFields: string[];
 
   constructor() {
-    this.searchFields = [];
+    this.searchFields = ["name", "description"];
   }
 
   public async createProduct(

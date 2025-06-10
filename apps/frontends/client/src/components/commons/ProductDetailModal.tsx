@@ -14,7 +14,7 @@ import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
 import type { Product } from "@/types/product.types";
 import { Heart, Minus, Plus, Share, ShoppingBag } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -22,154 +22,148 @@ interface ProductDetailModalProps {
   onClose: () => void;
 }
 
-const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
+export const ProductDetailModal: FC<ProductDetailModalProps> = ({
   product,
   isOpen,
   onClose
 }) => {
-  const [thumbIdx, setThumbIdx] = useState(0);
-  const [qty, setQty] = useState(1);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const [shareOpen, setShareOpen] = useState(false);
+  const { addToCart } = useCart();
+
+  const thumbnails = useMemo(() => {
+    if (!product) return [];
+    return [product.thumbnail, ...product.images];
+  }, [product]);
 
   useEffect(() => {
     if (product) {
-      setThumbIdx(0);
-      setQty(1);
+      setActiveIdx(0);
+      setQuantity(1);
       setShareOpen(false);
     }
   }, [product]);
 
-  const { addToCart } = useCart();
-
   if (!product) return null;
 
-  const { thumbnail, images, name, price, description, _id } = product;
-  const thumbnails = [thumbnail, ...images];
-
-  // demo values—replace with real props if needed
-  const unit = "1 pc";
+  const { _id, name, price, description } = product;
   const originalPrice = price + 100;
-  const discount = 10;
+  const discountPercent = 10;
   const stock = 10;
   const tags = ["food", "fresh"];
+  const unitLabel = "1 pc";
 
-  const increment = () => setQty((q) => q + 1);
-  const decrement = () => setQty((q) => Math.max(1, q - 1));
+  const increment = () => setQuantity((q) => q + 1);
+  const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
-  const handleAdd = () => {
-    addToCart({
-      id: _id,
-      name,
-      price,
-      quantity: qty,
-      image: thumbnail
-    });
-    toast({ description: `${name} (×${qty}) added to cart!` });
+  const handleAddToCart = () => {
+    addToCart({ id: _id, name, price, quantity, image: product.thumbnail });
+    toast({ description: `${name} (×${quantity}) added to cart!` });
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[90%]">
-        <div className="h-[90vh] overflow-y-auto p-4">
-          <div className="flex gap-6">
-            {/* Thumbnails */}
-            <div className="flex flex-col space-y-3">
-              {thumbnails.map((imgUrl, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => setThumbIdx(idx)}
-                  className={`w-24 h-24 border rounded-lg overflow-hidden cursor-pointer ${
-                    thumbIdx === idx ? "border-primary" : "border-gray-200"
-                  }`}
-                >
-                  <img
-                    src={imgUrl}
-                    alt={`${name}-${idx}`}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Main Image */}
-            <div className="relative w-1/2 h-[500px]">
-              <Carousel value={thumbIdx} onChange={setThumbIdx}>
-                <CarouselContent>
-                  {thumbnails.map((imgUrl, idx) => (
-                    <CarouselItem
-                      key={idx}
-                      className={`h-full rounded-lg ${
-                        idx !== thumbIdx ? "hidden" : ""
-                      }`}
-                    >
-                      <Card className="h-full w-full bg-white">
-                        <CardContent className="flex items-center justify-center">
-                          <img
-                            src={imgUrl}
-                            alt={`${name}-${idx}`}
-                            className="object-contain h-[400px]"
-                          />
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-
-                <PrevButton
-                  onClick={() =>
-                    setThumbIdx((i) =>
-                      i === 0 ? thumbnails.length - 1 : i - 1
-                    )
-                  }
-                  className="absolute left-2 top-1/2 -translate-y-1/2"
+      <DialogContent className="max-w-5xl w-full p-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Thumbnails */}
+          <div className="flex md:flex-col gap-3 overflow-auto">
+            {thumbnails.map((src, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveIdx(idx)}
+                className={`w-24 h-24 rounded-lg overflow-hidden border cursor-pointer transition-colors \$
+                  {activeIdx === idx ? 'border-primary' : 'border-gray-200'}`}
+              >
+                <img
+                  src={src}
+                  alt={`${name} thumbnail ${idx}`}
+                  className="w-full h-full object-cover"
                 />
-                <NextButton
-                  onClick={() =>
-                    setThumbIdx((i) =>
-                      i === thumbnails.length - 1 ? 0 : i + 1
-                    )
-                  }
-                  className="absolute right-2 top-1/2 -translate-y-1/2"
-                />
-              </Carousel>
-            </div>
+              </button>
+            ))}
+          </div>
 
-            {/* Details */}
-            <div className="w-1/2 space-y-4">
+          {/* Main Carousel */}
+          <div className="relative flex-1 h-[500px]">
+            <Carousel
+              value={activeIdx}
+              onChange={setActiveIdx}
+              className="h-full"
+            >
+              <CarouselContent>
+                {thumbnails.map((src, idx) => (
+                  <CarouselItem
+                    key={idx}
+                    className={`${activeIdx !== idx && "hidden"} h-full rounded-lg`}
+                  >
+                    <Card className="h-full w-full">
+                      <CardContent className="flex items-center justify-center">
+                        <img
+                          src={src}
+                          alt={`${name} view ${idx}`}
+                          className="max-h-[400px] object-contain"
+                        />
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+
+              <PrevButton
+                onClick={() =>
+                  setActiveIdx((i) => (i === 0 ? thumbnails.length - 1 : i - 1))
+                }
+                className="absolute left-2 top-1/2 transform -translate-y-1/2"
+              />
+              <NextButton
+                onClick={() =>
+                  setActiveIdx((i) => (i === thumbnails.length - 1 ? 0 : i + 1))
+                }
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              />
+            </Carousel>
+          </div>
+
+          {/* Product Details */}
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
               <h2 className="text-2xl font-semibold">{name}</h2>
-              <div className="text-sm text-gray-600">{unit}</div>
-              <div className="flex items-center space-x-3">
+              <p className="text-sm text-gray-600">{unitLabel}</p>
+
+              <div className="mt-2 flex items-center space-x-3">
                 <span className="text-2xl font-bold">${price.toFixed(2)}</span>
                 <del className="text-gray-400">${originalPrice.toFixed(2)}</del>
-                <Badge variant="outline">{discount}% Off</Badge>
-              </div>
-              <div className="text-sm text-red-600">
-                {stock > 0 ? `Only ${stock} left!` : "Out of stock"}
+                <Badge variant="outline">{discountPercent}% Off</Badge>
               </div>
 
-              {/* Quantity */}
-              <div className="flex items-center space-x-4">
+              <p
+                className={`mt-1 text-sm ${stock > 0 ? "text-red-600" : "text-gray-500"}`}
+              >
+                {stock > 0 ? `Only ${stock} left!` : "Out of stock"}
+              </p>
+
+              {/* Quantity & Add to Cart */}
+              <div className="mt-4 flex items-center space-x-4">
                 <Button size="icon" onClick={decrement}>
                   <Minus />
                 </Button>
-                <span>{qty}</span>
+                <span className="text-lg">{quantity}</span>
                 <Button size="icon" onClick={increment}>
                   <Plus />
                 </Button>
+                <Button
+                  onClick={handleAddToCart}
+                  className="flex-1 flex items-center justify-center space-x-2"
+                >
+                  <ShoppingBag />
+                  <span>Add to Cart</span>
+                </Button>
               </div>
 
-              {/* Add to Cart */}
-              <Button
-                className="flex items-center space-x-2 mt-4 w-full"
-                onClick={handleAdd}
-              >
-                <ShoppingBag />
-                <span>Add to Cart</span>
-              </Button>
-
-              {/* Wishlist / Share */}
-              <div className="flex space-x-2 mt-2">
+              {/* Wishlist & Share */}
+              <div className="mt-4 flex space-x-2">
                 <Button variant="outline" size="icon">
                   <Heart />
                 </Button>
@@ -180,18 +174,18 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 >
                   <Share />
                 </Button>
+                <ShareLink
+                  isOpen={shareOpen}
+                  onClose={() => setShareOpen(false)}
+                />
               </div>
-              <ShareLink
-                isOpen={shareOpen}
-                onClose={() => setShareOpen(false)}
-              />
 
               {/* Tags */}
               {tags.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {tags.map((t) => (
-                    <Badge key={t} variant="outline">
-                      {t}
+                  {tags.map((tag) => (
+                    <Badge key={tag} variant="outline">
+                      {tag}
                     </Badge>
                   ))}
                 </div>
@@ -209,5 +203,3 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     </Dialog>
   );
 };
-
-export default ProductDetailModal;

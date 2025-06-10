@@ -1,6 +1,6 @@
-// src/components/commons/ProductList.tsx
 import { CardProduct } from "@/components/commons/CardProduct";
 import { useCart } from "@/contexts/cart.context";
+import { Cuisine } from "@/types/cuisine.types";
 import type { Product } from "@/types/product.types";
 import axiosInstance from "@/utils/axiosInstance";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -15,16 +15,18 @@ const SORT_MAP: Record<string, string | undefined> = {
   oldest: "createdAt"
 };
 
-export interface ProductListProps {
+interface ProductListProps {
   sortBy: string;
-  cuisines: any; // ← new
+  cuisines: Cuisine[];
+  search?: string;
   onSelectProduct: (p: Product) => void;
-  onCountChange: (count: number) => void; // ← new
+  onCountChange: (count: number) => void;
 }
 
-const ProductList: React.FC<ProductListProps> = ({
+export const ProductList: React.FC<ProductListProps> = ({
   sortBy,
   cuisines,
+  search = "",
   onSelectProduct,
   onCountChange
 }) => {
@@ -32,7 +34,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery<{ data: Product[]; total: number }, Error>({
-      queryKey: ["products", sortBy, cuisines],
+      queryKey: ["products", sortBy, cuisines, search],
       queryFn: async ({ pageParam = 1 }) => {
         const params: Record<string, any> = {
           page: pageParam,
@@ -41,13 +43,12 @@ const ProductList: React.FC<ProductListProps> = ({
         // sort
         const sp = SORT_MAP[sortBy];
         if (sp) params.sort = sp;
-        // cuisine filter
+        // filters
         if (Array.isArray(cuisines) && cuisines.length) {
-          params.cuisines = cuisines.map((c: any) => c._id);
+          params.cuisines = cuisines.map((c: Cuisine) => c._id);
         }
 
-        console.log(params);
-
+        if (search) params.search = search;
         const res = await axiosInstance.get("/products", { params });
         return res.data;
       },
@@ -61,7 +62,6 @@ const ProductList: React.FC<ProductListProps> = ({
   const allProducts = data?.pages.flatMap((pg) => pg.data) ?? [];
   const total = data?.pages[0].total ?? 0;
 
-  // inform parent of total count
   useEffect(() => {
     onCountChange(total);
   }, [total, onCountChange]);
@@ -83,12 +83,12 @@ const ProductList: React.FC<ProductListProps> = ({
   }, [handleScroll]);
 
   const handleAddToCart = useCallback(
-    (product: Product, qty: number) =>
+    (product: Product, amount: number) =>
       addToCart({
         id: product._id,
         name: product.name,
         price: product.price,
-        quantity: qty,
+        quantity: amount,
         image: product.thumbnail
       }),
     [addToCart]
@@ -96,7 +96,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 px-2 pb-4">
+      <div className="grid grid-cols-4 gap-6">
         {allProducts.map((product) => {
           const qty = cart.find((c) => c.id === product._id)?.quantity || 0;
           return (
@@ -105,33 +105,28 @@ const ProductList: React.FC<ProductListProps> = ({
               image={product.thumbnail}
               title={product.name}
               price={`$${product.price.toFixed(2)}`}
-              unit="1 pc"
+              unit="1 item"
               cartQty={qty}
-              onAddToCart={(q) => handleAddToCart(product, q)}
+              onAddToCart={(amount) => handleAddToCart(product, amount)}
               onViewDetails={() => onSelectProduct(product)}
               onClickProductModalDetails={() => onSelectProduct(product)}
             />
           );
         })}
-
-        {isFetchingNextPage && (
-          <div className="col-span-3 flex justify-center py-4">
-            <Loader2 className="animate-spin text-gray-500" size={24} />
-          </div>
-        )}
-
-        {!hasNextPage && (
-          <div className="col-span-3 text-center py-4">
-            Nothing more to load
-          </div>
-        )}
       </div>
+      {isFetchingNextPage && (
+        <div className="flex flex-1 justify-center">
+          <Loader2 className="animate-spin text-gray-500" size={24} />
+        </div>
+      )}
+
+      {!hasNextPage && (
+        <div className="flex flex-1 justify-center">Nothing more to load</div>
+      )}
 
       {isFetching && !isFetchingNextPage && (
-        <div className="py-2 text-center">Background updating...</div>
+        <div className="flex flex-1 justify-center">Background updating...</div>
       )}
     </>
   );
 };
-
-export default ProductList;

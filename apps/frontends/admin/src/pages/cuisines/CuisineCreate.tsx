@@ -19,21 +19,18 @@ import {
 } from "@/validators/cuisine.validators";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 const CuisineCreate: React.FC = () => {
-  const form = useForm<CuisineInput & { thumbnail?: File }>({
-    resolver: zodResolver(
-      CuisineSchema.extend({ thumbnail: z.any().optional() })
-    ),
-    defaultValues: { ...cuisineDefaultValues, thumbnail: undefined }
+  const form = useForm<CuisineInput>({
+    resolver: zodResolver(CuisineSchema),
+    defaultValues: cuisineDefaultValues
   });
 
   const { mutation: createCuisineMutation, progress } =
     useCreateCuisineMutation();
   const uploadDialog = useUploadDialog();
 
-  const onSubmit = (data: CuisineInput & { thumbnail?: File }) => {
+  const onSubmit = (data: CuisineInput) => {
     uploadDialog.openDialog({
       status: "uploading",
       message: "Creating cuisine..."

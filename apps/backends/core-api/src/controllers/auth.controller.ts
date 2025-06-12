@@ -108,7 +108,7 @@ export class AuthController {
   public getAllAddresses = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
       const addresses = await this.userService.getAllAddresses(req.user.id);
-      res.status(201).json({
+      res.status(200).json({
         status: "success",
         data: addresses
       });

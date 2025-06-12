@@ -25,7 +25,7 @@ export default class OrderService {
       (sum, i) => sum + i.price * i.quantity,
       0
     );
-    const amount = itemsTotal + input.shipping + (input.tip || 0);
+    const amount = itemsTotal + input.shipping + input.tip;
 
     // convert string IDs to mongoose.Types.ObjectId
     const dbItems: Item[] = input.items.map((i) => ({
@@ -39,13 +39,14 @@ export default class OrderService {
       items: dbItems,
       customer: input.customer,
       shipping: input.shipping,
-      tip: input.tip || 0,
+      tip: input.tip,
       paymentMethod: input.paymentMethod,
-      deliveryAddressId: input.deliveryAddressId,
+      deliveryAddress: input.deliveryAddress,
       deliveryTimeSlot: input.deliveryTimeSlot,
       instructions: input.instructions,
       amount,
-      status: "pending"
+      status: "pending",
+      leaveAtDoor: input.leaveAtDoor
     });
 
     if (input.paymentMethod === "cod") {
@@ -61,7 +62,13 @@ export default class OrderService {
         quantity: i.quantity,
         price: i.price
       })),
-      customer: input.customer
+      customer: {
+        firstName: input.customer.firstName ?? "",
+        lastName: input.customer.lastName ?? "",
+        email: input.customer.email ?? "",
+        phone: input.customer.phone
+      },
+      paymentMethod: input.paymentMethod
     };
     const paymentConfig =
       await this.paymentService.purchaseTransaction(purchaseParams);

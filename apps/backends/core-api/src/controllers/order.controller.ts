@@ -7,6 +7,9 @@ export default class OrderController {
 
   public create = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
+      req.body.customer.email = req.user.email;
+      req.body.customer.firstName = req.user.firstName || "";
+      req.body.customer.lastName = req.user.lastName || "";
       const result = await this.service.create(req.body);
       res.json(result);
     }

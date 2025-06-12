@@ -8,13 +8,13 @@ export interface Item {
 }
 
 export interface Customer {
-  firstName: string;
-  lastName: string;
-  email: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
   phone: string;
 }
 
-export type PaymentMethod = "khqr" | "card" | "cod";
+export type PaymentMethod = "abapay_khqr" | "cards" | "cod";
 
 export interface OrderDoc extends Document {
   tranId: string;
@@ -25,9 +25,14 @@ export interface OrderDoc extends Document {
   paymentMethod: PaymentMethod;
   status: string;
   amount: number;
-  deliveryAddressId: string;
+  deliveryAddress: {
+    type: "Point";
+    coordinates: [number, number];
+    address?: string | undefined;
+  };
   deliveryTimeSlot: string;
-  instructions?: string;
+  instructions: string;
+  leaveAtDoor: boolean;
 }
 
 const ItemSchema = new Schema<Item>(
@@ -41,8 +46,8 @@ const ItemSchema = new Schema<Item>(
 
 const CustomerSchema = new Schema<Customer>(
   {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    firstName: { type: String },
+    lastName: { type: String },
     email: { type: String, required: true },
     phone: { type: String, required: true }
   },
@@ -58,7 +63,7 @@ const OrderSchema = new Schema<OrderDoc>(
     tip: { type: Number, default: 0 },
     paymentMethod: {
       type: String,
-      enum: ["khqr", "card", "cod"],
+      enum: ["abapay_khqr", "cards", "cod"],
       required: true
     },
     status: {
@@ -66,11 +71,29 @@ const OrderSchema = new Schema<OrderDoc>(
       default: "pending"
     },
     amount: { type: Number, required: true },
-    deliveryAddressId: { type: String, required: true },
-    deliveryTimeSlot: { type: String, required: true },
-    instructions: { type: String }
+    deliveryAddress: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+        default: "Point"
+      },
+      coordinates: {
+        type: [Number],
+        required: true
+      },
+      address: {
+        type: String,
+        trim: true
+      }
+    },
+    deliveryTimeSlot: { type: String },
+    instructions: { type: String },
+    leaveAtDoor: { type: Boolean }
   },
   { timestamps: true }
 );
+
+OrderSchema.index({ location: "2dsphere" });
 
 export const OrderModel = model<OrderDoc>("Order", OrderSchema);

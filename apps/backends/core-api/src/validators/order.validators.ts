@@ -11,16 +11,21 @@ export const CreateOrderSchema = z.object({
     )
     .min(1),
   customer: z.object({
-    firstName: z.string().nonempty(),
-    lastName: z.string().nonempty(),
-    email: z.string().email(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    email: z.string().email().optional(),
     phone: z.string().min(7)
   }),
   shipping: z.number().min(0),
-  tip: z.number().min(0).optional(),
-  paymentMethod: z.enum(["khqr", "card", "cod"]),
-  deliveryAddressId: z.string().nonempty(),
-  deliveryTimeSlot: z.string().nonempty(),
-  instructions: z.string().optional()
+  tip: z.number().min(0),
+  paymentMethod: z.enum(["abapay_khqr", "cards", "cod"]),
+  deliveryAddress: z.object({
+    type: z.literal("Point"),
+    coordinates: z.tuple([z.number(), z.number()]),
+    address: z.string().trim().optional()
+  }),
+  deliveryTimeSlot: z.string(),
+  instructions: z.string(),
+  leaveAtDoor: z.boolean()
 });
 export type CreateOrderInput = z.infer<typeof CreateOrderSchema>;

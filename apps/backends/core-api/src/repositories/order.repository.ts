@@ -2,8 +2,8 @@ import { OrderDoc, OrderModel } from "@/src/models/order.model";
 
 export default class OrderRepository {
   public async create(data: Partial<OrderDoc>): Promise<OrderDoc> {
-    const o = new OrderModel(data);
-    return o.save();
+    const order = await OrderModel.create(data);
+    return order;
   }
 
   public async updateStatus(

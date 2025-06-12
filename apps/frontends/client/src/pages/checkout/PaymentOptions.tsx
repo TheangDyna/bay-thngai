@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, QrCode, Tag } from "lucide-react";
 import React from "react";
 
-export type PaymentMethod = "khqr" | "card" | "cod";
+export type PaymentMethod = "abapay_khqr" | "cards" | "cod";
 
 interface PaymentOptionsProps {
   paymentMethod: PaymentMethod;
@@ -17,9 +17,9 @@ const OPTIONS: {
   label: string;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }[] = [
-  { value: "khqr", id: "pay_khqr", label: "KHQR", Icon: QrCode },
+  { value: "abapay_khqr", id: "pay_khqr", label: "KHQR", Icon: QrCode },
   {
-    value: "card",
+    value: "cards",
     id: "pay_card",
     label: "Credit / Debit Card",
     Icon: CreditCard

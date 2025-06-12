@@ -8,9 +8,10 @@ export interface PurchaseParams {
   customer: {
     firstName: string;
     lastName: string;
-    email?: string;
-    phone?: string;
+    email: string;
+    phone: string;
   };
+  paymentMethod: "abapay_khqr" | "cards";
 }
 export interface PaymentConfig {
   endpoint: string;
@@ -63,7 +64,7 @@ export default class PaymentService {
   public async purchaseTransaction(
     input: PurchaseParams
   ): Promise<PaymentConfig> {
-    const { tranId, amount, shipping, items, customer } = input;
+    const { tranId, amount, shipping, items, customer, paymentMethod } = input;
     const req_time = this.makeReqTime();
     const itemsBase64 = Buffer.from(JSON.stringify(items)).toString("base64");
 
@@ -78,12 +79,12 @@ export default class PaymentService {
       currency: "USD",
       items: itemsBase64,
       shipping: shipping.toFixed(2),
-      firstname: `${customer.firstName}`,
-      lastname: `${customer.lastName}`,
-      email: customer.email || "",
-      phone: customer.phone || "",
+      firstname: customer.firstName,
+      lastname: customer.lastName,
+      email: customer.email,
+      phone: customer.phone,
       type: "purchase",
-      payment_option: "",
+      payment_option: paymentMethod,
 
       return_url: returnUrl,
       cancel_url: cancelUrl,

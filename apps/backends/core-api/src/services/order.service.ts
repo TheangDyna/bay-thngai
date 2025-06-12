@@ -1,90 +1,90 @@
 // src/services/order.service.ts
+import { Item, OrderDoc } from "@/src/models/order.model";
+import OrderRepository from "@/src/repositories/order.repository";
+import PaymentService, {
+  PaymentConfig,
+  PurchaseParams
+} from "@/src/services/payment.service";
+import { AppError } from "@/src/utils/appError";
+import { CreateOrderInput } from "@/src/validators/order.validators";
+import { Types } from "mongoose";
+import { customAlphabet } from "nanoid";
 
-import { IOrder } from "@/src/models/order.model";
-import { OrderRepository } from "@/src/repositories/order.repository";
-import { PaymentService, PurchaseParams } from "@/src/services/payment.service";
-import { generateTranId } from "@/src/utils/generateTranId";
-
-export interface CreateOrderInput {
-  items: Array<{ productId: string; quantity: number; price: number }>;
-  customer: {
-    firstName: string;
-    lastName: string;
-    email?: string;
-    phone?: string;
-  };
-  shipping?: number; // optional, default to 0
-}
-
-export class OrderService {
-  private orderRepo = new OrderRepository();
+export default class OrderService {
+  private orderRepository = new OrderRepository();
   private paymentService = new PaymentService();
 
-  /**
-   * 1) Generate a unique tranId
-   * 2) Compute amount = sum(items) + shipping
-   * 3) Save order with status “PENDING”
-   * 4) Call PaymentService.purchaseTransaction(...)
-   * 5) Return { order, paymentConfig }
-   */
-  public async create(input: CreateOrderInput): Promise<{
-    order: IOrder;
-    paymentConfig: { endpoint: string; payload: Record<string, string> };
-  }> {
-    const { items, customer } = input;
-    const shipping = input.shipping || 0;
+  public async create(
+    input: CreateOrderInput
+  ): Promise<{ order: OrderDoc; paymentConfig?: PaymentConfig }> {
+    const alphabet =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const generateId = customAlphabet(alphabet, 20);
+    const tranId = generateId();
+    const itemsTotal = input.items.reduce(
+      (sum, i) => sum + i.price * i.quantity,
+      0
+    );
+    const amount = itemsTotal + input.shipping + (input.tip || 0);
 
-    // 1) Generate a 20-char unique tranId
-    const tranId = generateTranId();
+    // convert string IDs to mongoose.Types.ObjectId
+    const dbItems: Item[] = input.items.map((i) => ({
+      productId: new Types.ObjectId(i.productId),
+      quantity: i.quantity,
+      price: i.price
+    }));
 
-    // 2) Compute itemsTotal & total amount
-    const itemsTotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const amount = itemsTotal + shipping;
-
-    // 3) Create the order in the DB with status “PENDING”
-    const orderData = {
+    const order = await this.orderRepository.create({
       tranId,
-      items: items.map((i) => ({
-        productId: i.productId,
-        quantity: i.quantity,
-        price: i.price
-      })),
-      customer,
+      items: dbItems,
+      customer: input.customer,
+      shipping: input.shipping,
+      tip: input.tip || 0,
+      paymentMethod: input.paymentMethod,
+      deliveryAddressId: input.deliveryAddressId,
+      deliveryTimeSlot: input.deliveryTimeSlot,
+      instructions: input.instructions,
       amount,
-      shipping,
-      status: "PENDING" as const
-    };
-    const order = await this.orderRepo.create(orderData);
+      status: "pending"
+    });
 
-    // 4) Build payment payload
+    if (input.paymentMethod === "cod") {
+      return { order };
+    }
+
     const purchaseParams: PurchaseParams = {
       tranId,
       amount,
-      shipping,
-      items: items.map((i) => ({
+      shipping: input.shipping,
+      items: input.items.map((i) => ({
         name: i.productId,
         quantity: i.quantity,
         price: i.price
       })),
-      customer: {
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        email: customer.email,
-        phone: customer.phone
-      }
+      customer: input.customer
     };
-
     const paymentConfig =
       await this.paymentService.purchaseTransaction(purchaseParams);
 
     return { order, paymentConfig };
   }
 
-  public async getById(orderId: string): Promise<IOrder | null> {
-    return this.orderRepo.findById(orderId);
-  }
+  public async handleCallback(body: any): Promise<OrderDoc> {
+    const { tran_id: tranId, status } = body;
 
-  public async listAll(): Promise<IOrder[]> {
-    return this.orderRepo.listAll();
+    const statusMap: Record<string | number, string> = {
+      0: "approved",
+      2: "pending",
+      3: "declined",
+      4: "refunded",
+      7: "cancelled"
+    };
+
+    const mappedStatus = statusMap[status];
+
+    const order = await this.orderRepository.updateStatus(tranId, mappedStatus);
+
+    if (!order) throw new AppError("Order not found", 404);
+    return order;
   }
 }

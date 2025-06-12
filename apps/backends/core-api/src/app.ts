@@ -1,7 +1,6 @@
 import "dotenv/config";
 
 // import "dotenv/config"; always on the top
-import { cartRoutes } from "@/src/routes/cart.routes";
 import { orderRoutes } from "@/src/routes/order.routes";
 import { paymentRoutes } from "@/src/routes/payment.routes";
 import { pushSubscriptionRoutes } from "@/src/routes/pushSubscription.routes";
@@ -53,9 +52,8 @@ app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/reviews", reviewRoutes);
-app.use("/api/v1/carts", cartRoutes);
 app.use("/api/v1/orders", orderRoutes);
-app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/push", pushSubscriptionRoutes);
 
 // Error handling

@@ -56,7 +56,6 @@ export class ProductController {
 
   public deleteProduct = catchAsync(
     async (req: Request, res: Response): Promise<void> => {
-      console.log(req.params.productId);
       await this.service.deleteProduct(req.params.productId);
       res.status(204).json();
     }

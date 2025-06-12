@@ -1,3 +1,4 @@
+import { ScrollToTop } from "@/components/commons/ScrollToTop";
 import BaseLayout from "@/components/layouts/BaseLayout";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
@@ -27,6 +28,7 @@ const AppRoutes: React.FC = () => {
           <AuthProvider>
             <BrowserRouter>
               <Suspense fallback={<Loading />}>
+                <ScrollToTop />
                 <Routes>
                   <Route
                     path="/"

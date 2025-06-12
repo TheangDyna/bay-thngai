@@ -1,50 +1,76 @@
 // src/models/order.model.ts
-import mongoose, { Document, Schema } from "mongoose";
+import { Document, Schema, Types, model } from "mongoose";
 
-export interface IOrder extends Document {
-  tranId: string;
-  items: Array<{
-    productId: string;
-    quantity: number;
-    price: number;
-  }>;
-  customer: {
-    firstName: string;
-    lastName: string;
-    email?: string;
-    phone?: string;
-  };
-  amount: number;
-  shipping: number;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
+export interface Item {
+  productId: Types.ObjectId;
+  quantity: number;
+  price: number;
 }
 
-const OrderSchema = new Schema<IOrder>(
+export interface Customer {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+export type PaymentMethod = "khqr" | "card" | "cod";
+
+export interface OrderDoc extends Document {
+  tranId: string;
+  items: Item[];
+  customer: Customer;
+  shipping: number;
+  tip: number;
+  paymentMethod: PaymentMethod;
+  status: string;
+  amount: number;
+  deliveryAddressId: string;
+  deliveryTimeSlot: string;
+  instructions?: string;
+}
+
+const ItemSchema = new Schema<Item>(
   {
-    tranId: { type: String, required: true, unique: true, maxlength: 20 },
-    items: [
-      {
-        productId: { type: String, required: true },
-        quantity: { type: Number, required: true },
-        price: { type: Number, required: true }
-      }
-    ],
-    customer: {
-      firstName: { type: String, required: true },
-      lastName: { type: String, required: true },
-      email: { type: String },
-      phone: { type: String }
+    productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
+    quantity: { type: Number, required: true },
+    price: { type: Number, required: true }
+  },
+  { _id: false }
+);
+
+const CustomerSchema = new Schema<Customer>(
+  {
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true }
+  },
+  { _id: false }
+);
+
+const OrderSchema = new Schema<OrderDoc>(
+  {
+    tranId: { type: String, required: true, unique: true },
+    items: { type: [ItemSchema], required: true },
+    customer: { type: CustomerSchema, required: true },
+    shipping: { type: Number, required: true },
+    tip: { type: Number, default: 0 },
+    paymentMethod: {
+      type: String,
+      enum: ["khqr", "card", "cod"],
+      required: true
     },
-    amount: { type: Number, required: true },
-    shipping: { type: Number, required: true, default: 0 },
     status: {
       type: String,
-      default: "PENDING"
-    }
+      default: "pending"
+    },
+    amount: { type: Number, required: true },
+    deliveryAddressId: { type: String, required: true },
+    deliveryTimeSlot: { type: String, required: true },
+    instructions: { type: String }
   },
   { timestamps: true }
 );
 
-export const OrderModel = mongoose.model<IOrder>("Order", OrderSchema);
+export const OrderModel = model<OrderDoc>("Order", OrderSchema);

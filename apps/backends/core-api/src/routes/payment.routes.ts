@@ -1,15 +1,11 @@
-// src/routes/payment.routes.ts
-import { PaymentController } from "@/src/controllers/payment.controller";
+import PaymentController from "@/src/controllers/payment.controller";
 import { Router } from "express";
 
 const router = Router();
-const controller = new PaymentController();
+const paymentController = new PaymentController();
 
-// 1) Create signed payload: { endpoint, payload }
-router.post("/purchase", controller.createTransaction);
+router.get("/callback", paymentController.getCallback);
 
-// 2) PayWay’s server‐to‐server callback:
-router.get("/callback", controller.getCallback);
-router.post("/callback", controller.handleCallback);
+router.post("/callback", paymentController.callback);
 
 export const paymentRoutes = router;

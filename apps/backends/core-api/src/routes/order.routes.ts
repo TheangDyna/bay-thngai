@@ -1,17 +1,11 @@
-// src/routes/order.routes.ts
-import { OrderController } from "@/src/controllers/order.controller";
+import OrderController from "@/src/controllers/order.controller";
+import { validate } from "@/src/middlewares/validation.middleware";
+import { CreateOrderSchema } from "@/src/validators/order.validators";
 import { Router } from "express";
 
 const router = Router();
-const controller = new OrderController();
+const orderController = new OrderController();
 
-// POST /api/orders  → create a new order & return paymentConfig
-router.post("/", controller.createOrder);
-
-// GET /api/orders/:id  → fetch one order
-router.get("/:id", controller.getOrderById);
-
-// GET /api/orders  → list all orders
-router.get("/", controller.listOrders);
+router.post("/", validate(CreateOrderSchema), orderController.create);
 
 export const orderRoutes = router;

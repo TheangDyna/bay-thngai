@@ -9,4 +9,6 @@ const orderController = new OrderController();
 
 router.post("/", protect, validate(CreateOrderSchema), orderController.create);
 
+router.get("/:tranId", orderController.getOrderByTranId);
+
 export const orderRoutes = router;

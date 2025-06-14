@@ -17,4 +17,9 @@ export default class OrderRepository {
     );
     return updateOrder;
   }
+
+  public async findByTranId(tranId: string): Promise<OrderDoc | null> {
+    const order = OrderModel.findOne({ tranId });
+    return order;
+  }
 }

@@ -1,3 +1,6 @@
+import { OrderDoc } from "@/src/models/order.model";
+import OrderRepository from "@/src/repositories/order.repository";
+import { AppError } from "@/src/utils/appError";
 import crypto from "crypto";
 
 export interface PurchaseParams {
@@ -22,6 +25,8 @@ export default class PaymentService {
   private baseUrl = process.env.ABA_ENDPOINT!;
   private merchantId = process.env.ABA_MERCHANT_ID!;
   private publicKey = process.env.ABA_PUBLIC_KEY!;
+
+  private orderRepository = new OrderRepository();
 
   private makeReqTime(): string {
     return new Date().toISOString().replace(/\D/g, "").slice(0, 14);
@@ -61,6 +66,14 @@ export default class PaymentService {
       .digest("base64");
   }
 
+  private statusMap: Record<number, string> = {
+    0: "approved",
+    2: "pending",
+    3: "declined",
+    4: "refunded",
+    7: "cancelled"
+  };
+
   public async purchaseTransaction(
     input: PurchaseParams
   ): Promise<PaymentConfig> {
@@ -88,7 +101,7 @@ export default class PaymentService {
 
       return_url: returnUrl,
       cancel_url: cancelUrl,
-      continue_success_url: successUrl,
+      continue_success_url: `${successUrl}?tranId=${tranId}`,
 
       return_deeplink: "",
       custom_fields: "",
@@ -108,5 +121,17 @@ export default class PaymentService {
       endpoint: `${this.baseUrl}/api/payment-gateway/v1/payments/purchase`,
       payload: fields
     };
+  }
+
+  public async handleCallback(body: any): Promise<OrderDoc> {
+    const { tran_id: tranId, status } = body;
+
+    const mappedStatus = this.statusMap[+status];
+    if (!mappedStatus) throw new AppError("Invalid status", 400);
+
+    const order = await this.orderRepository.updateStatus(tranId, mappedStatus);
+
+    if (!order) throw new AppError("Order not found", 404);
+    return order;
   }
 }

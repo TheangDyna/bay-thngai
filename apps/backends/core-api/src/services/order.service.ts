@@ -5,7 +5,6 @@ import PaymentService, {
   PaymentConfig,
   PurchaseParams
 } from "@/src/services/payment.service";
-import { AppError } from "@/src/utils/appError";
 import { CreateOrderInput } from "@/src/validators/order.validators";
 import { Types } from "mongoose";
 import { customAlphabet } from "nanoid";
@@ -76,22 +75,9 @@ export default class OrderService {
     return { order, paymentConfig };
   }
 
-  public async handleCallback(body: any): Promise<OrderDoc> {
-    const { tran_id: tranId, status } = body;
-
-    const statusMap: Record<string | number, string> = {
-      0: "approved",
-      2: "pending",
-      3: "declined",
-      4: "refunded",
-      7: "cancelled"
-    };
-
-    const mappedStatus = statusMap[status];
-
-    const order = await this.orderRepository.updateStatus(tranId, mappedStatus);
-
-    if (!order) throw new AppError("Order not found", 404);
+  public async getOrderByTranId(tranId: string) {
+    const order = await this.orderRepository.findByTranId(tranId);
+    if (!order) throw new Error("Order not found");
     return order;
   }
 }

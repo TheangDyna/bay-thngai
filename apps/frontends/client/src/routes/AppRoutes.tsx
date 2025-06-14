@@ -1,18 +1,24 @@
 import { ScrollToTop } from "@/components/commons/ScrollToTop";
 import BaseLayout from "@/components/layouts/BaseLayout";
+import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
+
 import CheckoutPage from "@/pages/checkout/CheckoutPage";
 import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
-import PaymentCancel from "@/pages/checkout/PaymentCancel";
 import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
+import OrderSuccessPage from "@/pages/order/order-success";
+import OrderTrackingPage from "@/pages/order/order-track";
+import PaymentCancel from "@/pages/payment/payment-cancel";
+import PaymentReturn from "@/pages/payment/payment-return";
 import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import Search from "@/pages/search/SearchPage";
 import Shop from "@/pages/Shop";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
@@ -38,25 +44,34 @@ const AppRoutes: React.FC = () => {
                       </BaseLayout>
                     }
                   >
-                    <Route path="/" element={<Home />} />
-                    <Route path="/search" element={<Search />} />
-                    <Route path="/shops" element={<Shop />} />
-                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route index element={<Home />} />
+                    <Route path="search" element={<Search />} />
+                    <Route path="shops" element={<Shop />} />
+                    <Route path="checkout" element={<CheckoutPage />} />
                     <Route
-                      path="/checkout-test"
+                      path="checkout-test"
                       element={<CheckoutTestPage />}
                     />
-                    <Route path="/payment-cancel" element={<PaymentCancel />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/address" element={<AddressSettingsPage />} />
+                    <Route path="payment-cancel" element={<PaymentCancel />} />
+                    <Route path="payment-return" element={<PaymentReturn />} />
+                    <Route
+                      path="order-success/:tranId"
+                      element={<OrderSuccessPage />}
+                    />
+                    <Route
+                      path="order-track/:tranId"
+                      element={<OrderTrackingPage />}
+                    />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="address" element={<AddressSettingsPage />} />
                   </Route>
-                  {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
             </BrowserRouter>
           </AuthProvider>
         </CartProvider>
+        <Toaster />
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

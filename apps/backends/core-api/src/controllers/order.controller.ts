@@ -14,4 +14,9 @@ export default class OrderController {
       res.json(result);
     }
   );
+  public getOrderByTranId = catchAsync(async (req: Request, res: Response) => {
+    const { tranId } = req.params;
+    const order = await this.service.getOrderByTranId(tranId);
+    res.status(200).json(order);
+  });
 }

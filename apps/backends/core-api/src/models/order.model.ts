@@ -16,6 +16,21 @@ export interface Customer {
 
 export type PaymentMethod = "abapay_khqr" | "cards" | "cod";
 
+export type PaymentStatus =
+  | "pending"
+  | "approved"
+  | "declined"
+  | "refunded"
+  | "cancelled";
+
+export type DeliveryStatus =
+  | "pending"
+  | "confirmed"
+  | "preparing"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled";
+
 export interface OrderDoc extends Document {
   tranId: string;
   items: Item[];
@@ -23,7 +38,8 @@ export interface OrderDoc extends Document {
   shipping: number;
   tip: number;
   paymentMethod: PaymentMethod;
-  status: string;
+  paymentStatus: PaymentStatus;
+  deliveryStatus: DeliveryStatus;
   amount: number;
   deliveryAddress: {
     type: "Point";
@@ -54,7 +70,7 @@ const CustomerSchema = new Schema<Customer>(
   { _id: false }
 );
 
-const OrderSchema = new Schema<OrderDoc>(
+const OrderSchema = new Schema(
   {
     tranId: { type: String, required: true, unique: true },
     items: { type: [ItemSchema], required: true },
@@ -66,8 +82,21 @@ const OrderSchema = new Schema<OrderDoc>(
       enum: ["abapay_khqr", "cards", "cod"],
       required: true
     },
-    status: {
+    paymentStatus: {
       type: String,
+      enum: ["pending", "approved", "declined", "refunded", "cancelled"],
+      default: "pending"
+    },
+    deliveryStatus: {
+      type: String,
+      enum: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "out_for_delivery",
+        "delivered",
+        "cancelled"
+      ],
       default: "pending"
     },
     amount: { type: Number, required: true },
@@ -75,8 +104,7 @@ const OrderSchema = new Schema<OrderDoc>(
       type: {
         type: String,
         enum: ["Point"],
-        required: true,
-        default: "Point"
+        required: true
       },
       coordinates: {
         type: [Number],

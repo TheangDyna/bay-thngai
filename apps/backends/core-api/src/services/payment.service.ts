@@ -129,7 +129,10 @@ export default class PaymentService {
     const mappedStatus = this.statusMap[+status];
     if (!mappedStatus) throw new AppError("Invalid status", 400);
 
-    const order = await this.orderRepository.updateStatus(tranId, mappedStatus);
+    const order = await this.orderRepository.updatePaymentStatus(
+      tranId,
+      mappedStatus
+    );
 
     if (!order) throw new AppError("Order not found", 404);
     return order;

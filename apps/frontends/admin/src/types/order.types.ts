@@ -28,7 +28,7 @@ export type DeliveryStatus =
   | "delivered"
   | "cancelled";
 
-export type Order = {
+export interface Order {
   _id: string;
   tranId: string;
   items: Item[];
@@ -49,4 +49,4 @@ export type Order = {
   leaveAtDoor: boolean;
   createdAt: Date;
   updatedAt: Date;
-};
+}

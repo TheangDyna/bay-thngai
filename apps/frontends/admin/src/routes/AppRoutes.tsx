@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
 import CuisineEdit from "@/pages/cuisines/CuisineEdit";
 import Loading from "@/pages/Loading";
+import OrderList from "@/pages/order/OrderList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React, { lazy, Suspense } from "react";
@@ -70,6 +71,11 @@ const AppRoutes: React.FC = () => {
                   />
                   <Route path="new" element={<CuisineCreate />} />
                   <Route path=":cuisineId/edit" element={<CuisineEdit />} />
+                </Route>
+
+                {/* Order Route */}
+                <Route path="order">
+                  <Route index element={<OrderList />} />
                 </Route>
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />

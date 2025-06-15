@@ -4,10 +4,12 @@ import "dotenv/config";
 import { orderRoutes } from "@/src/routes/order.routes";
 import { paymentRoutes } from "@/src/routes/payment.routes";
 import { pushSubscriptionRoutes } from "@/src/routes/pushSubscription.routes";
+import { initSocket } from "@/src/socket";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import http from "http";
 import webpush from "web-push";
 import { config } from "./configs/config";
 import { errorHandler } from "./middlewares/error.middleware";
@@ -20,6 +22,8 @@ import { reviewRoutes } from "./routes/review.routes";
 import { userRoutes } from "./routes/user.routes";
 
 const app = express();
+const server = http.createServer(app);
+initSocket(server);
 
 webpush.setVapidDetails(
   "mailto:your-support@yourdomain.com",
@@ -60,4 +64,4 @@ app.use("/api/v1/push", pushSubscriptionRoutes);
 app.use(routeNotFound);
 app.use(errorHandler);
 
-export default app;
+export { app, server };

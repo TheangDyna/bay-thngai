@@ -14,9 +14,32 @@ export default class OrderController {
       res.json(result);
     }
   );
+
+  public getAllOrders = catchAsync(async (req: Request, res: Response) => {
+    const { total, orders } = await this.service.getAllOrders(req.query);
+    res.status(200).json({
+      status: "success",
+      total,
+      results: orders.length,
+      data: orders
+    });
+  });
+
   public getOrderByTranId = catchAsync(async (req: Request, res: Response) => {
     const { tranId } = req.params;
     const order = await this.service.getOrderByTranId(tranId);
     res.status(200).json(order);
   });
+
+  public updateDeliveryStatus = catchAsync(
+    async (req: Request, res: Response) => {
+      const { orderId } = req.params;
+      const { status } = req.body;
+      const order = await this.service.updateDeliveryStatus(orderId, status);
+      res.status(200).json({
+        status: "success",
+        data: order
+      });
+    }
+  );
 }

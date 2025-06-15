@@ -94,26 +94,26 @@ export const menuItems: MenuSection[] = [
     ]
   },
   {
-    title: "Inventory",
-    subItems: [
-      {
-        title: "Inventory",
-        icon: Inbox,
-        path: "#"
-      }
-    ]
-  },
-  {
     title: "Orders",
     subItems: [
       {
         title: "All Orders",
         icon: ArrowRightLeft,
-        path: "#"
+        path: "/order"
       },
       {
         title: "Returns",
         icon: Undo2,
+        path: "#"
+      }
+    ]
+  },
+  {
+    title: "Inventory",
+    subItems: [
+      {
+        title: "Inventory",
+        icon: Inbox,
         path: "#"
       }
     ]

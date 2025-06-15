@@ -10,7 +10,6 @@ import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
 import Home from "@/pages/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
-import OrderSuccessPage from "@/pages/order/order-success";
 import OrderTrackingPage from "@/pages/order/order-track";
 import PaymentCancel from "@/pages/payment/payment-cancel";
 import PaymentReturn from "@/pages/payment/payment-return";
@@ -54,10 +53,6 @@ const AppRoutes: React.FC = () => {
                     />
                     <Route path="payment-cancel" element={<PaymentCancel />} />
                     <Route path="payment-return" element={<PaymentReturn />} />
-                    <Route
-                      path="order-success/:tranId"
-                      element={<OrderSuccessPage />}
-                    />
                     <Route
                       path="order-track/:tranId"
                       element={<OrderTrackingPage />}

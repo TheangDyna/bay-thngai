@@ -1,10 +1,17 @@
 // src/services/order.service.ts
-import { Item, OrderDoc } from "@/src/models/order.model";
+import {
+  DeliveryStatus,
+  Item,
+  OrderDoc,
+  PaymentStatus
+} from "@/src/models/order.model";
 import OrderRepository from "@/src/repositories/order.repository";
 import PaymentService, {
   PaymentConfig,
   PurchaseParams
 } from "@/src/services/payment.service";
+import { emitOrderUpdate } from "@/src/socket";
+import { AppError } from "@/src/utils/appError";
 import { CreateOrderInput } from "@/src/validators/order.validators";
 import { Types } from "mongoose";
 import { customAlphabet } from "nanoid";
@@ -44,7 +51,8 @@ export default class OrderService {
       deliveryTimeSlot: input.deliveryTimeSlot,
       instructions: input.instructions,
       amount,
-      status: "pending",
+      paymentStatus: "pending" as PaymentStatus,
+      deliveryStatus: "pending" as DeliveryStatus,
       leaveAtDoor: input.leaveAtDoor
     });
 
@@ -75,9 +83,45 @@ export default class OrderService {
     return { order, paymentConfig };
   }
 
+  public async getAllOrders(
+    queryString: Record<string, any>
+  ): Promise<{ total: number; orders: OrderDoc[] }> {
+    return await this.orderRepository.getAllOrders(queryString);
+  }
+
   public async getOrderByTranId(tranId: string) {
     const order = await this.orderRepository.findByTranId(tranId);
     if (!order) throw new Error("Order not found");
     return order;
+  }
+
+  private allowedStatuses: OrderDoc["deliveryStatus"][] = [
+    "pending",
+    "confirmed",
+    "preparing",
+    "out_for_delivery",
+    "delivered",
+    "cancelled"
+  ];
+
+  public async updateDeliveryStatus(
+    orderId: string,
+    status: string
+  ): Promise<OrderDoc> {
+    if (!this.allowedStatuses.includes(status as OrderDoc["deliveryStatus"])) {
+      throw new AppError("Invalid delivery status", 400);
+    }
+
+    const updated = await this.orderRepository.updateDeliveryStatus(
+      orderId,
+      status
+    );
+    if (!updated) throw new AppError("Order not found", 404);
+
+    if (updated) {
+      emitOrderUpdate(updated.tranId, updated);
+    }
+
+    return updated;
   }
 }

@@ -19,7 +19,7 @@ const PaymentReturn: React.FC = () => {
     const verify = async () => {
       try {
         clearCart();
-        navigate(`/order-success/${tranId}`);
+        navigate(`/order-track/${tranId}`);
       } catch {
         toast({
           description: "Payment verification failed",

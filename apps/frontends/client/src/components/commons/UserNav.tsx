@@ -1,3 +1,4 @@
+import SignIn from "@/components/commons/SignIn";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +11,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth.context";
-import SignIn from "@/components/commons/SignIn";
 
 export const UserNav: React.FC = () => {
   const { user, logout } = useAuth();
@@ -21,10 +21,12 @@ export const UserNav: React.FC = () => {
       {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="" alt="@profile" />
-                <AvatarFallback>{initials}</AvatarFallback>
+            <Button variant="ghost" className="relative h-10 w-10">
+              <Avatar className="h-10 w-10 rounded-md">
+                <AvatarImage className="rounded-md" src="" alt="@profile" />
+                <AvatarFallback className="rounded-md">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>

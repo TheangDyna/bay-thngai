@@ -1,9 +1,17 @@
 import CardProductCart from "@/components/commons/CardProductCart";
 import EmptyCartSection from "@/components/commons/EmptyCartSection";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from "@/components/ui/sheet";
 import { useCart } from "@/contexts/cart.context";
 import { toast } from "@/hooks/use-toast";
-import { ShoppingCart, TrashIcon, X } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,9 +19,6 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
-
-  const toggleSidebar = () => setIsSidebarOpen((o) => !o);
-  const closeSidebar = () => setIsSidebarOpen(false);
 
   const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
@@ -52,90 +57,80 @@ const Cart: React.FC = () => {
   };
 
   return (
-    <>
-      <div>
-        {/* Cart Icon */}
-        <div
-          onClick={toggleSidebar}
-          className="relative flex items-center cursor-pointer"
-        >
-          <ShoppingCart />
-
+    <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+      <SheetTrigger asChild>
+        <Button variant="secondary" size="icon" className="relative">
+          <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
           {totalQty > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center bg-emerald-500 text-white text-xs rounded-full">
+            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
               {totalQty}
             </span>
           )}
-        </div>
+          <span className="sr-only">Shopping cart</span>
+        </Button>
+      </SheetTrigger>
 
-        {/* Sidebar */}
-        <div
-          className={`fixed inset-0 z-50 flex justify-end bg-black bg-opacity-50 transition-opacity duration-300 ${
-            isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={closeSidebar}
-        >
-          <div
-            className={`w-[378px] h-full bg-white flex flex-col transform transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? "translate-x-0" : "translate-x-full"
-            }`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="font-semibold">Shopping Cart</h3>
-              <div className="flex">
-                <Button
-                  variant="ghost"
-                  onClick={handleClear}
-                  disabled={cart.length === 0}
-                >
-                  <TrashIcon className="w-5 h-5" />
-                </Button>
-                <Button variant="ghost" onClick={closeSidebar} size="icon">
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Items */}
-            <div className="flex-grow overflow-y-auto p-4">
-              {cart.length === 0 ? (
-                <EmptyCartSection />
-              ) : (
-                cart.map((it) => (
-                  <CardProductCart
-                    key={it.id}
-                    imageUrl={it.image}
-                    title={it.name}
-                    price={it.price}
-                    quantity={it.quantity}
-                    onRemove={() => handleRemove(it.id)}
-                    onIncrement={() => handleIncrement(it.id)}
-                    onDecrement={() => handleDecrement(it.id)}
-                  />
-                ))
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 border-t">
-              <div className="flex justify-between mb-4">
-                <span className="font-semibold">Subtotal:</span>
-                <span className="font-semibold">${subtotal.toFixed(2)}</span>
-              </div>
+      <SheetContent className="w-full sm:max-w-md flex flex-col">
+        <SheetHeader className="border-b pb-4">
+          <div className="flex items-center justify-between">
+            <SheetTitle>Shopping Cart</SheetTitle>
+            {cart.length > 0 && (
               <Button
-                onClick={handleCheckout}
-                disabled={cart.length === 0}
-                className="w-full"
+                variant="link"
+                onClick={handleClear}
+                className="text-destructive hover:text-destructive p-0"
               >
-                Proceed to Checkout
+                <span>Clear All</span>
               </Button>
-            </div>
+            )}
           </div>
+        </SheetHeader>
+
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full">
+            {cart.length === 0 ? (
+              <EmptyCartSection />
+            ) : (
+              <div className="space-y-1">
+                {cart.map((item) => (
+                  <CardProductCart
+                    key={item.id}
+                    imageUrl={item.image}
+                    title={item.name}
+                    price={item.price}
+                    quantity={item.quantity}
+                    onRemove={() => handleRemove(item.id)}
+                    onIncrement={() => handleIncrement(item.id)}
+                    onDecrement={() => handleDecrement(item.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </ScrollArea>
         </div>
-      </div>
-    </>
+        {totalQty > 0 && (
+          <p className="w-full text-right text-sm text-muted-foreground">
+            {totalQty} {totalQty === 1 ? "item" : "items"} in your cart
+          </p>
+        )}
+        {cart.length > 0 && (
+          <div className="border-t pt-4 space-y-4">
+            <div className="flex items-center justify-between text-base font-semibold">
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+
+            <Button onClick={handleCheckout} className="w-full" size="lg">
+              Proceed to Checkout
+            </Button>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Shipping and taxes calculated at checkout
+            </p>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 };
 

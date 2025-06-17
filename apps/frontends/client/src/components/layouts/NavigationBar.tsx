@@ -1,4 +1,8 @@
+import { Menu, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import { UserNav } from "@/components/commons/UserNav";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -7,29 +11,59 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
-} from "@/components/ui/navigation-menu"; // ShadCN NavigationMenu
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Cart from "@/pages/Cart";
 import { cn } from "@/utils/cn";
-import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-// Define categories and dietary options outside the component
+// Define categories and dietary options
 const categories = [
-  { name: "Fresh Vegetable", path: "/categories/fresh-vegetable" },
-  { name: "Diet Nutrition", path: "/categories/diet-nutrition" },
-  { name: "Healthy Food", path: "/categories/healthy-food" },
-  { name: "Organic Food", path: "/categories/organic-food" }
+  {
+    name: "Fresh Vegetable",
+    path: "/categories/fresh-vegetable",
+    description: "Farm-fresh vegetables delivered daily"
+  },
+  {
+    name: "Diet Nutrition",
+    path: "/categories/diet-nutrition",
+    description: "Nutritious options for healthy living"
+  },
+  {
+    name: "Healthy Food",
+    path: "/categories/healthy-food",
+    description: "Wholesome meals and ingredients"
+  },
+  {
+    name: "Organic Food",
+    path: "/categories/organic-food",
+    description: "Certified organic products"
+  }
 ];
 
 const dietary = [
-  { name: "Vegan", path: "/dietary/vegan" },
-  { name: "Gluten-Free", path: "/dietary/gluten-free" },
-  { name: "Keto", path: "/dietary/keto" }
+  { name: "Vegan", path: "/dietary/vegan", description: "Plant-based options" },
+  {
+    name: "Gluten-Free",
+    path: "/dietary/gluten-free",
+    description: "Safe for celiac and gluten sensitivity"
+  },
+  {
+    name: "Keto",
+    path: "/dietary/keto",
+    description: "Low-carb, high-fat diet options"
+  }
 ];
 
-export const NavigationBar: React.FC = () => {
+const navigationLinks = [
+  { to: "/search", label: "Search" },
+  { to: "/shops", label: "Shop" }
+];
+
+export function NavigationBar() {
   const location = useLocation();
-  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 0);
@@ -43,51 +77,158 @@ export const NavigationBar: React.FC = () => {
 
   return (
     <nav
-      className={
-        "sticky top-0 z-50 h-20 flex items-center justify-between w-full px-6 py-4 bg-background transition-shadow border-b"
-      }
+      className={cn(
+        "sticky top-0 z-50 h-16 md:h-20 flex items-center justify-between w-full px-4 md:px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-200 border-b",
+        scrolled && "shadow-sm"
+      )}
     >
-      {/* Left */}
-      <div className="flex items-center space-x-6">
-        <Link to="/" className="flex items-center">
+      {/* Mobile Menu Button */}
+      <div className="flex items-center lg:hidden">
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="mr-2">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+            <div className="flex flex-col space-y-4 mt-4">
+              <Link
+                to="/"
+                className="flex items-center space-x-2 pb-4 border-b"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <img
+                  src="/bay-thngai-logo.svg"
+                  alt="Bay Thngai logo"
+                  className="w-8 h-8 md:w-10 md:h-10"
+                />
+                <span className="font-semibold text-lg">Bay Thngai</span>
+              </Link>
+
+              {/* Mobile Categories */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+                  Categories
+                </h3>
+                {categories.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={cn(
+                      "block px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      isActive(item.path)
+                        ? "text-primary font-semibold bg-accent"
+                        : "text-muted-foreground"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Mobile Dietary */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+                  Dietary
+                </h3>
+                {dietary.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={cn(
+                      "block px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      isActive(item.path)
+                        ? "text-primary font-semibold bg-accent"
+                        : "text-muted-foreground"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Mobile Navigation Links */}
+              <div className="space-y-2 pt-4 border-t">
+                {navigationLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={cn(
+                      "block px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      isActive(link.to)
+                        ? "text-primary font-semibold bg-accent"
+                        : "text-muted-foreground"
+                    )}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Logo */}
+      <div className="flex items-center">
+        <Link to="/" className="flex items-center space-x-2">
           <img
             src="/bay-thngai-logo.svg"
             alt="Bay Thngai logo"
-            className="w-12 h-12"
+            className="w-8 h-8 md:w-10 md:h-10"
           />
+          <span className="font-bold text-lg md:text-xl hidden sm:block">
+            Bay Thngai
+          </span>
         </Link>
+      </div>
 
-        {/* Navigation Links */}
+      {/* Desktop Navigation */}
+      <div className="hidden lg:flex items-center flex-1 justify-center">
         <NavigationMenu>
-          <NavigationMenuList className="flex space-x-2">
+          <NavigationMenuList className="flex space-x-1">
             {/* Categories */}
             <NavigationMenuItem>
               <NavigationMenuTrigger
                 className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-sm font-medium",
+                  "text-sm font-medium transition-colors",
                   isActive("/categories")
                     ? "text-primary font-semibold"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Categories
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-2 p-4 md:w-[300px] md:grid-cols-2 lg:w-[400px]">
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                   {categories.map((item) => (
                     <li key={item.name}>
                       <NavigationMenuLink asChild>
                         <Link
                           to={item.path}
                           className={cn(
-                            "block select-none rounded-md p-2 text-sm font-medium leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            isActive(item.path)
-                              ? "text-primary font-semibold"
-                              : "text-muted-foreground"
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            isActive(item.path) &&
+                              "bg-accent text-accent-foreground"
                           )}
                         >
-                          {item.name}
+                          <div
+                            className={cn(
+                              "text-sm font-medium leading-none",
+                              isActive(item.path)
+                                ? "text-primary font-semibold"
+                                : ""
+                            )}
+                          >
+                            {item.name}
+                          </div>
+                          <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                            {item.description}
+                          </p>
                         </Link>
                       </NavigationMenuLink>
                     </li>
@@ -100,30 +241,40 @@ export const NavigationBar: React.FC = () => {
             <NavigationMenuItem>
               <NavigationMenuTrigger
                 className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-sm font-medium",
+                  "text-sm font-medium transition-colors",
                   isActive("/dietary")
                     ? "text-primary font-semibold"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Dietary
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-2 p-4 md:w-[300px] md:grid-cols-2 lg:w-[400px]">
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[500px]">
                   {dietary.map((item) => (
                     <li key={item.name}>
                       <NavigationMenuLink asChild>
                         <Link
                           to={item.path}
                           className={cn(
-                            "block select-none rounded-md p-2 text-sm font-medium leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-                            isActive(item.path)
-                              ? "text-primary font-semibold"
-                              : "text-muted-foreground"
+                            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                            isActive(item.path) &&
+                              "bg-accent text-accent-foreground"
                           )}
                         >
-                          {item.name}
+                          <div
+                            className={cn(
+                              "text-sm font-medium leading-none",
+                              isActive(item.path)
+                                ? "text-primary font-semibold"
+                                : ""
+                            )}
+                          >
+                            {item.name}
+                          </div>
+                          <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                            {item.description}
+                          </p>
                         </Link>
                       </NavigationMenuLink>
                     </li>
@@ -133,20 +284,17 @@ export const NavigationBar: React.FC = () => {
             </NavigationMenuItem>
 
             {/* Search and Shop */}
-            {[
-              { to: "/search", label: "Search" },
-              { to: "/shops", label: "Shop" }
-            ].map((link) => (
+            {navigationLinks.map((link) => (
               <NavigationMenuItem key={link.to}>
                 <NavigationMenuLink asChild>
                   <Link
                     to={link.to}
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "text-sm font-medium",
+                      "text-sm font-medium transition-colors",
                       isActive(link.to)
                         ? "text-primary font-semibold"
-                        : "text-muted-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     )}
                   >
                     {link.label}
@@ -158,11 +306,17 @@ export const NavigationBar: React.FC = () => {
         </NavigationMenu>
       </div>
 
-      {/* Right */}
-      <div className="flex items-center space-x-6">
+      {/* Right Side Actions */}
+      <div className="flex items-center space-x-2">
+        {/* Mobile Search Button */}
+        <Button variant="ghost" size="icon" className="lg:hidden">
+          <Search className="h-4 w-4" />
+          <span className="sr-only">Search</span>
+        </Button>
+
         <Cart />
         <UserNav />
       </div>
     </nav>
   );
-};
+}

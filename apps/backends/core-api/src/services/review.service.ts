@@ -1,9 +1,9 @@
+import { ReviewRepository } from "@/src/repositories/review.repository";
 import { Types } from "mongoose";
 import { Review } from "../models/review.model";
 import { IReviewDocument } from "../types/review.types";
 import { AppError } from "../utils/appError";
 import { ProductService } from "./product.service";
-import { ReviewRepository } from "@/src/repositories/review.repository";
 
 export class ReviewService {
   private productService: ProductService;
@@ -38,6 +38,17 @@ export class ReviewService {
     });
     await this.updateAverageRatings(productId);
     return review;
+  }
+
+  public async getReviewsByProduct(
+    productId: string
+  ): Promise<IReviewDocument[]> {
+    await this.productService.getProductById(productId);
+    const { reviews } = await this.reviewRepository.getAllReviews({
+      product: productId
+    });
+
+    return reviews;
   }
 
   public async updateReview(
@@ -111,5 +122,35 @@ export class ReviewService {
         ratingsQuantity: 0
       });
     }
+  }
+
+  public async getRatingSummary(productId: string) {
+    const breakdown = await Review.aggregate([
+      { $match: { product: new Types.ObjectId(productId) } },
+      {
+        $group: {
+          _id: "$rating",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: -1 }
+      }
+    ]);
+
+    const total = breakdown.reduce((sum, r) => sum + r.count, 0);
+
+    return {
+      total,
+      breakdown: [5, 4, 3, 2, 1].map((star) => {
+        const found = breakdown.find((r) => r._id === star);
+        const count = found ? found.count : 0;
+        return {
+          rating: star,
+          count,
+          percent: total ? (count / total) * 100 : 0
+        };
+      })
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 
 export const validate = (schema: z.ZodSchema<any>) => {

@@ -110,6 +110,8 @@ export const ProductList: React.FC<ProductListProps> = ({
               onAddToCart={(amount) => handleAddToCart(product, amount)}
               onViewDetails={() => onSelectProduct(product)}
               onClickProductModalDetails={() => onSelectProduct(product)}
+              ratingsAverage={product.ratingsAverage}
+              ratingsQuantity={product.ratingsQuantity}
             />
           );
         })}

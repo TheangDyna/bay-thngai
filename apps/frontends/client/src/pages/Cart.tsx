@@ -20,12 +20,10 @@ const Cart: React.FC = () => {
 
   const handleRemove = (id: string) => {
     removeFromCart(id);
-    toast({ description: "Item removed" });
   };
 
   const handleClear = () => {
     clearCart();
-    toast({ description: "Cart cleared" });
   };
 
   const handleIncrement = (id: string) => {

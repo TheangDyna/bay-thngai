@@ -50,10 +50,10 @@ export const GrocerySection: React.FC = () => {
               image={product.thumbnail}
               title={product.name}
               price={product.price}
-              originalPrice={product.originalPrice}
-              unit={product.unit || "1 pc"}
+              unit="1 pc"
               onAddToCart={() => handleAddToCart(product)}
               onViewDetails={() => setSelectedProduct(product)}
+              onClickProductModalDetails={() => setSelectedProduct(product)}
             />
           ))}
         </div>

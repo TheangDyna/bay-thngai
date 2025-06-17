@@ -18,7 +18,6 @@ import { routeNotFound } from "./middlewares/route.middleware";
 import { authRoutes } from "./routes/auth.routes";
 import { cuisineRoutes } from "./routes/cuisine.routes";
 import { productRoutes } from "./routes/product.routes";
-import { reviewRoutes } from "./routes/review.routes";
 import { userRoutes } from "./routes/user.routes";
 
 const app = express();
@@ -55,7 +54,6 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cuisines", cuisineRoutes);
 app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/reviews", reviewRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/push", pushSubscriptionRoutes);

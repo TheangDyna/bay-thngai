@@ -10,5 +10,8 @@ export const ReviewSchema = z
   })
   .strict();
 
-export const CreateReviewSchema = ReviewSchema;
+export const CreateReviewSchema = ReviewSchema.omit({
+  user: true,
+  product: true
+});
 export const UpdateReviewSchema = ReviewSchema.partial();

@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Star } from "lucide-react";
 import React, { useCallback } from "react";
 
 interface ProductCardProps {
@@ -12,6 +12,8 @@ interface ProductCardProps {
   onAddToCart: (qty: number) => void;
   onViewDetails: () => void;
   onClickProductModalDetails: () => void;
+  ratingsAverage?: number;
+  ratingsQuantity?: number;
 }
 
 export const CardProduct: React.FC<ProductCardProps> = ({
@@ -21,7 +23,9 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   unit,
   cartQty = 0,
   onAddToCart,
-  onClickProductModalDetails
+  onClickProductModalDetails,
+  ratingsAverage,
+  ratingsQuantity
 }) => {
   const isInCart = cartQty > 0;
 
@@ -101,7 +105,29 @@ export const CardProduct: React.FC<ProductCardProps> = ({
           <del className="text-sm text-muted-foreground">$100.00</del>
         </div>
         <h3 className="text-sm font-medium truncate">{title}</h3>
-        <div className="text-sm text-muted-foreground">{unit}</div>
+        <div className="flex justify-between items-center">
+          {ratingsAverage && (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    fill={
+                      i < Math.round(ratingsAverage) ? "currentColor" : "none"
+                    }
+                    strokeWidth={1.5}
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-muted-foreground">
+                ({ratingsQuantity})
+              </span>
+            </div>
+          )}
+
+          <div className="text-sm text-muted-foreground">{unit}</div>
+        </div>
       </div>
     </Card>
   );

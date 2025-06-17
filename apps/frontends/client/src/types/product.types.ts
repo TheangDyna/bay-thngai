@@ -15,6 +15,8 @@ export interface Product {
   ingredients?: string[];
   thumbnail: string;
   images: string[];
+  ratingsAverage: number;
+  ratingsQuantity: number;
   createdAt: Date;
   updatedAt: Date;
 }

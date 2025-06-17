@@ -39,14 +39,14 @@ export const useProductsQuery = ({
 
 // Query to Fetch a Single Product
 export const useProductQuery = (
-  id?: string
-): UseQueryResult<Product, AxiosError> => {
+  productId?: string
+): UseQueryResult<{ data: Product }, AxiosError> => {
   return useQuery({
-    queryKey: ["products", id],
+    queryKey: ["products", productId],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/products/${id}`);
+      const response = await axiosInstance.get(`/products/${productId}`);
       return response.data;
     },
-    enabled: !!id // Only fetch if `id` is provided
+    enabled: !!productId // Only fetch if `id` is provided
   });
 };

@@ -14,8 +14,11 @@ const CategorySection: React.FC = () => {
   const [isEnd, setIsEnd] = useState(false);
 
   // fetch cuisines
-  const { data, isLoading, isError } = useCuisinesQuery({
-    pagination: { pageIndex: 0, pageSize: 10 },
+  const {
+    data: cuisines,
+    isLoading,
+    isError
+  } = useCuisinesQuery({
     sorting: [],
     columnFilters: []
   });
@@ -25,15 +28,16 @@ const CategorySection: React.FC = () => {
       setIsBeginning(swiperRef.current.isBeginning);
       setIsEnd(swiperRef.current.isEnd);
     }
-  }, [data]);
+  }, [cuisines]);
 
   if (isLoading)
     return <div className="py-20 text-center">Loading categories…</div>;
-  if (isError)
+
+  if (isError || !cuisines)
     return <div className="py-20 text-center">Failed to load categories</div>;
 
   return (
-    <div>
+    <div className="px-10 space-y-6">
       <BannerHeader
         title="What food you love to order"
         subTitle="Here order your favorite foods from different categories"
@@ -66,12 +70,12 @@ const CategorySection: React.FC = () => {
           modules={[SwiperPagination, Navigation]}
           className="mySwiper"
         >
-          {data.data.map((cuisine) => (
+          {cuisines.data.map((cuisine) => (
             <SwiperSlide key={cuisine._id}>
               <CardCategory
-                imageUrl={"/logo.png"}
+                imageUrl={cuisine.thumbnail}
                 title={cuisine.name}
-                path={`/category/${cuisine._id}`}
+                path={`/search?cuisines=${cuisine._id}`}
               />
             </SwiperSlide>
           ))}

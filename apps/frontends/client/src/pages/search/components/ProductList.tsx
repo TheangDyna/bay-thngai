@@ -12,7 +12,9 @@ const SORT_MAP: Record<string, string | undefined> = {
   "lowest-price": "price",
   "highest-price": "-price",
   newest: "-createdAt",
-  oldest: "createdAt"
+  oldest: "createdAt",
+  "top-rated": "-ratingsAverage",
+  "most-sold": "-sold"
 };
 
 interface ProductListProps {
@@ -112,6 +114,7 @@ export const ProductList: React.FC<ProductListProps> = ({
               onClickProductModalDetails={() => onSelectProduct(product)}
               ratingsAverage={product.ratingsAverage}
               ratingsQuantity={product.ratingsQuantity}
+              sold={product.sold}
             />
           );
         })}
@@ -123,11 +126,15 @@ export const ProductList: React.FC<ProductListProps> = ({
       )}
 
       {!hasNextPage && (
-        <div className="flex flex-1 justify-center">Nothing more to load</div>
+        <div className="flex flex-1 justify-center text-muted-foreground">
+          — That's all —
+        </div>
       )}
 
       {isFetching && !isFetchingNextPage && (
-        <div className="flex flex-1 justify-center">Background updating...</div>
+        <div className="flex flex-1 justify-center text-muted-foreground">
+          Background updating...
+        </div>
       )}
     </>
   );

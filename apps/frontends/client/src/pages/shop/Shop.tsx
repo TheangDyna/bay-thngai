@@ -1,5 +1,5 @@
-import DownloadBanner from "@/components/commons/DownloadBanner";
 import ShopCard from "@/components/commons/ShopCard";
+import DownloadBanner from "@/pages/home/DownloadBanner";
 import { shops } from "@/utils/data/constants/data";
 
 const Shop = () => {

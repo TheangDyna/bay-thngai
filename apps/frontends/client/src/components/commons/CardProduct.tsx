@@ -14,6 +14,7 @@ interface ProductCardProps {
   onClickProductModalDetails: () => void;
   ratingsAverage?: number;
   ratingsQuantity?: number;
+  sold: number;
 }
 
 export const CardProduct: React.FC<ProductCardProps> = ({
@@ -25,7 +26,8 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   onAddToCart,
   onClickProductModalDetails,
   ratingsAverage,
-  ratingsQuantity
+  ratingsQuantity,
+  sold
 }) => {
   const isInCart = cartQty > 0;
 
@@ -63,9 +65,17 @@ export const CardProduct: React.FC<ProductCardProps> = ({
           alt={title}
           className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
         />
-        <span className="absolute top-4 left-4 bg-primary text-white text-xs font-semibold uppercase px-2 py-1 rounded-full">
-          On Sale
-        </span>
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <span className="text-white bg-primary text-xs font-semibold px-2 py-1 rounded-full">
+            On Sale
+          </span>
+          {sold > 0 && (
+            <span className="bg-secondary text-xs font-semibold px-2 py-1 rounded-full">
+              {sold} Sold
+            </span>
+          )}
+        </div>
+
         {isInCart ? (
           <div className="absolute bottom-4 flex justify-center items-center">
             <div className="bg-white shadow px-4 py-2 rounded-full flex items-center space-x-10">

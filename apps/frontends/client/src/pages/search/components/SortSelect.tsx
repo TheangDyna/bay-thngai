@@ -13,11 +13,13 @@ export interface SortSelectProps {
 }
 
 const OPTIONS = [
-  { value: "lowest-price", label: "Lowest Price" },
   { value: "highest-price", label: "Highest Price" },
+  { value: "lowest-price", label: "Lowest Price" },
   { value: "newest", label: "Newest" },
   { value: "oldest", label: "Oldest" },
-  { value: "clear", label: "Clear selection" }
+  { value: "top-rated", label: "Top Rated" },
+  { value: "most-sold", label: "Best Seller" },
+  { value: "clear", label: "Clear Selection" }
 ];
 
 export const SortSelect: React.FC<SortSelectProps> = ({ value, onChange }) => (
@@ -31,7 +33,7 @@ export const SortSelect: React.FC<SortSelectProps> = ({ value, onChange }) => (
       }
     }}
   >
-    <SelectTrigger className="w-[150px]">
+    <SelectTrigger className="w-[170px]">
       <SelectValue placeholder="Sort by..." />
     </SelectTrigger>
     <SelectContent>

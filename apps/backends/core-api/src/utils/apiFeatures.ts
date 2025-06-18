@@ -70,7 +70,11 @@ export class APIFeatures<T> {
 
   public sort(): this {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(",").join(" ");
+      const sortBy = this.queryString.sort
+        .split(",")
+        .map((field: string) => field.trim())
+        .join(" ");
+
       this.query = this.query.sort(sortBy);
     } else {
       this.query = this.query.sort("-createdAt");

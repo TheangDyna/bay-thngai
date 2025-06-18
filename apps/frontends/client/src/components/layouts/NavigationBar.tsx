@@ -13,7 +13,7 @@ import {
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Cart from "@/pages/Cart";
+import Cart from "@/pages/cart/Cart";
 import { cn } from "@/utils/cn";
 import { Link, useLocation } from "react-router-dom";
 
@@ -78,7 +78,7 @@ export function NavigationBar() {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 h-16 md:h-20 flex items-center justify-between w-full px-4 md:px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-200 border-b",
+        "sticky top-0 z-50 h-16 flex items-center justify-between w-full px-4 md:px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-200 border-b",
         scrolled && "shadow-sm"
       )}
     >
@@ -101,7 +101,7 @@ export function NavigationBar() {
                 <img
                   src="/bay-thngai-logo.svg"
                   alt="Bay Thngai logo"
-                  className="w-24 h-24"
+                  className="w-16 h-16"
                 />
               </Link>
 
@@ -178,7 +178,7 @@ export function NavigationBar() {
           <img
             src="/bay-thngai-logo.svg"
             alt="Bay Thngai logo"
-            className="w-24 h-24"
+            className="w-16 h-16"
           />
         </Link>
       </div>

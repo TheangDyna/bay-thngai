@@ -22,9 +22,9 @@ export const useProductsQuery = ({
       const params = {
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
-        sort: sorting[0]
-          ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}`
-          : undefined,
+        sort:
+          sorting.map((s) => `${s.desc ? "-" : ""}${s.id}`).join(",") ||
+          undefined,
         ...columnFilters.reduce((acc, filter) => {
           (acc as any)[filter.id] = filter.value;
           return acc;

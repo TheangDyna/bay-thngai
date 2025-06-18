@@ -25,7 +25,7 @@ const CollectionSection = () => {
     }
   }, []);
   return (
-    <div>
+    <div className="px-10 space-y-6">
       <BannerHeader
         title="Curated collections"
         subTitle="We have categories the best quality grocery items"

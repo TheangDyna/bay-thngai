@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Swiper as SwiperClass } from "swiper"; // Import Swiper class for typing
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import CardPackage from "./CardPackage";
+import CardPackage from "../../components/commons/CardPackage";
 
 const CardPackageSwiper: React.FC = () => {
   const swiperRef = useRef<SwiperClass | null>(null);

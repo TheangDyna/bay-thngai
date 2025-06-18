@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/contexts/theme.context";
 
 import CheckoutPage from "@/pages/checkout/CheckoutPage";
 import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
-import Home from "@/pages/Home";
+import Home from "@/pages/home/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
 import OrderTrackingPage from "@/pages/order/order-track";
@@ -17,7 +17,7 @@ import ProductDetailPage from "@/pages/product/ProductDetailPage";
 import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import Search from "@/pages/search/SearchPage";
-import Shop from "@/pages/Shop";
+import Shop from "@/pages/shop/Shop";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

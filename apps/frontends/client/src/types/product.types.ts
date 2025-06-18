@@ -17,6 +17,7 @@ export interface Product {
   images: string[];
   ratingsAverage: number;
   ratingsQuantity: number;
+  sold: number;
   createdAt: Date;
   updatedAt: Date;
 }

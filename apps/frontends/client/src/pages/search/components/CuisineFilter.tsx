@@ -1,10 +1,9 @@
+import { useCuisinesQuery } from "@/api/cuisine";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FilterChips } from "@/pages/search/components/FilterChips";
 import type { Cuisine } from "@/types/cuisine.types";
-import axiosInstance from "@/utils/axiosInstance";
-import { useQuery } from "@tanstack/react-query";
 import { Loader2, X } from "lucide-react"; // <-- import X
 import React from "react";
 
@@ -29,9 +28,9 @@ export const CuisineFilter: React.FC<CuisineFilterProps> = ({
     data: cuisines,
     isLoading,
     isError
-  } = useQuery<{ data: Cuisine[] }, Error>({
-    queryKey: ["cuisines"],
-    queryFn: () => axiosInstance.get("/cuisines").then((r) => r.data)
+  } = useCuisinesQuery({
+    sorting: [],
+    columnFilters: []
   });
 
   const container =

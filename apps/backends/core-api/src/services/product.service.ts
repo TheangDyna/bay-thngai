@@ -37,6 +37,15 @@ export class ProductService {
     return await this.repository.updateProduct(id, data);
   }
 
+  public async increaseSold(
+    productId: string,
+    quantity: number
+  ): Promise<void> {
+    await this.repository.updateProduct(productId, {
+      $inc: { sold: quantity }
+    });
+  }
+
   public async deleteProduct(id: string): Promise<void> {
     await this.repository.deleteProduct(id);
   }

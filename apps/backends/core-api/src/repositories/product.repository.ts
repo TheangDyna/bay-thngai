@@ -55,7 +55,7 @@ export class ProductRepository {
 
   public async updateProduct(
     id: string,
-    data: Partial<IProductDocument>
+    data: Partial<IProductDocument> | { $inc: { sold: number } }
   ): Promise<IProductDocument> {
     const product = await Product.findByIdAndUpdate(id, data, {
       new: true,

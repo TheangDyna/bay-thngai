@@ -10,6 +10,7 @@ import PaymentService, {
   PaymentConfig,
   PurchaseParams
 } from "@/src/services/payment.service";
+import { ProductService } from "@/src/services/product.service";
 import { emitOrderUpdate } from "@/src/socket";
 import { AppError } from "@/src/utils/appError";
 import { CreateOrderInput } from "@/src/validators/order.validators";
@@ -19,6 +20,7 @@ import { customAlphabet } from "nanoid";
 export default class OrderService {
   private orderRepository = new OrderRepository();
   private paymentService = new PaymentService();
+  private productService = new ProductService();
 
   public async create(
     input: CreateOrderInput
@@ -57,7 +59,20 @@ export default class OrderService {
     });
 
     if (input.paymentMethod === "cod") {
-      return { order };
+      for (const item of order.items) {
+        await this.productService.increaseSold(
+          item.productId.toString(),
+          item.quantity
+        );
+      }
+
+      const updatedOrder =
+        await this.orderRepository.updatePaymentStatusCod(tranId);
+      if (!updatedOrder) {
+        throw new AppError("Order not found", 404);
+      }
+
+      return { order: updatedOrder };
     }
 
     const purchaseParams: PurchaseParams = {
@@ -77,8 +92,16 @@ export default class OrderService {
       },
       paymentMethod: input.paymentMethod
     };
+
     const paymentConfig =
       await this.paymentService.purchaseTransaction(purchaseParams);
+
+    for (const item of order.items) {
+      await this.productService.increaseSold(
+        item.productId.toString(),
+        item.quantity
+      );
+    }
 
     return { order, paymentConfig };
   }

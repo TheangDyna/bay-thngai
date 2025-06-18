@@ -18,7 +18,8 @@ const productSchema = new Schema<IProductDocument>(
     ratingsAverage: { type: Number },
     ratingsQuantity: { type: Number },
     thumbnail: { type: String },
-    images: [{ type: String }]
+    images: [{ type: String }],
+    sold: { type: Number, default: 0 }
   },
   defaultSchemaOptions
 );

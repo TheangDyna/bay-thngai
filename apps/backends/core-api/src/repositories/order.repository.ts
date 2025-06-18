@@ -56,6 +56,17 @@ export default class OrderRepository {
     return updateOrder;
   }
 
+  public async updatePaymentStatusCod(
+    tranId: string
+  ): Promise<OrderDoc | null> {
+    const updateOrder = await OrderModel.findOneAndUpdate(
+      { tranId },
+      { paymentStatus: "pending", deliveryStatus: "confirmed" },
+      { new: true }
+    );
+    return updateOrder;
+  }
+
   public async updateDeliveryStatus(
     tranId: string,
     status: string

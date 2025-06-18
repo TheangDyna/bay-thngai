@@ -78,7 +78,7 @@ const CheckoutPage: React.FC = () => {
 
       if (paymentMethod === "cod") {
         clearCart();
-        navigate(`/order-success/${order.tranId}`);
+        navigate(`/order-track/${order.tranId}`);
         return;
       }
 

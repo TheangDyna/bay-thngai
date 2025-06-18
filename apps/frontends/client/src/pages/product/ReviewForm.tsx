@@ -11,6 +11,18 @@ export function ReviewForm({ productId }: { productId: string }) {
 
   const { mutate, isPending } = useSubmitReviewMutation(productId);
 
+  const handleSubmit = () => {
+    mutate(
+      { rating, review },
+      {
+        onSuccess: () => {
+          setRating(5);
+          setReview("");
+        }
+      }
+    );
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-1">
@@ -29,10 +41,7 @@ export function ReviewForm({ productId }: { productId: string }) {
         onChange={(e) => setReview(e.target.value)}
         placeholder="Share your experience..."
       />
-      <Button
-        onClick={() => mutate({ rating, review })}
-        disabled={isPending || !review}
-      >
+      <Button onClick={handleSubmit} disabled={isPending || !review}>
         Submit Review
       </Button>
     </div>

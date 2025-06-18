@@ -101,9 +101,8 @@ export function NavigationBar() {
                 <img
                   src="/bay-thngai-logo.svg"
                   alt="Bay Thngai logo"
-                  className="w-8 h-8 md:w-10 md:h-10"
+                  className="w-24 h-24"
                 />
-                <span className="font-semibold text-lg">Bay Thngai</span>
               </Link>
 
               {/* Mobile Categories */}
@@ -179,11 +178,8 @@ export function NavigationBar() {
           <img
             src="/bay-thngai-logo.svg"
             alt="Bay Thngai logo"
-            className="w-8 h-8 md:w-10 md:h-10"
+            className="w-24 h-24"
           />
-          <span className="font-bold text-lg md:text-xl hidden sm:block">
-            Bay Thngai
-          </span>
         </Link>
       </div>
 

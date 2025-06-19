@@ -1,13 +1,8 @@
+// src/pages/product/ProductDetailPage.tsx
 import { useProductQuery } from "@/api/product";
-import { useCart } from "@/contexts/cart.context";
-import { Heart, Minus, Plus, Share, ShoppingBag } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-
 import NextButton from "@/components/commons/NextButton";
 import PrevButton from "@/components/commons/PrevButton";
 import ShareLink from "@/components/commons/ShareLink";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,90 +10,131 @@ import {
   CarouselContent,
   CarouselItem
 } from "@/components/ui/carousel";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCart } from "@/contexts/cart.context";
 import { RatingBreakdown } from "@/pages/product/RatingBreakdown";
 import { ReviewForm } from "@/pages/product/ReviewForm";
 import { ReviewList } from "@/pages/product/ReviewList";
+import { calculateDiscountedPrice } from "@/utils/price";
+import { format } from "date-fns";
+import { Heart, Minus, Plus, Share } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function ProductDetailPage() {
   const { productId } = useParams<{ productId: string }>();
-  const { data: productResponse } = useProductQuery(productId);
+  const {
+    data: productResponse,
+    isLoading,
+    isError
+  } = useProductQuery(productId!);
 
-  const product = productResponse?.data;
+  const product = productResponse?.data ?? null;
+
+  // 1) All hooks before any return
   const [activeIdx, setActiveIdx] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [shareOpen, setShareOpen] = useState(false);
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
 
   useEffect(() => {
+    // reset gallery & share panel on product change
     setActiveIdx(0);
-    setQuantity(1);
     setShareOpen(false);
-  }, [productId]);
+  }, [product?._id]);
 
-  const thumbnails = useMemo(() => {
-    if (!product) return [];
-    return [product.thumbnail, ...(product.images || [])];
-  }, [product]);
+  const thumbnails = useMemo(
+    () => (product ? [product.thumbnail, ...(product.images ?? [])] : []),
+    [product]
+  );
 
-  if (!product) return null;
+  const { isDiscountActive, finalPrice } = calculateDiscountedPrice(
+    product?.price ?? 0,
+    product?.discount
+  );
 
-  const { _id, name, price, description, ratingsAverage, ratingsQuantity } =
-    product;
+  const discountPercent = product?.discount
+    ? product.discount.type === "percentage"
+      ? product.discount.amount
+      : Math.round((product.discount.amount / product.price) * 100)
+    : 0;
 
-  const originalPrice = price + 100;
-  const discountPercent = 10;
-  const stock = 10;
-  const tags = ["food", "fresh"];
-  const unitLabel = "1 pc";
+  const qtyInCart =
+    cart.find((item) => item.id === product?._id)?.quantity || 0;
 
-  const increment = () => setQuantity((q) => q + 1);
-  const decrement = () => setQuantity((q) => Math.max(1, q - 1));
+  const changeQty = useCallback(
+    (delta: number) => {
+      if (!product) return;
+      addToCart({
+        id: product._id,
+        name: product.name,
+        price: finalPrice,
+        quantity: delta,
+        image: product.thumbnail
+      });
+    },
+    [addToCart, finalPrice, product]
+  );
 
-  const handleAddToCart = () => {
-    addToCart({ id: _id, name, price, quantity, image: product.thumbnail });
-  };
+  // 2) Early returns after hooks
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <Skeleton className="h-8 w-1/3 mb-6" />
+        <Skeleton className="h-[342px] w-full mb-6 rounded-md" />
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-1/4" />
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </div>
+    );
+  }
 
+  if (isError || !product) {
+    return (
+      <div className="text-center text-red-600 mt-20">
+        Oops — couldn’t load that product.
+      </div>
+    );
+  }
+
+  // 3) Render once we know we have a product
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-      {/* Product Section */}
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-8">
         {/* Thumbnails */}
         <div className="flex md:flex-col gap-3 overflow-auto">
-          {thumbnails.map((src, idx) => (
+          {thumbnails.map((src, i) => (
             <button
-              key={idx}
-              onClick={() => setActiveIdx(idx)}
-              className={`w-24 h-24 rounded-lg overflow-hidden border ${
-                activeIdx === idx ? "border-primary" : "border-muted"
+              key={i}
+              onClick={() => setActiveIdx(i)}
+              className={`w-24 h-24 border rounded-lg overflow-hidden ${
+                activeIdx === i ? "border-primary" : "border-muted"
               }`}
             >
               <img
                 src={src}
-                alt={`${name} thumbnail ${idx}`}
+                alt={`${product.name} thumbnail ${i}`}
                 className="w-full h-full object-cover"
               />
             </button>
           ))}
         </div>
 
-        {/* Main Carousel */}
-        <div className="relative flex-1 h-1/2 rounded-2xl border overflow-hidden">
-          <Carousel
-            value={activeIdx}
-            onChange={setActiveIdx}
-            className="h-full"
-          >
+        {/* Carousel */}
+        <div className="relative flex-1 rounded-2xl border overflow-hidden">
+          <Carousel value={activeIdx} onChange={setActiveIdx}>
             <CarouselContent>
-              {thumbnails.map((src, idx) => (
+              {thumbnails.map((src, i) => (
                 <CarouselItem
-                  key={idx}
-                  className={activeIdx !== idx ? "hidden" : "h-full"}
+                  key={i}
+                  className={activeIdx !== i ? "hidden" : "h-full"}
                 >
-                  <Card className="h-full w-full border-none">
-                    <CardContent className="flex items-center justify-center h-full p-2">
+                  <Card className="h-[342px] w-full border-none mx-auto">
+                    <CardContent className="flex items-center justify-center h-full p-4 bg-muted">
                       <img
                         src={src}
-                        alt={`${name} view ${idx}`}
+                        alt={`${product.name} view ${i}`}
                         className="h-full w-full object-contain rounded-xl"
                       />
                     </CardContent>
@@ -106,7 +142,6 @@ export default function ProductDetailPage() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-
             <PrevButton
               onClick={() =>
                 setActiveIdx((i) => (i === 0 ? thumbnails.length - 1 : i - 1))
@@ -122,86 +157,105 @@ export default function ProductDetailPage() {
           </Carousel>
         </div>
 
-        {/* Info */}
-        <div className="flex-1 space-y-4">
-          <div>
-            <h1 className="text-3xl font-bold">{name}</h1>
-            <p className="text-sm text-muted-foreground">{unitLabel}</p>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="text-2xl font-bold text-primary">
-                ${price.toFixed(2)}
-              </span>
-              <del className="text-muted-foreground">
-                ${originalPrice.toFixed(2)}
-              </del>
-              <Badge variant="outline">{discountPercent}% Off</Badge>
+        {/* Details */}
+        <div className="flex-1 flex flex-col justify-between">
+          <div className="space-y-4">
+            {/* Title & Badges */}
+            <div>
+              <div className="flex">
+                <h2 className="text-2xl font-bold flex-1">{product.name}</h2>
+                {product.inStock ? (
+                  <span className="w-fit h-fit text-white bg-primary text-xs font-semibold px-2 py-1 rounded-full">
+                    In Stock
+                  </span>
+                ) : (
+                  <span className="w-fit h-fit text-white bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
+                    Sold Out
+                  </span>
+                )}
+              </div>
+              {isDiscountActive && (
+                <div className="mt-2 text-sm text-orange-600 bg-orange-100 px-2 py-1 inline-block rounded">
+                  {discountPercent}
+                  {product.discount!.type === "percentage"
+                    ? "% OFF"
+                    : "$ OFF"}{" "}
+                  until {format(new Date(product.discount!.endDate), "PPpp")}
+                </div>
+              )}
             </div>
-            <p className="text-sm text-red-600">
-              {stock > 0 ? `Only ${stock} left` : "Out of stock"}
+
+            {/* Pricing */}
+            <div className="flex items-baseline gap-4">
+              <span className="text-3xl font-extrabold">
+                ${finalPrice.toFixed(2)}
+              </span>
+              {isDiscountActive && (
+                <del className="text-muted-foreground">
+                  ${product.price.toFixed(2)}
+                </del>
+              )}
+            </div>
+
+            {/* Description */}
+            <p className="text-sm text-muted-foreground">
+              {product.description}
             </p>
           </div>
 
-          {/* Quantity & Cart */}
-          <div className="flex items-center gap-3">
-            <Button size="icon" onClick={decrement}>
-              <Minus />
-            </Button>
-            <span className="text-lg text-center w-10">{quantity}</span>
-            <Button size="icon" onClick={increment}>
-              <Plus />
-            </Button>
-            <Button onClick={handleAddToCart} className="flex gap-2">
-              <ShoppingBag size={20} /> Add to Cart
-            </Button>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-2">
-            <Button variant="outline" size="icon">
-              <Heart />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setShareOpen(true)}
-            >
-              <Share />
-            </Button>
-            <ShareLink isOpen={shareOpen} onClose={() => setShareOpen(false)} />
-          </div>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <Badge key={tag} variant="outline">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Description */}
-          <div className="pt-4 border-t">
-            <h3 className="font-semibold text-lg mb-1">Product Details</h3>
-            <p className="text-sm text-muted-foreground">{description}</p>
+          {/* Cart & Actions */}
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <Button
+                size="icon"
+                onClick={() => changeQty(-1)}
+                disabled={qtyInCart <= 0}
+              >
+                <Minus />
+              </Button>
+              <span className="text-lg w-10 text-center">{qtyInCart}</span>
+              <Button size="icon" onClick={() => changeQty(1)}>
+                <Plus />
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="icon">
+                <Heart />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShareOpen(true)}
+              >
+                <Share />
+              </Button>
+              <ShareLink
+                isOpen={shareOpen}
+                onClose={() => setShareOpen(false)}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-10">
-        <div className="space-y-2">
-          <h3 className="font-semibold text-lg">What Customers Think</h3>
+      {/* Reviews */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div>
+          <h3 className="text-lg font-semibold mb-2">What Customers Think</h3>
           <RatingBreakdown productId={product._id} />
         </div>
-
-        {/* Reviews Section */}
         <div className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="font-semibold text-lg">Share Your Experience</h3>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">
+              Share Your Experience
+            </h3>
             <ReviewForm productId={product._id} />
           </div>
-          <div className="space-y-2">
-            <h3 className="font-semibold text-lg">What People Are Saying</h3>
-            <ReviewList productId={_id} />
+          <div>
+            <h3 className="text-lg font-semibold mb-2">
+              What People Are Saying
+            </h3>
+            <ReviewList productId={product._id} />
           </div>
         </div>
       </div>

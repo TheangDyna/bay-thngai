@@ -16,7 +16,7 @@ const DownloadBanner = () => {
               <div className="flex justify-center md:justify-start -mx-1 md:-mx-1.5 pt-0.5 px-7 sm:px-0">
                 <a
                   className="inline-flex transition duration-200 ease-in hover:box-shadow hover:opacity-80 mx-1 md:mx-1.5"
-                  href="https://www.apple.com/app-store/"
+                  href="https://play.google.com/store/games"
                 >
                   <img
                     alt="App Store"
@@ -31,7 +31,7 @@ const DownloadBanner = () => {
                 </a>
                 <a
                   className="inline-flex transition duration-200 ease-in hover:box-shadow hover:opacity-80 mx-1 md:mx-1.5"
-                  href="https://play.google.com/store/games"
+                  href="https://www.apple.com/app-store/"
                 >
                   <img
                     alt="Play Store"

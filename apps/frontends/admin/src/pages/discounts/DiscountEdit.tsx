@@ -27,9 +27,10 @@ const DiscountEdit: React.FC = () => {
 
   useEffect(() => {
     if (data?.data) {
-      const { type, amount, startDate, endDate, active } = data.data;
+      const { name, type, amount, startDate, endDate, active } = data.data;
 
       form.reset({
+        name,
         type,
         amount,
         active,

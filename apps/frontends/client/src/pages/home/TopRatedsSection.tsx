@@ -81,8 +81,7 @@ export const TopRatedsSection: React.FC = () => {
                   key={product._id}
                   image={product.thumbnail}
                   title={product.name}
-                  price={`$${product.price.toFixed(2)}`}
-                  unit="1 item"
+                  price={product.price}
                   cartQty={qty}
                   onAddToCart={(amount) => handleAddToCart(product, amount)}
                   onViewDetails={() => setSelectedProduct(product)}
@@ -90,6 +89,8 @@ export const TopRatedsSection: React.FC = () => {
                   ratingsAverage={product.ratingsAverage}
                   ratingsQuantity={product.ratingsQuantity}
                   sold={product.sold}
+                  discount={product.discount}
+                  inStock={product.inStock}
                 />
               );
             })}

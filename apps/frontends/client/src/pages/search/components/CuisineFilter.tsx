@@ -34,7 +34,7 @@ export const CuisineFilter: React.FC<CuisineFilterProps> = ({
   });
 
   const container =
-    "w-[320px] h-[calc(100vh-80px)] sticky top-20 bg-background p-6 border-r";
+    "w-[260px] h-[calc(100vh-80px)] sticky top-20 bg-background p-6 border-r";
 
   if (isLoading) {
     return (

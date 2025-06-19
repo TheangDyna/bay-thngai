@@ -5,6 +5,7 @@ import CategorySection from "@/pages/home/CategorySection";
 import CollectionSection from "@/pages/home/CollectionSection";
 import DownloadBanner from "@/pages/home/DownloadBanner";
 import { NewArrivalsSection } from "@/pages/home/NewArrivalsSection";
+import Promotion from "@/pages/home/Promotion";
 import { TopRatedsSection } from "@/pages/home/TopRatedsSection";
 
 const Home: React.FC = () => {
@@ -17,6 +18,7 @@ const Home: React.FC = () => {
       <NewArrivalsSection />
       <TopRatedsSection />
       <CollectionSection />
+      <Promotion />
       <DownloadBanner />
     </div>
   );

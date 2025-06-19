@@ -10,15 +10,16 @@ import { TopRatedsSection } from "@/pages/home/TopRatedsSection";
 
 const Home: React.FC = () => {
   return (
-    <div className="flex justify-center flex-col space-y-14">
+    <div className="flex justify-center flex-col space-y-10">
       <Banner />
       <CardPackageSwiper />
       <CategorySection />
       <BestSellersSection />
+      <Promotion />
       <NewArrivalsSection />
+      <Promotion />
       <TopRatedsSection />
       <CollectionSection />
-      <Promotion />
       <DownloadBanner />
     </div>
   );

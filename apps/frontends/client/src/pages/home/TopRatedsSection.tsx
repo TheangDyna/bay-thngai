@@ -32,14 +32,16 @@ export const TopRatedsSection: React.FC = () => {
   const products = productsResponse?.data || [];
 
   const handleAddToCart = useCallback(
-    (product: Product, amount: number) =>
+    (product: Product, amount: number) => {
       addToCart({
         id: product._id,
         name: product.name,
         price: product.price,
+        discount: product.discount,
         quantity: amount,
         image: product.thumbnail
-      }),
+      });
+    },
     [addToCart]
   );
 

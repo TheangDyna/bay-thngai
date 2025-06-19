@@ -1,5 +1,5 @@
 // src/contexts/cart.context.tsx
-
+import type { Discount } from "@/types/discount.types";
 import React, {
   createContext,
   ReactNode,
@@ -11,7 +11,10 @@ import React, {
 export interface CartItem {
   id: string;
   name: string;
+  // base, pre-discount price per unit
   price: number;
+  // discount object (may be undefined)
+  discount?: Discount;
   quantity: number;
   image: string;
 }
@@ -29,7 +32,6 @@ const LS_KEY = "my_app_cart";
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children
 }) => {
-  // 1️⃣ Initialize from localStorage
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
       const raw = localStorage.getItem(LS_KEY);
@@ -39,50 +41,39 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     }
   });
 
-  // 2️⃣ Persist on change
   useEffect(() => {
     localStorage.setItem(LS_KEY, JSON.stringify(cart));
   }, [cart]);
 
-  // 3️⃣ addToCart: bump existing or add new; if qty ≤ 0, remove
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
       const idx = prev.findIndex((i) => i.id === item.id);
-
-      // existing item
       if (idx !== -1) {
         const existing = prev[idx];
         const newQty = existing.quantity + item.quantity;
-
-        // auto-remove if zero or less
         if (newQty <= 0) {
           return prev.filter((i) => i.id !== item.id);
         }
-
         const newCart = [...prev];
-        newCart[idx] = { ...existing, quantity: newQty };
+        newCart[idx] = {
+          ...existing,
+          quantity: newQty,
+          // keep the same discount object
+          discount: existing.discount
+        };
         return newCart;
       }
-
-      // new item: only add if positive quantity
       if (item.quantity > 0) {
-        return [...prev, { ...item }];
+        return [...prev, item];
       }
-
-      // ignore attempts to add zero or negative qty
       return prev;
     });
   };
 
-  // 4️⃣ removeFromCart: explicit removal
-  const removeFromCart = (id: string) => {
+  const removeFromCart = (id: string) =>
     setCart((prev) => prev.filter((i) => i.id !== id));
-  };
 
-  // 5️⃣ clearCart: empty out
-  const clearCart = () => {
-    setCart([]);
-  };
+  const clearCart = () => setCart([]);
 
   return (
     <CartContext.Provider
@@ -95,8 +86,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 
 export const useCart = (): CartContextValue => {
   const ctx = useContext(CartContext);
-  if (!ctx) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
   return ctx;
 };

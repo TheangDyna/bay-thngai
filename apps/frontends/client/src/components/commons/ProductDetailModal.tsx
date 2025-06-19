@@ -65,14 +65,17 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
 
   // 6) change quantity handler
   const changeQty = useCallback(
-    (delta: number) =>
+    (delta: number) => {
+      if (!product) return;
       addToCart({
         id: product._id,
         name: product.name,
-        price: finalPrice,
+        price: product.price,
+        discount: product.discount,
         quantity: delta,
         image: product.thumbnail
-      }),
+      });
+    },
     [addToCart, finalPrice, product]
   );
 
@@ -101,7 +104,7 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
 
           {/* Carousel */}
           <div className="relative flex-1 rounded-2xl border overflow-hidden">
-            <Carousel value={activeIdx} onChange={setActiveIdx}>
+            <Carousel>
               <CarouselContent>
                 {thumbnails.map((src, i) => (
                   <CarouselItem
@@ -212,8 +215,8 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
                   <Share />
                 </Button>
                 <ShareLink
-                  isOpen={shareOpen}
-                  onClose={() => setShareOpen(false)}
+                  isOpenShareLink={shareOpen}
+                  onCloseShareLink={() => setShareOpen(false)}
                 />
               </div>
             </div>

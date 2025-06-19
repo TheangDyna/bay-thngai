@@ -1,3 +1,4 @@
+// src/components/layout/Cart.tsx
 import CardProductCart from "@/components/commons/CardProductCart";
 import EmptyCartSection from "@/components/commons/EmptyCartSection";
 import { Button } from "@/components/ui/button";
@@ -17,70 +18,67 @@ import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
 
   const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const subtotal = cart.reduce((sum, i) => sum + i.quantity * i.price, 0);
+  const subtotal = cart.reduce(
+    (sum, i) =>
+      sum +
+      i.quantity *
+        i.price *
+        (i.discount && i.discount.active
+          ? 1 -
+            (i.discount.type === "percentage"
+              ? i.discount.amount / 100
+              : i.discount.amount / i.price)
+          : 1),
+    0
+  );
 
-  const handleRemove = (id: string) => {
-    removeFromCart(id);
+  const inc = (id: string) => {
+    const it = cart.find((c) => c.id === id);
+    if (it) addToCart({ ...it, quantity: 1 });
   };
-
-  const handleClear = () => {
-    clearCart();
+  const dec = (id: string) => {
+    const it = cart.find((c) => c.id === id);
+    if (it) addToCart({ ...it, quantity: -1 });
   };
-
-  const handleIncrement = (id: string) => {
-    const item = cart.find((i) => i.id === id);
-    if (item) {
-      addToCart({ ...item, quantity: 1 });
-    }
-  };
-
-  const handleDecrement = (id: string) => {
-    const item = cart.find((i) => i.id === id);
-    if (item) {
-      addToCart({ ...item, quantity: -1 });
-    }
-  };
-
-  const handleCheckout = () => {
-    if (cart.length === 0) {
+  const rmv = (id: string) => removeFromCart(id);
+  const clr = () => clearCart();
+  const ck = () => {
+    if (!cart.length) {
       toast({ description: "Your cart is empty", variant: "destructive" });
       return;
     }
-    // close drawer first
-    setIsSidebarOpen(false);
-    // then navigate
+    setOpen(false);
     navigate("/checkout");
   };
 
   return (
-    <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="secondary" size="icon" className="relative">
-          <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
+          <ShoppingCart className="h-5 w-5" />
           {totalQty > 0 && (
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
               {totalQty}
             </span>
           )}
-          <span className="sr-only">Shopping cart</span>
         </Button>
       </SheetTrigger>
 
       <SheetContent className="w-full sm:max-w-md flex flex-col">
         <SheetHeader className="border-b pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-1 items-center justify-between pr-4">
             <SheetTitle>Shopping Cart</SheetTitle>
             {cart.length > 0 && (
               <Button
                 variant="link"
-                onClick={handleClear}
-                className="text-destructive hover:text-destructive p-0"
+                onClick={clr}
+                className="p-0 text-destructive"
               >
-                <span>Clear All</span>
+                Clear All
               </Button>
             )}
           </div>
@@ -95,39 +93,32 @@ const Cart: React.FC = () => {
                 {cart.map((item) => (
                   <CardProductCart
                     key={item.id}
-                    imageUrl={item.image}
-                    title={item.name}
-                    price={item.price}
-                    quantity={item.quantity}
-                    onRemove={() => handleRemove(item.id)}
-                    onIncrement={() => handleIncrement(item.id)}
-                    onDecrement={() => handleDecrement(item.id)}
+                    item={item}
+                    onIncrement={() => inc(item.id)}
+                    onDecrement={() => dec(item.id)}
+                    onRemove={() => rmv(item.id)}
                   />
                 ))}
               </div>
             )}
           </ScrollArea>
         </div>
-        {totalQty > 0 && (
-          <p className="w-full text-right text-sm text-muted-foreground">
-            {totalQty} {totalQty === 1 ? "item" : "items"} in your cart
-          </p>
-        )}
+
         {cart.length > 0 && (
-          <div className="border-t pt-4 space-y-4">
-            <div className="flex items-center justify-between text-base font-semibold">
-              <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+          <>
+            <div className="border-t pt-4">
+              <div className="flex justify-between font-semibold text-base">
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <Button onClick={ck} className="w-full mt-4">
+                Proceed to Checkout
+              </Button>
             </div>
-
-            <Button onClick={handleCheckout} className="w-full" size="lg">
-              Proceed to Checkout
-            </Button>
-
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground text-center mt-2">
               Shipping and taxes calculated at checkout
             </p>
-          </div>
+          </>
         )}
       </SheetContent>
     </Sheet>

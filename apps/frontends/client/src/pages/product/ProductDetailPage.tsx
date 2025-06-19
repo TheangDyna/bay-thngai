@@ -67,7 +67,8 @@ export default function ProductDetailPage() {
       addToCart({
         id: product._id,
         name: product.name,
-        price: finalPrice,
+        price: product.price,
+        discount: product.discount,
         quantity: delta,
         image: product.thumbnail
       });
@@ -123,7 +124,7 @@ export default function ProductDetailPage() {
 
         {/* Carousel */}
         <div className="relative flex-1 rounded-2xl border overflow-hidden">
-          <Carousel value={activeIdx} onChange={setActiveIdx}>
+          <Carousel>
             <CarouselContent>
               {thumbnails.map((src, i) => (
                 <CarouselItem
@@ -230,8 +231,8 @@ export default function ProductDetailPage() {
                 <Share />
               </Button>
               <ShareLink
-                isOpen={shareOpen}
-                onClose={() => setShareOpen(false)}
+                isOpenShareLink={shareOpen}
+                onCloseShareLink={() => setShareOpen(false)}
               />
             </div>
           </div>

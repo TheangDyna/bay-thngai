@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 
+import { useAuth } from "@/contexts/auth.context";
 import { LoginInput } from "@/types/auth.types";
 import { LoginSchema } from "@/validators/auth.validators";
-import { useAuth } from "@/contexts/auth.context";
 
 const defaultValues: Partial<LoginInput> = {
   email: "",
@@ -61,12 +61,7 @@ const SignIn = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className="rounded-[16px] hover:bg-secondary/5 hover:text-secondary"
-        >
-          <LogIn /> Sign In
-        </Button>
+        <Button variant="ghost">Sign In</Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-[1025px] rounded-[16px] p-0 m-0 flex">

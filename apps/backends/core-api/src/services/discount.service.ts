@@ -34,4 +34,8 @@ export class DiscountService {
   public async assignToProducts(discountId: string, productIds: string[]) {
     await this.productService.assignDiscountToProducts(discountId, productIds);
   }
+
+  public async removeDiscountFromProducts(productIds: string[]) {
+    return await this.productService.assignDiscountToProducts(null, productIds);
+  }
 }

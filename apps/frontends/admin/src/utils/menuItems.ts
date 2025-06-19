@@ -125,6 +125,11 @@ export const menuItems: MenuSection[] = [
         path: "/discount/:id/edit",
         icon: Percent,
         disabled: true
+      },
+      {
+        title: "Apply Discount",
+        path: "/discount/apply",
+        icon: Percent
       }
     ]
   },

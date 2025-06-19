@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const DiscountBaseSchema = z.object({
+  name: z.string().min(1, "Name is required"),
   type: z.enum(["flat", "percentage"]),
   amount: z.number().min(1, "Amount must be at least 1"),
   startDate: z.string().min(1, "Start date is required"),

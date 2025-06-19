@@ -45,7 +45,6 @@ const renderDateTimePicker = (
       const [open, setOpen] = useState(false);
 
       useEffect(() => {
-        // Sync state on initial mount or reset
         const d = field.value ? new Date(field.value) : undefined;
         setLocalDate(d);
         setLocalTime(d ? d.toTimeString().slice(0, 8) : "00:00:00");
@@ -61,8 +60,7 @@ const renderDateTimePicker = (
       return (
         <FormItem className="flex flex-col">
           <FormLabel>{label}</FormLabel>
-          <div className="flex gap-4">
-            {/* Date Picker */}
+          <div className="flex gap-2">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <FormControl>
@@ -92,7 +90,6 @@ const renderDateTimePicker = (
               </PopoverContent>
             </Popover>
 
-            {/* Time Picker */}
             <FormControl>
               <Input
                 type="time"
@@ -120,6 +117,22 @@ export const DiscountFormFields = ({
 }) => {
   return (
     <>
+      {/* Name */}
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Discount Name</FormLabel>
+            <FormControl>
+              <Input placeholder="Black Friday" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Type */}
       <FormField
         control={form.control}
         name="type"
@@ -142,6 +155,7 @@ export const DiscountFormFields = ({
         )}
       />
 
+      {/* Amount */}
       <FormField
         control={form.control}
         name="amount"
@@ -151,12 +165,15 @@ export const DiscountFormFields = ({
             <FormControl>
               <Input
                 type="number"
-                {...field}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : field.value?.toString()
+                }
                 onChange={(e) => {
                   const value = e.target.value;
                   field.onChange(value === "" ? "" : Number(value));
                 }}
-                value={field.value}
               />
             </FormControl>
             <FormMessage />
@@ -164,9 +181,11 @@ export const DiscountFormFields = ({
         )}
       />
 
+      {/* Dates */}
       {renderDateTimePicker(form, "startDate", "Start Date")}
       {renderDateTimePicker(form, "endDate", "End Date")}
 
+      {/* Active */}
       <FormField
         control={form.control}
         name="active"

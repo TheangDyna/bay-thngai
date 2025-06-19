@@ -48,7 +48,7 @@ const DiscountCreate: React.FC = () => {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <h1 className="text-2xl font-bold">Create Discount</h1>
           <DiscountFormFields form={form} />
           <Button type="submit">Create Discount</Button>

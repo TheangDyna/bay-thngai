@@ -23,7 +23,6 @@ export class DiscountRepository {
     );
 
     features.sort().select().paginate();
-
     const discounts = await features.getQuery();
     return { total, discounts };
   }

@@ -25,23 +25,6 @@ const productSchema = new Schema<IProductDocument>(
   defaultSchemaOptions
 );
 
-productSchema.pre(
-  /^find/,
-  function (this: mongoose.Query<any, IProductDocument>, next) {
-    this.populate({
-      path: "cuisines",
-      select: "name"
-    });
-    next();
-  }
-);
-
-// productSchema.virtual("reviews", {
-//   ref: "Review",
-//   foreignField: "product",
-//   localField: "_id"
-// });
-
 export const Product = mongoose.model<IProductDocument>(
   "Product",
   productSchema

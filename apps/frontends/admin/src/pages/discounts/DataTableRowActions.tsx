@@ -23,6 +23,10 @@ export function DataTableRowActions<TData extends { _id: string }>({
     e.stopPropagation();
     navigate(`/discount/${row.original._id}/edit`);
   };
+  const handleApply = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/discount/${row.original._id}/apply`);
+  };
 
   return (
     <DropdownMenu>
@@ -33,9 +37,9 @@ export function DataTableRowActions<TData extends { _id: string }>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleApply}>Apply</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled>Delete</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

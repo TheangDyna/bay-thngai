@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const DiscountSchema = z
   .object({
+    name: z.string().min(1, "Name is required"),
     type: z.enum(["flat", "percentage"]),
     amount: z.union([
       z.string().trim().min(1, "Amount is required."),
@@ -19,6 +20,7 @@ export const DiscountSchema = z
   });
 
 export const DiscountDefaultValue: DiscountInput = {
+  name: "",
   type: "percentage",
   amount: "",
   startDate: format(new Date(), "yyyy-MM-dd'T'HH:mm"),

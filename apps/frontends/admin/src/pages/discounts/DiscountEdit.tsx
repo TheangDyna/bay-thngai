@@ -64,7 +64,7 @@ const DiscountEdit: React.FC = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <h1 className="text-2xl font-bold">Edit Discount</h1>
         <DiscountFormFields form={form} />
         <Button type="submit">Update Discount</Button>

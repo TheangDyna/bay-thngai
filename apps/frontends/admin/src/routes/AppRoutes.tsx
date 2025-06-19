@@ -3,6 +3,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
 import CuisineEdit from "@/pages/cuisines/CuisineEdit";
+import ApplyDiscount from "@/pages/discounts/apply/ApplyDiscount";
 import DiscountCreate from "@/pages/discounts/DiscountCreate";
 import DiscountEdit from "@/pages/discounts/DiscountEdit";
 import DiscountList from "@/pages/discounts/DiscountList";
@@ -30,7 +31,13 @@ const CuisineList = lazy(() => import("@/pages/cuisines/CuisineList"));
 const ProductDetail = lazy(() => import("@/pages/products/ProductDetail"));
 const ProductEdit = lazy(() => import("@/pages/products/ProductEdit"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 const AppRoutes: React.FC = () => {
   return (
@@ -85,6 +92,8 @@ const AppRoutes: React.FC = () => {
                 <Route path="discount">
                   <Route index element={<DiscountList />} />
                   <Route path="new" element={<DiscountCreate />} />
+                  <Route path="apply" element={<ApplyDiscount />} />
+                  <Route path=":discountId/edit" element={<DiscountEdit />} />
                   <Route path=":discountId/edit" element={<DiscountEdit />} />
                 </Route>
 

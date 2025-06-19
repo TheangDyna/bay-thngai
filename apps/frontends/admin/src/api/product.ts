@@ -149,3 +149,15 @@ export const useDeleteProductMutation = (
     }
   });
 };
+
+export const useProductsQueryLite = (search: string) => {
+  return useQuery({
+    queryKey: ["products-lite", search],
+    queryFn: async () => {
+      const res = await axiosInstance.get("/products", {
+        params: { search }
+      });
+      return res.data.data;
+    }
+  });
+};

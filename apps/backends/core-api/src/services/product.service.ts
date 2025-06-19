@@ -47,7 +47,7 @@ export class ProductService {
   }
 
   public async assignDiscountToProducts(
-    discountId: string,
+    discountId: string | null,
     productIds: string[]
   ): Promise<void> {
     await this.repository.assignDiscountToProducts(discountId, productIds);

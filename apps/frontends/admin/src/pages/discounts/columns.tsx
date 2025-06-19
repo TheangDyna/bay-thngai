@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from "@/components/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import { Discount } from "@/types/discount.types";
 import { ColumnDef } from "@tanstack/react-table";
@@ -15,8 +16,21 @@ export const columns: (
     enableSorting: false
   },
   {
+    accessorKey: "name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="max-w-[500px] truncate">{row.original.name}</span>
+      );
+    }
+  },
+  {
     accessorKey: "type",
-    header: "Type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Type" />
+    ),
     cell: ({ row }) => (
       <Badge variant="outline">
         {row.original.type === "flat" ? "Flat $" : "Percent %"}
@@ -25,7 +39,9 @@ export const columns: (
   },
   {
     accessorKey: "amount",
-    header: "Amount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Amount" />
+    ),
     cell: ({ row }) => (
       <span>
         {row.original.type === "percentage"
@@ -36,19 +52,25 @@ export const columns: (
   },
   {
     accessorKey: "startDate",
-    header: "Start",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Start" />
+    ),
     cell: ({ row }) =>
       format(new Date(row.original.startDate), "yyyy-MM-dd HH:mm:ss")
   },
   {
     accessorKey: "endDate",
-    header: "End",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="End" />
+    ),
     cell: ({ row }) =>
       format(new Date(row.original.endDate), "yyyy-MM-dd HH:mm:ss")
   },
   {
     accessorKey: "active",
-    header: "Active",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Active" />
+    ),
     cell: ({ row }) => (
       <Badge
         variant="outline"

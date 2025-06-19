@@ -50,4 +50,12 @@ export class DiscountController {
       res.json({ message: "Discount assigned successfully" });
     }
   );
+
+  public removeFromProducts = catchAsync(
+    async (req: Request, res: Response) => {
+      const { productIds } = req.body;
+      await this.service.removeDiscountFromProducts(productIds);
+      res.json({ message: "Discount removed from products" });
+    }
+  );
 }

@@ -31,7 +31,11 @@ export class ProductRepository {
 
     features.sort().select().paginate();
 
-    const products = await features.getQuery();
+    const products = await features
+      .getQuery()
+      .populate("cuisines", "name")
+      .populate("discount", "name type amount startDate endDate active");
+
     return { total, products };
   }
 
@@ -68,12 +72,12 @@ export class ProductRepository {
   }
 
   public async assignDiscountToProducts(
-    discountId: string,
+    discountId: string | null,
     productIds: string[]
   ): Promise<void> {
     await Product.updateMany(
       { _id: { $in: productIds } },
-      { $set: { discountRef: discountId } }
+      { $set: { discount: discountId } }
     );
   }
 

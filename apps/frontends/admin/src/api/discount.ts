@@ -114,3 +114,20 @@ export const useAssignDiscountMutation = (): UseMutationResult<
     }
   });
 };
+
+export const useRemoveDiscountMutation = (): UseMutationResult<
+  void,
+  AxiosError,
+  { productIds: string[] }
+> => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload) => {
+      await axiosInstance.post("/discounts/remove", payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    }
+  });
+};

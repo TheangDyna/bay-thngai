@@ -15,6 +15,7 @@ router.use(protect, restrictTo("admin"));
 router.post("/", validate(CreateDiscountSchema), controller.create);
 router.get("/", controller.getAll);
 router.post("/assign", controller.assignToProducts);
+router.post("/remove", controller.removeFromProducts);
 router.get("/:discountId", controller.getOne);
 router.patch("/:discountId", validate(UpdateDiscountSchema), controller.update);
 

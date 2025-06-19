@@ -3,6 +3,9 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
 import CuisineEdit from "@/pages/cuisines/CuisineEdit";
+import DiscountCreate from "@/pages/discounts/DiscountCreate";
+import DiscountEdit from "@/pages/discounts/DiscountEdit";
+import DiscountList from "@/pages/discounts/DiscountList";
 import Loading from "@/pages/Loading";
 import OrderList from "@/pages/order/OrderList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -77,6 +80,14 @@ const AppRoutes: React.FC = () => {
                 <Route path="order">
                   <Route index element={<OrderList />} />
                 </Route>
+
+                {/* Discount */}
+                <Route path="discount">
+                  <Route index element={<DiscountList />} />
+                  <Route path="new" element={<DiscountCreate />} />
+                  <Route path=":discountId/edit" element={<DiscountEdit />} />
+                </Route>
+
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />
               </Route>

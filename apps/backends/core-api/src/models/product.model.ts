@@ -9,7 +9,7 @@ const productSchema = new Schema<IProductDocument>(
     price: { type: Number },
     cuisines: [{ type: Schema.Types.ObjectId, ref: "Cuisine" }],
     dietaries: [{ type: Schema.Types.ObjectId, ref: "Dietary" }],
-    inStock: { type: Boolean },
+    inStock: { type: Boolean }, // change to availble or not
     calories: { type: Number },
     protein: { type: Number },
     carbs: { type: Number },
@@ -19,7 +19,8 @@ const productSchema = new Schema<IProductDocument>(
     ratingsQuantity: { type: Number },
     thumbnail: { type: String },
     images: [{ type: String }],
-    sold: { type: Number, default: 0 }
+    sold: { type: Number, default: 0 },
+    discount: { type: mongoose.Schema.Types.ObjectId, ref: "Discount" }
   },
   defaultSchemaOptions
 );

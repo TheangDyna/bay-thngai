@@ -56,7 +56,7 @@ export const columns: (
       <DataTableColumnHeader column={column} title="Cuisines" />
     ),
     cell: ({ row }) => {
-      const cuisines = row.original.cuisines || [];
+      const cuisines = row.original.cuisines;
       const maxCount = 1;
       return (
         <div className="flex space-x-2">

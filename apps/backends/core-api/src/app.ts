@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 // import "dotenv/config"; always on the top
+import { discountRoutes } from "@/src/routes/discount.routes";
 import { orderRoutes } from "@/src/routes/order.routes";
 import { paymentRoutes } from "@/src/routes/payment.routes";
 import { pushSubscriptionRoutes } from "@/src/routes/pushSubscription.routes";
@@ -57,6 +58,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/push", pushSubscriptionRoutes);
+app.use("/api/v1/discounts", discountRoutes);
 
 // Error handling
 app.use(routeNotFound);

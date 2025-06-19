@@ -67,6 +67,16 @@ export class ProductRepository {
     return product;
   }
 
+  public async assignDiscountToProducts(
+    discountId: string,
+    productIds: string[]
+  ): Promise<void> {
+    await Product.updateMany(
+      { _id: { $in: productIds } },
+      { $set: { discountRef: discountId } }
+    );
+  }
+
   public async deleteProduct(id: string): Promise<void> {
     const product = await Product.findByIdAndDelete(id);
     if (!product) {

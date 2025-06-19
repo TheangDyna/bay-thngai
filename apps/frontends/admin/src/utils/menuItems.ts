@@ -10,7 +10,6 @@ import {
   LogOut,
   MessageSquareWarning,
   Percent,
-  Puzzle,
   Settings2,
   Undo2,
   User,
@@ -109,6 +108,27 @@ export const menuItems: MenuSection[] = [
     ]
   },
   {
+    title: "Promotions",
+    subItems: [
+      {
+        title: "Discounts List",
+        icon: Percent,
+        path: "/discount"
+      },
+      {
+        title: "Create Discount",
+        icon: Percent,
+        path: "/discount/new"
+      },
+      {
+        title: "Edit Discount",
+        path: "/discount/:id/edit",
+        icon: Percent,
+        disabled: true
+      }
+    ]
+  },
+  {
     title: "Inventory",
     subItems: [
       {
@@ -133,21 +153,7 @@ export const menuItems: MenuSection[] = [
       }
     ]
   },
-  {
-    title: "Promotions",
-    subItems: [
-      {
-        title: "Discounts",
-        icon: Percent,
-        path: "#"
-      },
-      {
-        title: "Coupons",
-        icon: Puzzle,
-        path: "#"
-      }
-    ]
-  },
+
   {
     title: "Settings",
     subItems: [

@@ -46,6 +46,13 @@ export class ProductService {
     });
   }
 
+  public async assignDiscountToProducts(
+    discountId: string,
+    productIds: string[]
+  ): Promise<void> {
+    await this.repository.assignDiscountToProducts(discountId, productIds);
+  }
+
   public async deleteProduct(id: string): Promise<void> {
     await this.repository.deleteProduct(id);
   }

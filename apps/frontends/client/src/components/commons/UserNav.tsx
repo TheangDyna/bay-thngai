@@ -11,10 +11,16 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/auth.context";
+import { useNavigate } from "react-router-dom";
 
 export const UserNav: React.FC = () => {
   const { user, logout } = useAuth();
   const initials = user?.email[0].toUpperCase();
+  const navigate = useNavigate();
+
+  const goToProfile = () => {
+    navigate("/profile");
+  };
 
   return (
     <div>
@@ -38,7 +44,7 @@ export const UserNav: React.FC = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={goToProfile}>Profile</DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -14,7 +14,6 @@ import OrderTrackingPage from "@/pages/order/order-track";
 import PaymentCancel from "@/pages/payment/payment-cancel";
 import PaymentReturn from "@/pages/payment/payment-return";
 import ProductDetailPage from "@/pages/product/ProductDetailPage";
-import AddressSettingsPage from "@/pages/profile/address/AddressSettingsPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import Search from "@/pages/search/SearchPage";
 import Shop from "@/pages/shop/Shop";
@@ -63,7 +62,6 @@ const AppRoutes: React.FC = () => {
                       element={<OrderTrackingPage />}
                     />
                     <Route path="profile" element={<ProfilePage />} />
-                    <Route path="address" element={<AddressSettingsPage />} />
                   </Route>
                   <Route path="*" element={<NotFound />} />
                 </Routes>

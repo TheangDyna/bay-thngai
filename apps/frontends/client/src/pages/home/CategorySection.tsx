@@ -37,7 +37,7 @@ const CategorySection: React.FC = () => {
     return <div className="py-20 text-center">Failed to load categories</div>;
 
   return (
-    <div className="px-10 space-y-6">
+    <div className="space-y-6">
       <BannerHeader
         title="What food you love to order"
         subTitle="Here order your favorite foods from different categories"

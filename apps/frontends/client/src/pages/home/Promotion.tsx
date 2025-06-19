@@ -1,7 +1,7 @@
 const Promotion = () => {
   return (
     <div>
-      <div className="mx-auto">
+      <div className="mx-auto px-10">
         <a
           className="h-full group flex justify-center relative overflow-hidden"
           href="#"

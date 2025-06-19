@@ -37,7 +37,7 @@ interface AddressFormValues {
   lng: number;
 }
 
-export default function AddressSettingsPage() {
+export function AddressSettings() {
   // 1) Fetch all addresses for this user
   const {
     data: addresses = [],

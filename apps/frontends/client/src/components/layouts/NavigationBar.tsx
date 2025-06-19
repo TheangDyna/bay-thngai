@@ -2,6 +2,7 @@ import { Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { UserNav } from "@/components/commons/UserNav";
+import Cart from "@/components/layouts/Cart";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -13,7 +14,6 @@ import {
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Cart from "@/pages/cart/Cart";
 import { cn } from "@/utils/cn";
 import { Link, useLocation } from "react-router-dom";
 

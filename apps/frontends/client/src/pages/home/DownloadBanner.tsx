@@ -1,8 +1,8 @@
 const DownloadBanner = () => {
   return (
     <div>
-      <div className="bg-fill-two overflow-hidden pt-1.5 md:pt-0">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-5 md:px-6 lg:px-16 xl:px-28 2xl:px-32 3xl:px-40 md:flex justify-between items-center">
+      <div className="bg-fill-two overflow-hidden">
+        <div className="max-w-[1920px] mx-auto px-10 md:flex justify-between items-center">
           <div className="shrink-0 mx-auto md:ltr:ml-0 md:rtl:mr-0 lg:flex lg:items-center pb-5 pt-1.5 md:pt-4 max-w-[350px] md:max-w-[340px] lg:max-w-[485px] xl:max-w-[540px] 2xl:max-w-[680px] 3xl:ltr:pl-10 3xl:rtl:pr-10">
             <div className="py-8 text-left xl:py-10 2xl:py-14 md:ltr:text-left md:rtl:text-right">
               <h2 className="text-[22px] md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-[42px] leading-9 lg:leading-[1.4em] xl:leading-[1.45em] text-brand-dark font-bold font-manrope -tracking-[0.2px] mb-3 lg:mb-4">

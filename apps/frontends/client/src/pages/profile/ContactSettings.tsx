@@ -56,7 +56,7 @@ function formatPhone(raw: string): string {
   return raw;
 }
 
-export default function ContactSettingsPage() {
+export function ContactSettings() {
   const {
     data: contacts = [],
     isLoading: contactsLoading,

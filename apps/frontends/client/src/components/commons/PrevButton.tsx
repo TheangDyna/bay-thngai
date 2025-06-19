@@ -13,7 +13,7 @@ const PrevButton: React.FC<IPrevButtonProps> = ({ onClick, className }) => {
         onClick={onClick}
         variant="outline"
         size="icon"
-        className={`rounded-full p-2 hover:bg-primary ${className}`}
+        className={`rounded-full p-2 ${className}`}
       >
         <ChevronLeft className="w-6 h-6" />
       </Button>

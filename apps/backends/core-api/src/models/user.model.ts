@@ -57,6 +57,10 @@ const userSchema = new Schema<IUserDocument>(
     contacts: {
       type: [contactSchema],
       default: []
+    },
+    wishlist: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+      default: []
     }
   },
   defaultSchemaOptions

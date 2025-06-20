@@ -29,8 +29,6 @@ export default class OrderRepository {
 
     const orders = await features.getQuery();
 
-    console.log(orders);
-
     return { total, orders };
   }
 

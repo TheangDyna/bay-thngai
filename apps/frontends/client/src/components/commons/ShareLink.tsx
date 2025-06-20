@@ -32,12 +32,10 @@ const ShareLink: React.FC<IShareLinkProps> = ({
         "https://ui.shadcn.com/docs/installation"
       );
       toast({
-        title: "Link copied!",
         description: "The link has been copied to your clipboard."
       });
     } catch {
       toast({
-        title: "Error",
         description: "Failed to copy the link. Please try again.",
         variant: "destructive"
       });

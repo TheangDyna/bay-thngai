@@ -1,4 +1,5 @@
 // src/api/review.ts
+import { toast } from "@/hooks/use-toast";
 import { Pagination } from "@/types/pagination.types";
 import { RatingSummary, Review } from "@/types/review.types";
 import { Sorting } from "@/types/sort.types";
@@ -11,7 +12,6 @@ import {
 } from "@tanstack/react-query";
 import { ColumnFilter } from "@tanstack/react-table";
 import { AxiosError } from "axios";
-import { toast } from "sonner";
 
 // GET reviews by productId with pagination, sorting, filters
 export const useReviewsQuery = ({
@@ -71,9 +71,7 @@ export const useSubmitReviewMutation = (productId: string) => {
       await axiosInstance.post(`/products/${productId}/reviews`, input);
     },
     onSuccess: () => {
-      toast.success("Thanks for your feedback!", {
-        duration: 3000
-      });
+      toast({ description: "Thanks for your feedback!" });
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
       queryClient.invalidateQueries({
         queryKey: ["rating-summary", productId]
@@ -83,10 +81,7 @@ export const useSubmitReviewMutation = (productId: string) => {
       const message =
         err.response?.data?.message ||
         "Something went wrong. Please try again.";
-
-      toast.error(message, {
-        duration: 5000
-      });
+      toast({ description: message, variant: "destructive" });
     }
   });
 };

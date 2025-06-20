@@ -230,4 +230,39 @@ export class AuthController {
       res.status(200).json({ status: "success", data: updated });
     }
   );
+
+  // WISHLIST
+  public getWishlist = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const wishlist = await this.userService.getWishlist(req.user.id);
+      res.status(200).json({
+        status: "success",
+        data: wishlist
+      });
+    }
+  );
+
+  public addToWishlist = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const { productId } = req.body;
+      const addedProductId = await this.userService.addToWishlist(
+        req.user.id,
+        productId
+      );
+      res.status(201).json({
+        status: "success",
+        data: addedProductId
+      });
+    }
+  );
+
+  public removeFromWishlist = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      await this.userService.removeFromWishlist(
+        req.user.id,
+        req.params.productId
+      );
+      res.status(204).json({ status: "success", data: null });
+    }
+  );
 }

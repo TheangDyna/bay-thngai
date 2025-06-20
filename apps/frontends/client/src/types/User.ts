@@ -16,4 +16,5 @@ export interface User {
   dailyCalorieTarget?: number;
   createdAt: string;
   updatedAt: string;
+  wishlist: string[];
 }

@@ -2,6 +2,7 @@
 import { useUpdateUserInfoMutation } from "@/api/userInfo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -361,17 +362,16 @@ export const AccountSettings: React.FC = () => {
                     <FormItem>
                       <FormLabel>Dietary Preferences</FormLabel>
                       <FormControl>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 gap-2">
                           {DIETARY_PREFERENCES.map((opt) => (
                             <label
                               key={opt}
                               className="flex items-center space-x-2"
                             >
-                              <input
-                                type="checkbox"
+                              <Checkbox
                                 checked={field.value.includes(opt)}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
                                     field.onChange([...field.value, opt]);
                                   } else {
                                     field.onChange(

@@ -1,3 +1,4 @@
+import { ObjectIdSchema } from "@/src/utils/objectIdSchema";
 import { z } from "zod";
 
 export const UserRoleSchema = z.enum(["user", "admin"]);
@@ -60,7 +61,8 @@ export const UserSchema = z
     allergies: z.array(z.string().trim().min(1)).optional().default([]),
     dailyCalorieTarget: z.number().positive().optional().default(2000),
     addresses: z.array(AddressSchema).optional().default([]),
-    contacts: z.array(ContactSchema).optional().default([])
+    contacts: z.array(ContactSchema).optional().default([]),
+    wishlist: ObjectIdSchema
   })
   .strict();
 

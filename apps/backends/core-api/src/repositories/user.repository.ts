@@ -1,7 +1,9 @@
 import { User } from "@/src/models/user.model";
+import { IProduct } from "@/src/types/product.types";
 import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
 import { APIFeatures } from "@/src/utils/apiFeatures";
 import { AppError } from "@/src/utils/appError";
+import { Types } from "mongoose";
 
 export class UserRepository {
   private searchFields: string[];
@@ -175,6 +177,45 @@ export class UserRepository {
     if (idx === -1) throw new AppError("Contact not found.", 404);
 
     user.contacts.splice(idx, 1);
+    await user.save();
+  }
+
+  // WISHLIST
+  public async getWishlist(userId: string): Promise<IProduct[]> {
+    const user = await User.findById(userId).select("wishlist").populate({
+      path: "wishlist"
+    });
+    if (!user) throw new AppError("User not found.", 404);
+    return user.wishlist as IProduct[];
+  }
+
+  public async addToWishlist(
+    userId: string,
+    productId: string
+  ): Promise<Types.ObjectId> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+    if (!Types.ObjectId.isValid(productId)) {
+      throw new AppError("Invalid product ID.", 400);
+    }
+    if (!user.wishlist.includes(productId as any)) {
+      user.wishlist.push(productId as any);
+      await user.save();
+    }
+    return productId as any;
+  }
+
+  public async removeFromWishlist(
+    userId: string,
+    productId: string
+  ): Promise<void> {
+    const user = await User.findById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+    const index: number = user.wishlist.findIndex(
+      (id: Types.ObjectId) => id.toString() === productId
+    );
+    if (index === -1) throw new AppError("Product not found in wishlist.", 404);
+    user.wishlist.splice(index, 1);
     await user.save();
   }
 }

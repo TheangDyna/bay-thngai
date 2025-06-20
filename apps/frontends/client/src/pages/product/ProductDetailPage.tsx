@@ -3,6 +3,7 @@ import { useProductQuery } from "@/api/product";
 import NextButton from "@/components/commons/NextButton";
 import PrevButton from "@/components/commons/PrevButton";
 import ShareLink from "@/components/commons/ShareLink";
+import { WishlistButton } from "@/components/commons/WishlistButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -17,7 +18,7 @@ import { ReviewForm } from "@/pages/product/ReviewForm";
 import { ReviewList } from "@/pages/product/ReviewList";
 import { calculateDiscountedPrice } from "@/utils/price";
 import { format } from "date-fns";
-import { Heart, Minus, Plus, Share } from "lucide-react";
+import { Minus, Plus, Share2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -101,162 +102,162 @@ export default function ProductDetailPage() {
 
   // 3) Render once we know we have a product
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Thumbnails */}
-        <div className="flex md:flex-col gap-3 overflow-auto">
-          {thumbnails.map((src, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIdx(i)}
-              className={`w-24 h-24 border rounded-lg overflow-hidden ${
-                activeIdx === i ? "border-primary" : "border-muted"
-              }`}
-            >
-              <img
-                src={src}
-                alt={`${product.name} thumbnail ${i}`}
-                className="w-full h-full object-cover"
+    <div className="bg-gray-100">
+      <div className="max-w-5xl mx-auto p-10 space-y-10 bg-background">
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Thumbnails */}
+          <div className="flex md:flex-col gap-3 overflow-auto">
+            {thumbnails.map((src, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveIdx(i)}
+                className={`w-24 h-24 border rounded-lg overflow-hidden ${
+                  activeIdx === i ? "border-primary" : "border-muted"
+                }`}
+              >
+                <img
+                  src={src}
+                  alt={`${product.name} thumbnail ${i}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Carousel */}
+          <div className="relative flex-1 rounded-2xl border overflow-hidden">
+            <Carousel>
+              <CarouselContent>
+                {thumbnails.map((src, i) => (
+                  <CarouselItem
+                    key={i}
+                    className={activeIdx !== i ? "hidden" : "h-full"}
+                  >
+                    <Card className="h-[342px] w-full border-none mx-auto">
+                      <CardContent className="flex items-center justify-center h-full p-4 bg-muted">
+                        <img
+                          src={src}
+                          alt={`${product.name} view ${i}`}
+                          className="h-full w-full object-contain rounded-xl"
+                        />
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <PrevButton
+                onClick={() =>
+                  setActiveIdx((i) => (i === 0 ? thumbnails.length - 1 : i - 1))
+                }
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10"
               />
-            </button>
-          ))}
-        </div>
+              <NextButton
+                onClick={() =>
+                  setActiveIdx((i) => (i === thumbnails.length - 1 ? 0 : i + 1))
+                }
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10"
+              />
+            </Carousel>
+          </div>
 
-        {/* Carousel */}
-        <div className="relative flex-1 rounded-2xl border overflow-hidden">
-          <Carousel>
-            <CarouselContent>
-              {thumbnails.map((src, i) => (
-                <CarouselItem
-                  key={i}
-                  className={activeIdx !== i ? "hidden" : "h-full"}
-                >
-                  <Card className="h-[342px] w-full border-none mx-auto">
-                    <CardContent className="flex items-center justify-center h-full p-4 bg-muted">
-                      <img
-                        src={src}
-                        alt={`${product.name} view ${i}`}
-                        className="h-full w-full object-contain rounded-xl"
-                      />
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <PrevButton
-              onClick={() =>
-                setActiveIdx((i) => (i === 0 ? thumbnails.length - 1 : i - 1))
-              }
-              className="absolute left-2 top-1/2 -translate-y-1/2 z-10"
-            />
-            <NextButton
-              onClick={() =>
-                setActiveIdx((i) => (i === thumbnails.length - 1 ? 0 : i + 1))
-              }
-              className="absolute right-2 top-1/2 -translate-y-1/2 z-10"
-            />
-          </Carousel>
-        </div>
-
-        {/* Details */}
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="space-y-4">
-            {/* Title & Badges */}
-            <div>
-              <div className="flex">
-                <h2 className="text-2xl font-bold flex-1">{product.name}</h2>
-                {product.inStock ? (
-                  <span className="w-fit h-fit text-white bg-primary text-xs font-semibold px-2 py-1 rounded-full">
-                    In Stock
-                  </span>
-                ) : (
-                  <span className="w-fit h-fit text-white bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
-                    Sold Out
-                  </span>
+          {/* Details */}
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="space-y-4">
+              {/* Title & Badges */}
+              <div>
+                <div className="flex">
+                  <h2 className="text-2xl font-bold flex-1">{product.name}</h2>
+                  {product.inStock ? (
+                    <span className="w-fit h-fit text-white bg-primary text-xs font-semibold px-2 py-1 rounded-full">
+                      In Stock
+                    </span>
+                  ) : (
+                    <span className="w-fit h-fit text-white bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
+                      Sold Out
+                    </span>
+                  )}
+                </div>
+                {isDiscountActive && (
+                  <div className="mt-2 text-sm text-orange-600 bg-orange-100 px-2 py-1 inline-block rounded">
+                    {discountPercent}
+                    {product.discount!.type === "percentage"
+                      ? "% OFF"
+                      : "$ OFF"}{" "}
+                    until {format(new Date(product.discount!.endDate), "PPpp")}
+                  </div>
                 )}
               </div>
-              {isDiscountActive && (
-                <div className="mt-2 text-sm text-orange-600 bg-orange-100 px-2 py-1 inline-block rounded">
-                  {discountPercent}
-                  {product.discount!.type === "percentage"
-                    ? "% OFF"
-                    : "$ OFF"}{" "}
-                  until {format(new Date(product.discount!.endDate), "PPpp")}
-                </div>
-              )}
+
+              {/* Pricing */}
+              <div className="flex items-baseline gap-4">
+                <span className="text-3xl font-extrabold">
+                  ${finalPrice.toFixed(2)}
+                </span>
+                {isDiscountActive && (
+                  <del className="text-muted-foreground">
+                    ${product.price.toFixed(2)}
+                  </del>
+                )}
+              </div>
+
+              {/* Description */}
+              <p className="text-sm text-muted-foreground">
+                {product.description}
+              </p>
             </div>
 
-            {/* Pricing */}
-            <div className="flex items-baseline gap-4">
-              <span className="text-3xl font-extrabold">
-                ${finalPrice.toFixed(2)}
-              </span>
-              {isDiscountActive && (
-                <del className="text-muted-foreground">
-                  ${product.price.toFixed(2)}
-                </del>
-              )}
-            </div>
-
-            {/* Description */}
-            <p className="text-sm text-muted-foreground">
-              {product.description}
-            </p>
-          </div>
-
-          {/* Cart & Actions */}
-          <div className="mt-6 space-y-4">
-            <div className="flex items-center gap-3">
-              <Button
-                size="icon"
-                onClick={() => changeQty(-1)}
-                disabled={qtyInCart <= 0}
-              >
-                <Minus />
-              </Button>
-              <span className="text-lg w-10 text-center">{qtyInCart}</span>
-              <Button size="icon" onClick={() => changeQty(1)}>
-                <Plus />
-              </Button>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="icon">
-                <Heart />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setShareOpen(true)}
-              >
-                <Share />
-              </Button>
-              <ShareLink
-                isOpenShareLink={shareOpen}
-                onCloseShareLink={() => setShareOpen(false)}
-              />
+            {/* Cart & Actions */}
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <Button
+                  size="icon"
+                  onClick={() => changeQty(-1)}
+                  disabled={qtyInCart <= 0}
+                >
+                  <Minus />
+                </Button>
+                <span className="text-lg w-10 text-center">{qtyInCart}</span>
+                <Button size="icon" onClick={() => changeQty(1)}>
+                  <Plus />
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <WishlistButton productId={product._id} />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShareOpen(true)}
+                >
+                  <Share2 />
+                </Button>
+                <ShareLink
+                  isOpenShareLink={shareOpen}
+                  onCloseShareLink={() => setShareOpen(false)}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Reviews */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div>
-          <h3 className="text-lg font-semibold mb-2">What Customers Think</h3>
-          <RatingBreakdown productId={product._id} />
-        </div>
-        <div className="space-y-4">
+        {/* Reviews */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            <h3 className="text-lg font-semibold mb-2">
-              Share Your Experience
-            </h3>
-            <ReviewForm productId={product._id} />
+            <h3 className="text-lg font-semibold mb-2">What Customers Think</h3>
+            <RatingBreakdown productId={product._id} />
           </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-2">
-              What People Are Saying
-            </h3>
-            <ReviewList productId={product._id} />
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold mb-2">
+                Share Your Experience
+              </h3>
+              <ReviewForm productId={product._id} />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-2">
+                What People Are Saying
+              </h3>
+              <ReviewList productId={product._id} />
+            </div>
           </div>
         </div>
       </div>

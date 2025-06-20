@@ -1,17 +1,19 @@
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Discount } from "@/types/discount.types";
 import { calculateDiscountedPrice } from "@/utils/price";
-import { Minus, Plus, Star } from "lucide-react";
+import { ExternalLink, Minus, Plus, Star } from "lucide-react";
 import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
+  id: string;
   image: string;
   title: string;
   price: number;
   originalPrice?: string;
   cartQty?: number;
   onAddToCart: (qty: number) => void;
-  onViewDetails: () => void;
   onClickProductModalDetails: () => void;
   ratingsAverage?: number;
   ratingsQuantity?: number;
@@ -21,6 +23,7 @@ interface ProductCardProps {
 }
 
 export const CardProduct: React.FC<ProductCardProps> = ({
+  id,
   image,
   title,
   price,
@@ -33,6 +36,7 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   discount,
   inStock
 }) => {
+  const navigate = useNavigate();
   const isInCart = cartQty > 0;
 
   const handleAdd = useCallback(
@@ -56,6 +60,14 @@ export const CardProduct: React.FC<ProductCardProps> = ({
   const handleOpenModal = useCallback(
     () => onClickProductModalDetails(),
     [onClickProductModalDetails]
+  );
+
+  const handleOpenDetail = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      navigate(`/product/${id}`);
+    },
+    [navigate, id]
   );
 
   const { isDiscountActive, finalPrice } = calculateDiscountedPrice(
@@ -126,15 +138,25 @@ export const CardProduct: React.FC<ProductCardProps> = ({
 
       {/* Info */}
       <div className="p-4 space-y-2">
-        <div className="flex items-center space-x-2">
-          <span className="text-lg font-semibold">
-            ${finalPrice.toFixed(2)}
-          </span>
-          {isDiscountActive && (
-            <del className="text-sm text-muted-foreground">
-              ${price.toFixed(2)}
-            </del>
-          )}
+        <div className="flex justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="text-lg font-semibold">
+              ${finalPrice.toFixed(2)}
+            </span>
+            {isDiscountActive && (
+              <del className="text-sm text-muted-foreground">
+                ${price.toFixed(2)}
+              </del>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-6 h-6 text-muted-foreground"
+            onClick={handleOpenDetail}
+          >
+            <ExternalLink />
+          </Button>
         </div>
         <h3 className="text-sm font-medium truncate">{title}</h3>
         <div className="flex justify-between items-center">

@@ -52,6 +52,13 @@ router.route("/me/contacts").post(authController.addContact);
 router.route("/me/contacts/:contactId").put(authController.updateContact);
 router.route("/me/contacts/:contactId").delete(authController.deleteContact);
 
+// WISHLIST ROUTES
+router.route("/me/wishlists").get(authController.getWishlist);
+router.route("/me/wishlists").post(authController.addToWishlist);
+router
+  .route("/me/wishlists/:productId")
+  .delete(authController.removeFromWishlist);
+
 router.patch("/me/info", validate(UpdateInfoSchema), authController.updateInfo);
 
 export const authRoutes = router;

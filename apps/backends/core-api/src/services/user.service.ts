@@ -1,6 +1,9 @@
 // src/services/user.service.ts
 import { UserRepository } from "@/src/repositories/user.repository";
+import { IProduct } from "@/src/types/product.types";
 import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
+import { AppError } from "@/src/utils/appError";
+import { Types } from "mongoose";
 
 export class UserService {
   private repository: UserRepository;
@@ -87,5 +90,40 @@ export class UserService {
 
   public async deleteContact(userId: string, contactId: string): Promise<void> {
     await this.repository.deleteContact(userId, contactId);
+  }
+
+  public async getWishlist(userId: string): Promise<IProduct[]> {
+    const wishlist: IProduct[] = await this.repository.getWishlist(userId);
+    return wishlist;
+  }
+
+  public async addToWishlist(
+    userId: string,
+    productId: string
+  ): Promise<Types.ObjectId> {
+    const user = await this.repository.getUserById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+    if (!Types.ObjectId.isValid(productId)) {
+      throw new AppError("Invalid product ID.", 400);
+    }
+    if (!user.wishlist.includes(productId as any)) {
+      user.wishlist.push(productId as any);
+      await user.save();
+    }
+    return productId as any;
+  }
+
+  public async removeFromWishlist(
+    userId: string,
+    productId: string
+  ): Promise<void> {
+    const user = await this.repository.getUserById(userId);
+    if (!user) throw new AppError("User not found.", 404);
+    const index: number = user.wishlist.findIndex(
+      (id: Types.ObjectId) => id.toString() === productId
+    );
+    if (index === -1) throw new AppError("Product not found in wishlist.", 404);
+    user.wishlist.splice(index, 1);
+    await user.save();
   }
 }

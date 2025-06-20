@@ -78,12 +78,12 @@ export const BestSellersSection: React.FC = () => {
               return (
                 <CardProduct
                   key={product._id}
+                  id={product._id}
                   image={product.thumbnail}
                   title={product.name}
                   price={product.price}
                   cartQty={qty}
                   onAddToCart={(amount) => handleAddToCart(product, amount)}
-                  onViewDetails={() => setSelectedProduct(product)}
                   onClickProductModalDetails={() => setSelectedProduct(product)}
                   ratingsAverage={product.ratingsAverage}
                   ratingsQuantity={product.ratingsQuantity}

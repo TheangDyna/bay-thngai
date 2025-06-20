@@ -1,6 +1,7 @@
 import NextButton from "@/components/commons/NextButton";
 import PrevButton from "@/components/commons/PrevButton";
 import ShareLink from "@/components/commons/ShareLink";
+import { WishlistButton } from "@/components/commons/WishlistButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -15,8 +16,9 @@ import { ReviewForm } from "@/pages/product/ReviewForm";
 import type { Product } from "@/types/product.types";
 import { calculateDiscountedPrice } from "@/utils/price";
 import { format } from "date-fns";
-import { Heart, Minus, Plus, Share } from "lucide-react";
+import { ExternalLink, Minus, Plus, Share2 } from "lucide-react";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -36,6 +38,7 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
   const [activeIdx, setActiveIdx] = useState(0);
   const [shareOpen, setShareOpen] = useState(false);
   const { cart, addToCart } = useCart();
+  const navigate = useNavigate();
 
   // 2) reset carousel/index when product changes
   useEffect(() => {
@@ -77,6 +80,14 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
       });
     },
     [addToCart, finalPrice, product]
+  );
+
+  const handleOpenDetail = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      navigate(`/product/${product._id}`);
+    },
+    [navigate, product._id]
   );
 
   return (
@@ -204,20 +215,21 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" size="icon">
-                  <Heart />
-                </Button>
+                <WishlistButton productId={product._id} />
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={() => setShareOpen(true)}
                 >
-                  <Share />
+                  <Share2 />
                 </Button>
-                <ShareLink
-                  isOpenShareLink={shareOpen}
-                  onCloseShareLink={() => setShareOpen(false)}
-                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleOpenDetail}
+                >
+                  <ExternalLink />
+                </Button>
               </div>
             </div>
           </div>
@@ -236,6 +248,10 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
             <ReviewForm productId={product._id} />
           </div>
         </div>
+        <ShareLink
+          isOpenShareLink={shareOpen}
+          onCloseShareLink={() => setShareOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -1,3 +1,4 @@
+// src/api/auth.ts
 import axiosInstance from "@/utils/axiosInstance";
 import {
   useMutation,
@@ -17,10 +18,50 @@ export interface AddressRecord {
   };
 }
 
+// ─── AUTH MUTATIONS ─────────────────────────────────────────────────────────
+
 export const useLoginMutation = (): UseMutationResult<any, any, any> => {
   return useMutation({
     mutationFn: async (data) => {
       const response = await axiosInstance.post("/auth/login", data);
+      return response.data;
+    }
+  });
+};
+
+export const useSignupMutation = (): UseMutationResult<any, any, any> => {
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post("/auth/register", data);
+      return response.data;
+    }
+  });
+};
+
+export const useConfirmRegisterMutation = (): UseMutationResult<
+  any,
+  any,
+  { email: string; code: string }
+> => {
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post("/auth/confirm-register", data);
+      return response.data;
+    }
+  });
+};
+
+export const useResendConfirmCodeMutation = (): UseMutationResult<
+  any,
+  any,
+  { email: string }
+> => {
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post(
+        "/auth/resend-confirm-code",
+        data
+      );
       return response.data;
     }
   });
@@ -35,8 +76,8 @@ export const useGoogleLoginMutation = (): UseMutationResult<any, any, any> => {
   });
 };
 
-export const useGetMeQuery = () => {
-  return useQuery<any, any>({
+export const useGetMeQuery = (): UseQueryResult<any, any> => {
+  return useQuery({
     queryKey: ["me"],
     queryFn: async () => {
       const response = await axiosInstance.get("/auth/me");
@@ -54,12 +95,13 @@ export const useLogoutMutation = (): UseMutationResult<any, any, any> =>
     }
   });
 
+// ─── ADDRESS QUERIES & MUTATIONS ────────────────────────────────────────────
+
 interface UserWithAddresses {
   id: string;
   addresses: AddressRecord[];
 }
 
-// Fetch addresses by getting the user and extracting its addresses field
 export const useGetAddressesQuery = (): UseQueryResult<
   AddressRecord[],
   Error
@@ -76,7 +118,6 @@ export const useGetAddressesQuery = (): UseQueryResult<
   });
 };
 
-// Add a new address for a given user
 export const useAddAddressMutation = (): UseMutationResult<
   AddressRecord,
   Error,
@@ -92,14 +133,11 @@ export const useAddAddressMutation = (): UseMutationResult<
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["me", "addresses"]
-      });
+      queryClient.invalidateQueries({ queryKey: ["me", "addresses"] });
     }
   });
 };
 
-// Update an existing address for a given user
 export const useUpdateAddressMutation = (): UseMutationResult<
   AddressRecord,
   Error,
@@ -116,14 +154,11 @@ export const useUpdateAddressMutation = (): UseMutationResult<
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["me", "addresses"]
-      });
+      queryClient.invalidateQueries({ queryKey: ["me", "addresses"] });
     }
   });
 };
 
-// Delete an address for a given user
 export const useDeleteAddressMutation = (): UseMutationResult<
   { success: boolean },
   Error,
@@ -138,9 +173,7 @@ export const useDeleteAddressMutation = (): UseMutationResult<
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["me", "addresses"]
-      });
+      queryClient.invalidateQueries({ queryKey: ["me", "addresses"] });
     }
   });
 };

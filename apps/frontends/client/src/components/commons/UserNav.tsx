@@ -1,4 +1,4 @@
-import SignIn from "@/components/commons/SignIn";
+import SignIn from "@/components/commons/AuthModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

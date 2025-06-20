@@ -23,7 +23,7 @@ const CardCollections: React.FC<ICardCollectionsProps> = ({
       />
 
       {/* Overlay Content */}
-      <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-opacity-80 opacity-0">
+      <div className="absolute inset-0 bg-black flex flex-col justify-center items-center transition-opacity duration-300 group-hover:opacity-100 group-hover:bg-opacity-75 opacity-0">
         <h1 className="text-white text-2xl font-bold mb-2">{title}</h1>
         <p className="text-white text-sm mb-4 text-center px-4">
           {description}

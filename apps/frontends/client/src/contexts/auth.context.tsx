@@ -1,18 +1,31 @@
+// src/contexts/auth.context.tsx
 import {
+  useConfirmRegisterMutation,
   useGetMeQuery,
   useGoogleLoginMutation,
   useLoginMutation,
-  useLogoutMutation
+  useLogoutMutation,
+  useResendConfirmCodeMutation,
+  useSignupMutation
 } from "@/api/auth";
 import { User } from "@/types/User";
+import { SignupInput } from "@/types/auth.types";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface AuthProviderProps {
-  children: React.ReactNode;
+interface ConfirmRegisterInput {
+  email: string;
+  code: string;
+}
+
+interface ResendConfirmInput {
+  email: string;
 }
 
 interface AuthContextType {
   user: User | null;
+  signup: (data: SignupInput) => Promise<void>;
+  confirmRegister: (data: ConfirmRegisterInput) => Promise<void>;
+  resendConfirmCode: (data: ResendConfirmInput) => Promise<void>; // ← new
   login: (data: { email: string; password: string }) => Promise<void>;
   googleLogin: () => Promise<void>;
   logout: () => Promise<void>;
@@ -21,11 +34,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children
+}) => {
   const { data, refetch, isFetching } = useGetMeQuery();
   const loginMutation = useLoginMutation();
-  const logoutMutation = useLogoutMutation();
+  const signupMutation = useSignupMutation();
+  const confirmRegisterMutation = useConfirmRegisterMutation();
+  const resendConfirmCodeMutation = useResendConfirmCodeMutation(); // ← new
   const googleLoginMutation = useGoogleLoginMutation();
+  const logoutMutation = useLogoutMutation();
 
   const [user, setUser] = useState<User | null>(null);
 
@@ -37,9 +55,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [data]);
 
+  const signup = async (credentials: SignupInput) => {
+    const { confirmPassword, ...rest } = credentials;
+    await signupMutation.mutateAsync(rest);
+    // OTP sent—user remains null until confirmRegister
+  };
+
+  const confirmRegister = async (payload: ConfirmRegisterInput) => {
+    await confirmRegisterMutation.mutateAsync(payload);
+    const result = await refetch();
+    if (result.data?.status === "success" && result.data.data) {
+      setUser(result.data.data);
+    }
+  };
+
+  const resendConfirmCode = async (payload: ResendConfirmInput) => {
+    await resendConfirmCodeMutation.mutateAsync(payload);
+    // OTP resent to email
+  };
+
   const login = async (credentials: { email: string; password: string }) => {
     await loginMutation.mutateAsync(credentials);
-
     const result = await refetch();
     if (result.data?.status === "success" && result.data.data) {
       setUser(result.data.data);
@@ -48,12 +84,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const googleLogin = async () => {
     const response = await googleLoginMutation.mutateAsync({});
-
-    // redirect to Google OAuth if backend returns the URL
     if (typeof response.data === "string") {
       window.location.href = response.data;
     } else {
-      // fallback if Google login is handled differently
       const result = await refetch();
       if (result.data?.status === "success" && result.data.data) {
         setUser(result.data.data);
@@ -70,6 +103,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        signup,
+        confirmRegister,
+        resendConfirmCode, // ← new
         login,
         googleLogin,
         logout,
@@ -82,9 +118,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within AuthProvider");
   }
-  return context;
+  return ctx;
 };

@@ -25,6 +25,7 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Edit, MapPin, Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -124,150 +125,147 @@ export function AddressSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <main className="flex-1 p-8">
-        <Card className="max-w-3xl mx-auto">
-          <CardHeader className="px-6 pt-6 pb-2">
-            <CardTitle className="text-xl">Manage Addresses</CardTitle>
-          </CardHeader>
-          <CardContent className="px-6 py-8 space-y-6">
-            {addressesLoading ? (
-              <p>Loading addresses…</p>
-            ) : addressesError ? (
-              <p className="text-red-500">
-                Error:{" "}
-                {addressesFetchError instanceof Error
-                  ? addressesFetchError.message
-                  : ""}
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {addresses.map((addr, idx) => (
-                  <Card key={idx} className="border">
-                    <CardContent className="flex justify-between items-center p-4">
-                      <div className="flex items-center space-x-3">
-                        <MapPin className="h-6 w-6 text-blue-600" />
-                        <div>
-                          <p className="font-medium">{addr.label}</p>
-                          <p className="text-sm text-gray-500">
-                            {addr.location.address}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            Lat: {addr.location.coordinates[1].toFixed(6)}, Lng:{" "}
-                            {addr.location.coordinates[0].toFixed(6)}
-                          </p>
-                        </div>
+    <div className="max-w-3xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Manage Addresses</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {addressesLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          ) : addressesError ? (
+            <p className="text-center text-red-500 py-8">
+              Failed to load addresses. Please try again later.
+            </p>
+          ) : addresses.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">No addresses found.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-1"
+                onClick={openAddDialog}
+              >
+                <Plus className="h-5 w-5" />
+                <span>Add New Address</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {addresses.map((addr) => (
+                <Card key={addr._id} className="border">
+                  <CardContent className="flex justify-between items-center p-4">
+                    <div className="flex items-center space-x-3">
+                      <MapPin className="h-6 w-6 text-blue-600" />
+                      <div>
+                        <p className="font-medium">{addr.label}</p>
+                        <p className="text-sm text-gray-500">
+                          {addr.location.address}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          Lat: {addr.location.coordinates[1].toFixed(6)}, Lng:{" "}
+                          {addr.location.coordinates[0].toFixed(6)}
+                        </p>
                       </div>
-                      <div className="space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center space-x-1"
-                          onClick={() => openEditDialog(addr)}
-                        >
-                          <Edit className="h-5 w-5" />
-                          <span>Edit</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-500"
-                          onClick={() => handleDelete(addr._id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card className="border-dashed border-gray-300">
-                  <CardContent className="flex justify-center p-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                      onClick={openAddDialog}
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span>Add New Address</span>
-                    </Button>
+                    </div>
+                    <div className="space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                        onClick={() => openEditDialog(addr)}
+                      >
+                        <Edit className="h-5 w-5" />
+                        <span>Edit</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500"
+                        onClick={() => handleDelete(addr._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Form Dialog remains unchanged */}
-        <Dialog
-          open={formDialogOpen}
-          onOpenChange={() => setFormDialogOpen(false)}
-        >
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">
-                {currentAddress ? "Edit Address" : "Add New Address"}
-              </DialogTitle>
-            </DialogHeader>
-
-            <Form {...form}>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Label */}
-                <FormField
-                  control={control}
-                  name="label"
-                  rules={{ required: "Label is required" }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Label (e.g. Home, Office)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Home" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Hidden lat & lng inputs (registered via `register`) */}
-                <input type="hidden" {...register("lat")} />
-                <input type="hidden" {...register("lng")} />
-
-                {/* Read‐only address string */}
-                <FormItem>
-                  <FormLabel>Selected Address</FormLabel>
-                  <FormControl>
-                    <Input value={addressDisplay} readOnly />
-                  </FormControl>
-                </FormItem>
-
-                {/* Inline Map Selector (fixed height container) */}
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-700">
-                    Select Location
-                  </p>
-                  <div className="h-[300px] w-full rounded-md overflow-hidden border border-gray-200">
-                    <Map
-                      coordinates={{ lat: watchedLat, lng: watchedLng }}
-                      onLocationSelect={handleLocationSelect}
-                    />
-                  </div>
-                  <p className="text-sm">
-                    Coordinates: {watchedLat.toFixed(6)},{" "}
-                    {watchedLng.toFixed(6)}
-                  </p>
-                </div>
-
-                <DialogFooter>
-                  <Button type="submit" className="w-full">
-                    {currentAddress ? "Save Changes" : "Add Address"}
+              ))}
+              <Card className="border-dashed border-gray-300">
+                <CardContent className="flex justify-center p-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={openAddDialog}
+                  >
+                    <Plus className="h-5 w-5" />
+                    <span>Add New Address</span>
                   </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-          {/* … */}
-        </Dialog>
-      </main>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={formDialogOpen} onOpenChange={setFormDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              {currentAddress ? "Edit Address" : "Add New Address"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={control}
+                name="label"
+                rules={{ required: "Label is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Label (e.g. Home, Office)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Home" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <input type="hidden" {...register("lat")} />
+              <input type="hidden" {...register("lng")} />
+              <FormItem>
+                <FormLabel>Selected Address</FormLabel>
+                <FormControl>
+                  <Input value={addressDisplay} readOnly />
+                </FormControl>
+              </FormItem>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">
+                  Select Location
+                </p>
+                <div className="h-[300px] w-full rounded-md overflow-hidden border border-gray-200">
+                  <Map
+                    coordinates={{ lat: watchedLat, lng: watchedLng }}
+                    onLocationSelect={handleLocationSelect}
+                  />
+                </div>
+                <p className="text-sm">
+                  Coordinates: {watchedLat.toFixed(6)}, {watchedLng.toFixed(6)}
+                </p>
+              </div>
+              <DialogFooter>
+                <Button type="submit" className="w-full">
+                  {currentAddress ? "Save Changes" : "Add Address"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -2,11 +2,12 @@
 import { AccountSettings } from "@/pages/profile/AccountSettings";
 import { AddressSettings } from "@/pages/profile/AddressSettings";
 import { ContactSettings } from "@/pages/profile/ContactSettings";
+import { Orders } from "@/pages/profile/Orders";
 import { Sidebar, Tab } from "@/pages/profile/Sidebar";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
-const VALID_TABS: Tab[] = ["account", "addresses", "contacts"];
+const VALID_TABS: Tab[] = ["account", "addresses", "contacts", "orders"];
 
 const ProfilePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +32,7 @@ const ProfilePage: React.FC = () => {
         {activeTab === "account" && <AccountSettings />}
         {activeTab === "addresses" && <AddressSettings />}
         {activeTab === "contacts" && <ContactSettings />}
+        {activeTab === "orders" && <Orders />}
       </main>
     </div>
   );

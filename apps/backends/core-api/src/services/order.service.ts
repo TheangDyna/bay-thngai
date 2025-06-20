@@ -112,6 +112,16 @@ export default class OrderService {
     return await this.orderRepository.getAllOrders(queryString);
   }
 
+  public async getUserOrders(
+    queryString: Record<string, any>
+  ): Promise<{ total: number; orders: OrderDoc[] }> {
+    const { email, ...query } = queryString;
+    return await this.orderRepository.getAllOrders({
+      ...query,
+      "customer.email": email
+    });
+  }
+
   public async getOrderByTranId(tranId: string) {
     const order = await this.orderRepository.findByTranId(tranId);
     if (!order) throw new Error("Order not found");

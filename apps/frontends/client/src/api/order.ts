@@ -62,3 +62,31 @@ export const useOrderTrackingQuery = (
     enabled: !!tranId
   });
 };
+
+import { useInfiniteQuery } from "@tanstack/react-query";
+
+export const useGetOrdersQuery = (
+  query: { email: string; sort?: string },
+  options?: { skip?: boolean }
+) => {
+  return useInfiniteQuery({
+    queryKey: ["orders", query.email, query.sort],
+    queryFn: async ({ pageParam = 1 }) => {
+      const params: Record<string, any> = {
+        page: pageParam,
+        limit: 10, // Adjust as needed
+        email: query.email
+      };
+      if (query.sort) params.sort = query.sort;
+
+      const response = await axiosInstance.get("/orders/user", {
+        params
+      });
+      return response.data; // Returns { status, total, results, data }
+    },
+    getNextPageParam: (last, pages) =>
+      pages.length * 10 < last.total ? pages.length + 1 : undefined,
+    initialPageParam: 1,
+    enabled: !options?.skip
+  });
+};

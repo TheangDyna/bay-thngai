@@ -130,7 +130,7 @@ export const ProductList: React.FC<ProductListProps> = ({
 
       {!hasNextPage && (
         <div className="flex flex-1 justify-center text-muted-foreground">
-          — That's all —
+          — End of results —
         </div>
       )}
 

@@ -25,6 +25,26 @@ export default class OrderController {
     });
   });
 
+  public getUserOrders = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      const email = req.query.email as string;
+      if (!email) {
+        res.status(400).json({
+          status: "error",
+          message: "Email is required"
+        });
+        return;
+      }
+      const { total, orders } = await this.service.getUserOrders(req.query);
+      res.status(200).json({
+        status: "success",
+        total,
+        results: orders.length,
+        data: orders
+      });
+    }
+  );
+
   public getOrderByTranId = catchAsync(async (req: Request, res: Response) => {
     const { tranId } = req.params;
     const order = await this.service.getOrderByTranId(tranId);

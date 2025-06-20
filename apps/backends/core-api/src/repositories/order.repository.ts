@@ -16,6 +16,7 @@ export default class OrderRepository {
   public async getAllOrders(
     queryString: Record<string, any>
   ): Promise<{ orders: OrderDoc[]; total: number }> {
+    console.log(queryString);
     const features = new APIFeatures<OrderDoc>(OrderModel.find(), queryString)
       .filter()
       .search(this.searchFields);
@@ -27,6 +28,9 @@ export default class OrderRepository {
     features.sort().select().paginate();
 
     const orders = await features.getQuery();
+
+    console.log(orders);
+
     return { total, orders };
   }
 

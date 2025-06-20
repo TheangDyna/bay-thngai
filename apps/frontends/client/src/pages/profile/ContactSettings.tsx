@@ -23,6 +23,7 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Edit, Phone, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -117,150 +118,151 @@ export function ContactSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <main className="flex-1 p-8">
-        <Card className="max-w-3xl mx-auto">
-          <CardHeader className="px-6 pt-6 pb-2">
-            <CardTitle className="text-xl">Manage Contacts</CardTitle>
-          </CardHeader>
-          <CardContent className="px-6 py-8 space-y-6">
-            {contactsLoading ? (
-              <p>Loading contacts…</p>
-            ) : contactsError ? (
-              <p className="text-red-500">
-                Error:{" "}
-                {contactsFetchError instanceof Error
-                  ? contactsFetchError.message
-                  : ""}
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {contacts.map((c) => (
-                  <Card key={c._id} className="border">
-                    <CardContent className="flex justify-between items-center p-4">
-                      <div className="flex items-center space-x-3">
-                        <Phone className="h-6 w-6 text-green-600" />
-                        <div>
-                          <p className="font-medium">{c.label}</p>
-                          <p className="text-sm text-gray-500">
-                            {formatPhone(c.value)}
-                          </p>
-                        </div>
+    <div className="max-w-3xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">Manage Contacts</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {contactsLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          ) : contactsError ? (
+            <p className="text-center text-red-500 py-8">
+              Failed to load contacts. Please try again later.
+            </p>
+          ) : contacts.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-4">No contacts found.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-1"
+                onClick={openAddDialog}
+              >
+                <Plus className="h-5 w-5" />
+                <span>Add New Contact</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {contacts.map((c) => (
+                <Card key={c._id} className="border">
+                  <CardContent className="flex justify-between items-center p-4">
+                    <div className="flex items-center space-x-3">
+                      <Phone className="h-6 w-6 text-green-600" />
+                      <div>
+                        <p className="font-medium">{c.label}</p>
+                        <p className="text-sm text-gray-500">
+                          {formatPhone(c.value)}
+                        </p>
                       </div>
-                      <div className="space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="flex items-center space-x-1"
-                          onClick={() => openEditDialog(c)}
-                        >
-                          <Edit className="h-5 w-5" />
-                          <span>Edit</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-500"
-                          onClick={() => handleDelete(c._id)}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card className="border-dashed border-gray-300">
-                  <CardContent className="flex justify-center p-4">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center space-x-1"
-                      onClick={openAddDialog}
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span>Add New Contact</span>
-                    </Button>
+                    </div>
+                    <div className="space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                        onClick={() => openEditDialog(c)}
+                      >
+                        <Edit className="h-5 w-5" />
+                        <span>Edit</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500"
+                        onClick={() => handleDelete(c._id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Dialog
-          open={formDialogOpen}
-          onOpenChange={() => setFormDialogOpen(false)}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">
-                {currentContact ? "Edit Contact" : "Add New Contact"}
-              </DialogTitle>
-            </DialogHeader>
-            <Form {...form}>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-6 mt-4"
-              >
-                {/* Label Input */}
-                <FormField
-                  control={control}
-                  name="label"
-                  rules={{ required: "Label is required" }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Label (e.g. Primary, Secondary)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Primary" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Phone Input */}
-                <FormField
-                  control={control}
-                  name="value"
-                  rules={{
-                    required: "Phone number is required",
-                    validate: (val) => {
-                      const raw = val.replace(/\s+/g, "");
-                      return (
-                        PHONE_REGEX.test(raw) ||
-                        "Use format +855XXXXXXXX or +855XXXXXXXXX"
-                      );
-                    }
-                  }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="+85512123456"
-                          {...field}
-                          onBlur={(e) => {
-                            // Remove any spaces on blur; keep raw digits
-                            const raw = e.target.value.replace(/\s+/g, "");
-                            field.onChange(raw);
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <DialogFooter>
-                  <Button type="submit" className="w-full">
-                    {currentContact ? "Save Changes" : "Add Contact"}
+              ))}
+              <Card className="border-dashed border-gray-300">
+                <CardContent className="flex justify-center p-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                    onClick={openAddDialog}
+                  >
+                    <Plus className="h-5 w-5" />
+                    <span>Add New Contact</span>
                   </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </main>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={formDialogOpen} onOpenChange={setFormDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
+              {currentContact ? "Edit Contact" : "Add New Contact"}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+              <FormField
+                control={control}
+                name="label"
+                rules={{ required: "Label is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Label (e.g. Primary, Secondary)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Primary" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="value"
+                rules={{
+                  required: "Phone number is required",
+                  validate: (val) => {
+                    const raw = val.replace(/\s+/g, "");
+                    return (
+                      PHONE_REGEX.test(raw) ||
+                      "Use format +855XXXXXXXX or +855XXXXXXXXX"
+                    );
+                  }
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+85512123456"
+                        {...field}
+                        onBlur={(e) => {
+                          const raw = e.target.value.replace(/\s+/g, "");
+                          field.onChange(raw);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit" className="w-full">
+                  {currentContact ? "Save Changes" : "Add Contact"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

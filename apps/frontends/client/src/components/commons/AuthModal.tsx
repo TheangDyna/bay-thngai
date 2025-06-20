@@ -20,6 +20,7 @@ import {
   LoginSchema,
   SignupSchema
 } from "@/validators/auth.validators";
+import { Link } from "react-router-dom";
 
 const AuthModal = () => {
   const [mode, setMode] = useState<"signin" | "signup" | "confirm">("signin");
@@ -125,7 +126,7 @@ const AuthModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="secondary">
           {mode === "signin"
             ? "Sign In"
             : mode === "signup"
@@ -199,7 +200,7 @@ const AuthModal = () => {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-1 top-8 p-0 hover:bg-transparent"
+                    className="absolute right-1 top-1/3 p-0 hover:bg-transparent"
                     onClick={() => setShowPassword((s) => !s)}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -212,7 +213,7 @@ const AuthModal = () => {
                 </div>
                 <div className="w-full flex items-center justify-end">
                   <Button asChild variant="link" className="text-primary">
-                    <a href="/forgot-password">Forgot Password?</a>
+                    <Link to="/#">Forgot Password?</Link>
                   </Button>
                 </div>
                 <Button
@@ -269,7 +270,7 @@ const AuthModal = () => {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute right-1 top-8 p-0 hover:bg-transparent"
+                    className="absolute right-1 top-1/3 p-0 hover:bg-transparent"
                     onClick={() => setShowPassword((s) => !s)}
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -288,6 +289,7 @@ const AuthModal = () => {
                     placeholder="••••••••"
                     {...signupForm.register("confirmPassword")}
                   />
+
                   {signupForm.formState.errors.confirmPassword && (
                     <p className="text-xs text-destructive">
                       {signupForm.formState.errors.confirmPassword.message}

@@ -1,23 +1,18 @@
-const Promotion = () => {
+interface PromotionProps {
+  src: string;
+}
+
+export const Promotion = ({ src }: PromotionProps) => {
   return (
-    <div>
-      <div className="mx-auto px-10">
-        <a
-          className="h-full group flex justify-center relative overflow-hidden"
-          href="#"
-        >
-          <img
-            alt="Super Discount 70% Off"
-            decoding="async"
-            data-nimg="1"
-            className="object-cover w-full"
-            src="/promotion.webp"
-            style={{ color: "transparent" }}
-          />
-        </a>
-      </div>
+    <div className="mx-auto px-10">
+      <a className="h-full" href="#">
+        <img
+          alt="promotion"
+          className="object-cover w-full"
+          src={src}
+          style={{ color: "transparent" }}
+        />
+      </a>
     </div>
   );
 };
-
-export default Promotion;

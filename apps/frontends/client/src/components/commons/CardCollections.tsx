@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface ICardCollectionsProps {
   title: string;
@@ -28,12 +29,12 @@ const CardCollections: React.FC<ICardCollectionsProps> = ({
         <p className="text-white text-sm mb-4 text-center px-4">
           {description}
         </p>
-        <a
-          href={path}
+        <Link
+          to={path}
           className="px-4 py-2 bg-white text-black rounded-full font-semibold transition-colors duration-300 hover:bg-gray-200"
         >
           Explore
-        </a>
+        </Link>
       </div>
     </div>
   );

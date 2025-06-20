@@ -1,26 +1,17 @@
-// src/components/PushNotification/PushNotification.tsx
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { config } from "@/configs/config";
 import axiosInstance from "@/utils/axiosInstance";
 import { urlBase64ToUint8Array } from "@/utils/pushNotifications";
 import React, { useEffect, useState } from "react";
 
-const PushNotification: React.FC = () => {
+export const PushNotification: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [registration, setRegistration] =
     useState<ServiceWorkerRegistration | null>(null);
-
-  // Store the exact endpoint so we can DELETE it later
   const [endpoint, setEndpoint] = useState<string>("");
-
-  // Disable buttons until the initial SW + backend check completes
   const [initializing, setInitializing] = useState(true);
-
-  // Tracks subscribe/unsubscribe API calls
   const [loading, setLoading] = useState(false);
 
-  // 1️⃣ On mount: register SW and reconcile with backend
   useEffect(() => {
     if (!("serviceWorker" in navigator && "PushManager" in window)) {
       console.warn("Browser does not support Push notifications.");
@@ -40,11 +31,9 @@ const PushNotification: React.FC = () => {
           setEndpoint(ep);
 
           try {
-            // Ask backend if this endpoint still exists
             await axiosInstance.get(`/push/check/${encodeURIComponent(ep)}`);
             setIsSubscribed(true);
           } catch {
-            // Backend no longer has it → clean up locally
             console.warn(
               "Server doesn't recognize this endpoint anymore; cleaning up locally."
             );
@@ -53,7 +42,6 @@ const PushNotification: React.FC = () => {
             setEndpoint("");
           }
         } else {
-          // No local subscription → unsubscribed
           setIsSubscribed(false);
           setEndpoint("");
         }
@@ -66,7 +54,6 @@ const PushNotification: React.FC = () => {
       });
   }, []);
 
-  // 2️⃣ Subscribe handler
   const subscribe = async () => {
     if (!registration) return;
     setLoading(true);
@@ -89,7 +76,6 @@ const PushNotification: React.FC = () => {
     }
   };
 
-  // 3️⃣ Unsubscribe handler
   const unsubscribe = async () => {
     if (!registration) return;
     setLoading(true);
@@ -110,29 +96,21 @@ const PushNotification: React.FC = () => {
   };
 
   return (
-    <Card className="max-w-md mx-auto my-6">
-      <CardContent>
-        <h2 className="text-xl font-semibold mb-4">Push Notifications</h2>
-
-        <Button
-          onClick={isSubscribed ? unsubscribe : subscribe}
-          disabled={loading || initializing}
-          variant={isSubscribed ? "destructive" : "default"}
-          className="w-full"
-        >
-          {initializing
-            ? "Checking..."
-            : loading
-              ? isSubscribed
-                ? "Disabling…"
-                : "Enabling…"
-              : isSubscribed
-                ? "Disable Notifications"
-                : "Enable Notifications"}
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="flex items-center justify-between">
+      <div>
+        <h3 className="text-sm">Enable Notifications</h3>
+        <p className="text-xs text-gray-500">
+          Receive updates about orders & promotions
+        </p>
+      </div>
+      <Switch
+        checked={isSubscribed}
+        onCheckedChange={(checked) => {
+          if (checked) subscribe();
+          else unsubscribe();
+        }}
+        disabled={loading || initializing}
+      />
+    </div>
   );
 };
-
-export default PushNotification;

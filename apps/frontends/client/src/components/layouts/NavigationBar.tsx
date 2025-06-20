@@ -21,44 +21,41 @@ import { Link, useLocation } from "react-router-dom";
 const categories = [
   {
     name: "Fresh Vegetable",
-    path: "/categories/fresh-vegetable",
+    path: "#",
     description: "Farm-fresh vegetables delivered daily"
   },
   {
     name: "Diet Nutrition",
-    path: "/categories/diet-nutrition",
+    path: "#",
     description: "Nutritious options for healthy living"
   },
   {
     name: "Healthy Food",
-    path: "/categories/healthy-food",
+    path: "#",
     description: "Wholesome meals and ingredients"
   },
   {
     name: "Organic Food",
-    path: "/categories/organic-food",
+    path: "#",
     description: "Certified organic products"
   }
 ];
 
 const dietary = [
-  { name: "Vegan", path: "/dietary/vegan", description: "Plant-based options" },
+  { name: "Vegan", path: "#", description: "Plant-based options" },
   {
     name: "Gluten-Free",
-    path: "/dietary/gluten-free",
+    path: "#",
     description: "Safe for celiac and gluten sensitivity"
   },
   {
     name: "Keto",
-    path: "/dietary/keto",
+    path: "#",
     description: "Low-carb, high-fat diet options"
   }
 ];
 
-const navigationLinks = [
-  { to: "/search", label: "Search" },
-  { to: "/shops", label: "Shop" }
-];
+const navigationLinks = [{ to: "/search", label: "Search" }];
 
 export function NavigationBar() {
   const location = useLocation();

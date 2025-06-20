@@ -1,27 +1,42 @@
 import { Search } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Banner = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  interface SearchEvent extends React.FormEvent<HTMLFormElement> {}
+
+  const handleSearch = (e: SearchEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div
       className="w-full bg-no-repeat bg-cover bg-center flex items-center bg-fill-thumbnail hero-banner-six min-h-[400px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[650px] py-20 py:pt-24 mb-5 2xl:bg-center"
       style={{
-        backgroundImage: "url(/banner-4.webp)",
+        backgroundImage: "url(/banner-1.png)",
         backgroundPosition: "center center"
       }}
     >
       <div className="mx-auto h-full flex flex-col text-center px-6 xl:max-w-[750px] 2xl:max-w-[850px] max-w-[480px] md:max-w-[550px]">
         <div className="text-center">
-          <h2 className=" text-3xl md:text-4xl font-manrope font-extrabold leading-snug md:leading-tight xl:leading-[1.3em] mb-3 md:mb-4 xl:mb-3 -mt-2 xl:-mt-3 2xl:-mt-4 text-brand-tree-dark xl:text-5xl 2xl:text-[55px]">
-            Healthy vegetable that you deserve to eat fresh
+          <h2 className="text-secondary text-3xl md:text-4xl font-manrope font-extrabold leading-snug md:leading-tight xl:leading-[1.3em] mb-3 md:mb-4 xl:mb-3 -mt-2 xl:-mt-3 2xl:-mt-4 text-brand-tree-dark xl:text-5xl 2xl:text-[55px]">
+            Delicious meals crafted by top chefs you deserve to savor
           </h2>
-          <p className=" text-base md:text-[17px] xl:text-lg leading-7 md:leading-8 xl:leading-[1.92em] xl:px-16 text-brand-dark text-opacity-80 2xl:px-32">
-            We source and sell the very best beef, lamb and pork, sourced with
-            the greatest care from farmer.
+          <p className="text-secondary text-base md:text-[17px] xl:text-lg leading-7 md:leading-8 xl:leading-[1.92em] xl:px-16 text-brand-dark text-opacity-80 2xl:px-32">
+            We partner with renowned restaurants to deliver the finest cooked
+            dishes, prepared with passion and expertise.
           </p>
           <div className="hidden lg:block max-w-[700px] mx-auto md:pt-1 lg:pt-3">
             <div className="lg:flex">
               <form
                 className="relative flex w-full mt-6 rounded-md border border-gray-300 shadow-lg bg-white"
+                onSubmit={handleSearch}
                 noValidate
                 role="search"
               >
@@ -35,7 +50,8 @@ const Banner = () => {
                     placeholder="What are you looking..."
                     aria-label="Search"
                     autoComplete="off"
-                    defaultValue=""
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </label>
                 <button

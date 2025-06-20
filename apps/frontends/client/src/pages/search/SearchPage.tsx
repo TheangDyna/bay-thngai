@@ -13,7 +13,7 @@ const SearchPage: React.FC = () => {
   const [params, setParams] = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [sortBy, setSortBy] = useState(params.get("sort") || "");
-  const [search, setSearch] = useState(params.get("search") || "");
+  const [search, setSearch] = useState(params.get("q") || "");
   const [selectedCuisines, setSelectedCuisines] = useState<Cuisine[]>([]);
   const [debouncedSearch] = useDebounce(search, 1000);
   const [totalCount, setTotalCount] = useState(0);
@@ -47,7 +47,7 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     const newParams: any = {};
     if (sortBy) newParams.sort = sortBy;
-    if (search) newParams.search = search;
+    if (search) newParams.q = search;
     if (selectedCuisines.length)
       newParams.cuisines = selectedCuisines.map((c) => c._id).join(",");
     setParams(newParams, { replace: true });

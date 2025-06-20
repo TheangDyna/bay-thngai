@@ -1,5 +1,6 @@
 // src/components/profile/AccountSettings.tsx
 import { useUpdateUserInfoMutation } from "@/api/userInfo";
+import { PushNotification } from "@/components/commons/PushNotification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -467,15 +468,7 @@ export const AccountSettings: React.FC = () => {
       <Card className="max-w-3xl mx-auto">
         <CardContent className="px-6 py-8">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm">Enable Notifications</h3>
-                <p className="text-xs text-gray-500">
-                  Receive updates about orders & promotions
-                </p>
-              </div>
-              <Switch checked />
-            </div>
+            <PushNotification />
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm">Share Profile Data</h3>

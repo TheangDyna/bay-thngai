@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Facebook, Instagram, Send, Twitter, Youtube } from "lucide-react";
+import { Send } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
@@ -22,29 +22,33 @@ export default function Footer() {
               food market you can blindly trust
             </p>
             <div className="flex gap-3">
-              <Link
-                to="#"
-                className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
-              >
-                <Facebook className="w-4 h-4 text-white" />
+              <Link to="#">
+                <img
+                  src="/social-media/facebook.webp"
+                  alt="facebook"
+                  className="w-8 h-8"
+                />
               </Link>
-              <Link
-                to="#"
-                className="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-colors"
-              >
-                <Twitter className="w-4 h-4 text-white" />
+              <Link to="#">
+                <img
+                  src="/social-media/twitter.webp"
+                  alt="twitter"
+                  className="w-8 h-8"
+                />
               </Link>
-              <Link
-                to="#"
-                className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
-              >
-                <Instagram className="w-4 h-4 text-white" />
+              <Link to="#">
+                <img
+                  src="/social-media/instagram.webp"
+                  alt="instagram"
+                  className="w-8 h-8"
+                />
               </Link>
-              <Link
-                to="#"
-                className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
-              >
-                <Youtube className="w-4 h-4 text-white" />
+              <Link to="#">
+                <img
+                  src="/social-media/youtube.webp"
+                  alt="youtube"
+                  className="w-8 h-8"
+                />
               </Link>
             </div>
           </div>
@@ -175,21 +179,21 @@ export default function Footer() {
 
           {/* Payment Methods */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded text-white text-xs font-bold flex items-center justify-center">
-              MC
-            </div>
-            <div className="w-10 h-6 bg-blue-600 rounded text-white text-xs font-bold flex items-center justify-center">
-              VISA
-            </div>
-            <div className="w-10 h-6 bg-blue-500 rounded text-white text-xs font-bold flex items-center justify-center">
-              PP
-            </div>
-            <div className="w-10 h-6 bg-green-600 rounded text-white text-xs font-bold flex items-center justify-center">
-              JCB
-            </div>
-            <div className="w-10 h-6 bg-red-600 rounded text-white text-xs font-bold flex items-center justify-center">
-              SK
-            </div>
+            <img
+              src="/payments/mc.png"
+              alt="mc"
+              className="h-9 w-h-9 object-contain"
+            />
+            <img
+              src="/payments/visa.png"
+              alt="visa"
+              className="h-10 w-10 object-contain"
+            />
+            <img
+              src="/payments/pp.png"
+              alt="pp"
+              className="h-16 w-16 object-contain"
+            />
           </div>
         </div>
       </div>

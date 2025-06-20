@@ -54,33 +54,33 @@ const CardPackageSwiper: React.FC = () => {
         <SwiperSlide>
           <CardPackage
             backgroundColor="#ffeed6"
-            description="Get your clean on supplies."
-            imageUrl="/package-banner/1.webp"
-            title="Spring cleaning for home appliance"
+            description="Savor authentic Italian dishes."
+            imageUrl="/package-banner/1.png"
+            title="Chef’s Italian Feast Package"
           />
         </SwiperSlide>
         <SwiperSlide>
           <CardPackage
             backgroundColor="#d9ebd2"
-            description="Get your clean on supplies."
-            imageUrl="/package-banner/2.webp"
-            title="Your pet choice for fresh healthy food"
+            description="Enjoy spicy Asian culinary delights."
+            imageUrl="/package-banner/2.png"
+            title="Asian Fusion Chef Special"
           />
         </SwiperSlide>
         <SwiperSlide>
           <CardPackage
             backgroundColor="#dbe5ef"
-            description="Get your clean on supplies."
-            imageUrl="/package-banner/3.webp"
-            title="Washing item with discount product"
+            description="Taste gourmet French cuisine."
+            imageUrl="/package-banner/3.png"
+            title="French Gourmet Meal Set"
           />
         </SwiperSlide>
         <SwiperSlide>
           <CardPackage
             backgroundColor="#EFD8D4"
-            description="Get your clean on supplies."
-            imageUrl="/package-banner/4.webp"
-            title="Fresh quality meat item with discount"
+            description="Indulge in savory Mediterranean flavors."
+            imageUrl="/package-banner/4.png"
+            title="Mediterranean Chef’s Delight"
           />
         </SwiperSlide>
       </Swiper>

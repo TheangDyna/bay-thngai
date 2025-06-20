@@ -4,9 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
-
 import CheckoutPage from "@/pages/checkout/CheckoutPage";
-import CheckoutTestPage from "@/pages/checkout/CheckoutTestPage";
 import Home from "@/pages/home/Home";
 import Loading from "@/pages/Loading";
 import NotFound from "@/pages/NotFound";
@@ -16,8 +14,6 @@ import PaymentReturn from "@/pages/payment/payment-return";
 import ProductDetailPage from "@/pages/product/ProductDetailPage";
 import ProfilePage from "@/pages/profile/ProfilePage";
 import Search from "@/pages/search/SearchPage";
-import Shop from "@/pages/shop/Shop";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
@@ -49,12 +45,7 @@ const AppRoutes: React.FC = () => {
                       path="product/:productId"
                       element={<ProductDetailPage />}
                     />
-                    <Route path="shops" element={<Shop />} />
                     <Route path="checkout" element={<CheckoutPage />} />
-                    <Route
-                      path="checkout-test"
-                      element={<CheckoutTestPage />}
-                    />
                     <Route path="payment-cancel" element={<PaymentCancel />} />
                     <Route path="payment-return" element={<PaymentReturn />} />
                     <Route

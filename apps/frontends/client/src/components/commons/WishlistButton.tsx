@@ -37,12 +37,7 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
         variant: "destructive",
         description: "Please sign in to manage your wishlist.",
         action: (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="border-white text-white hover:bg-white hover:text-black"
-          >
+          <Button variant="link" className="text-secondary" size="sm">
             Sign In
           </Button>
         )

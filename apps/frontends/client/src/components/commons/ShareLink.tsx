@@ -1,6 +1,5 @@
 "use client";
 
-import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Copy } from "lucide-react";
 
 interface IShareLinkProps {
   isOpenShareLink: boolean;
@@ -69,28 +69,28 @@ const ShareLink: React.FC<IShareLinkProps> = ({
               <div className="flex items-center gap-4">
                 <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
                   <img
-                    src="/social-media/facebook.png"
+                    src="/social-media/facebook.webp"
                     alt="facebook"
                     className="w-8 h-8"
                   />
                 </button>
                 <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
                   <img
-                    src="/social-media/messenger.png"
+                    src="/social-media/messenger.webp"
                     alt="messenger"
                     className="w-8 h-8"
                   />
                 </button>
                 <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
                   <img
-                    src="/social-media/telegram.png"
+                    src="/social-media/telegram.webp"
                     alt="telegram"
                     className="w-8 h-8"
                   />
                 </button>
                 <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
                   <img
-                    src="/social-media/tiktok.png"
+                    src="/social-media/tiktok.webp"
                     alt="tiktok"
                     className="w-8 h-8"
                   />
@@ -119,12 +119,7 @@ const ShareLink: React.FC<IShareLinkProps> = ({
                     className="text-gray-800 bg-gray-100 rounded-lg focus:ring focus:ring-gray-200"
                   />
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleCopy}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg"
-                >
+                <Button type="button" size="sm" onClick={handleCopy}>
                   <span className="sr-only">Copy</span>
                   <Copy className="w-5 h-5" />
                 </Button>
@@ -136,7 +131,6 @@ const ShareLink: React.FC<IShareLinkProps> = ({
             <DialogClose asChild>
               <Button
                 type="button"
-                variant="secondary"
                 className="w-full bg-gray-800 text-white hover:bg-gray-700"
               >
                 Close

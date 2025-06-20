@@ -1,3 +1,4 @@
+import Footer from "@/components/layouts/Footer";
 import Banner from "@/pages/home/Banner";
 import { BestSellersSection } from "@/pages/home/BestSellersSection";
 import CardPackageSwiper from "@/pages/home/CardPackageSwiper";
@@ -21,6 +22,7 @@ const Home: React.FC = () => {
       <TopRatedsSection />
       <CollectionSection />
       <DownloadBanner />
+      <Footer />
     </div>
   );
 };

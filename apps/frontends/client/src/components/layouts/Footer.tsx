@@ -1,164 +1,198 @@
-import { Facebook, PhoneCall, Twitter, Youtube } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Facebook, Instagram, Send, Twitter, Youtube } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <>
-      <footer className="relative z-10 bg-white shadow-xl overflow-hidden w-full pb-10 pt-20 px-10 lg:pb-20 lg:pt-[120px] flex justify-center items-center">
-        <div className="container text-center">
-          <div className="flex flex-wrap justify-center">
-            <div className="w-full px-4 sm:w-2/3 lg:w-3/12">
-              <div className="mb-10 w-full text-left">
-                <a href="/#" className="mb-6 inline-block max-w-[160px]">
-                  <img
-                    src="/bay-thngai-logo.svg"
-                    alt="logo"
-                    className="w-[150px] h-[150px] mx-auto"
-                  />
-                </a>
-                <p className="mb-7 text-base text-body-color">
-                  Sed ut perspiciatis undmnis is iste natus error sit amet
-                  voluptatem totam rem aperiam.
-                </p>
-                <p className="flex items-center justify-start text-sm font-medium text-dark">
-                  <span className="mr-3 text-primary">
-                    <PhoneCall className="w-4 h-4" />
-                  </span>
-                  <span>+855 12 321 123</span>
-                </p>
-              </div>
+    <footer className="bg-white border-t border-gray-200">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Company Info */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <img
+                src="/bay-thngai-logo.svg"
+                alt="Bay Thngai logo"
+                className="w-16 h-16"
+              />
             </div>
+            <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+              We offer high-quality foods and the best delivery service, and the
+              food market you can blindly trust
+            </p>
+            <div className="flex gap-3">
+              <Link
+                to="#"
+                className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+              >
+                <Facebook className="w-4 h-4 text-white" />
+              </Link>
+              <Link
+                to="#"
+                className="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-colors"
+              >
+                <Twitter className="w-4 h-4 text-white" />
+              </Link>
+              <Link
+                to="#"
+                className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+              >
+                <Instagram className="w-4 h-4 text-white" />
+              </Link>
+              <Link
+                to="#"
+                className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+              >
+                <Youtube className="w-4 h-4 text-white" />
+              </Link>
+            </div>
+          </div>
 
-            <LinkGroup header="Resources">
-              <NavLink link="/#" label="SaaS Development" />
-              <NavLink link="/#" label="Our Products" />
-              <NavLink link="/#" label="User Flow" />
-              <NavLink link="/#" label="User Strategy" />
-            </LinkGroup>
-            <LinkGroup header="Company">
-              <NavLink link="/#" label="About TailGrids" />
-              <NavLink link="/#" label="Contact & Support" />
-              <NavLink link="/#" label="Success History" />
-              <NavLink link="/#" label="Setting & Privacy" />
-            </LinkGroup>
-            <LinkGroup header="Quick Links">
-              <NavLink link="/#" label="Premium Support" />
-              <NavLink link="/#" label="Our Services" />
-              <NavLink link="/#" label="Know Our Team" />
-              <NavLink link="/#" label="Download App" />
-            </LinkGroup>
+          {/* About Us */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">About Us</h3>
+            <div className="space-y-3">
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                About us
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Contact us
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                About team
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Customer Support
+              </Link>
+            </div>
+          </div>
 
-            <div className="w-full px-4 sm:w-1/2 lg:w-3/12">
-              <div className="mb-10 w-full">
-                <h4 className="mb-9 text-lg font-semibold text-dark">
-                  Follow Us On
-                </h4>
-                <div className="mb-6 flex items-center justify-center space-x-4">
-                  <Youtube className="w-6 h-6" />
-                  <Facebook className="w-6 h-6" />
-                  <Twitter className="w-6 h-6" />
-                </div>
-                <p className="text-base text-body-color dark:text-dark-6">
-                  &copy; 2025 Bay Thngai
-                </p>
-              </div>
+          {/* Our Information */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Our Information
+            </h3>
+            <div className="space-y-3">
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Privacy policy update
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Terms & conditions
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Return Policy
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Site Map
+              </Link>
+            </div>
+          </div>
+
+          {/* Community */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Community</h3>
+            <div className="space-y-3">
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Announcements
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Answer center
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Discussion boards
+              </Link>
+              <Link
+                to="#"
+                className="block text-gray-600 hover:text-gray-900 transition-colors text-sm"
+              >
+                Giving works
+              </Link>
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-4">Subscribe Now</h3>
+            <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+              Subscribe your email for newsletter and featured news based on
+              your interest
+            </p>
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Write your email here"
+                className="flex-1 text-sm"
+              />
+              <Button
+                size="sm"
+                className="bg-emerald-500 hover:bg-emerald-600 px-3"
+              >
+                <Send className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>
-        <div>
-          <span className="absolute bottom-0 left-0 z-[-1]">
-            <svg
-              width={217}
-              height={229}
-              viewBox="0 0 217 229"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M-64 140.5C-64 62.904 -1.096 1.90666e-05 76.5 1.22829e-05C154.096 5.49924e-06 217 62.904 217 140.5C217 218.096 154.096 281 76.5 281C-1.09598 281 -64 218.096 -64 140.5Z"
-                fill="url(#paint0_linear_1179_5)"
-              />
-              <defs>
-                <linearGradient
-                  id="paint0_linear_1179_5"
-                  x1="76.5"
-                  y1={281}
-                  x2="76.5"
-                  y2="1.22829e-05"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#3056D3" stopOpacity="0.08" />
-                  <stop offset={1} stopColor="#C4C4C4" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-            </svg>
-          </span>
-          <span className="absolute right-10 top-10 z-[-1]">
-            <svg
-              width={75}
-              height={75}
-              viewBox="0 0 75 75"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M37.5 -1.63918e-06C58.2107 -2.54447e-06 75 16.7893 75 37.5C75 58.2107 58.2107 75 37.5 75C16.7893 75 -7.33885e-07 58.2107 -1.63918e-06 37.5C-2.54447e-06 16.7893 16.7893 -7.33885e-07 37.5 -1.63918e-06Z"
-                fill="url(#paint0_linear_1179_4)"
-              />
-              <defs>
-                <linearGradient
-                  id="paint0_linear_1179_4"
-                  x1="-1.63917e-06"
-                  y1="37.5"
-                  x2={75}
-                  y2="37.5"
-                  gradientUnits="userSpaceOnUse"
-                >
-                  <stop stopColor="#13C296" stopOpacity="0.31" />
-                  <stop offset={1} stopColor="#C4C4C4" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-            </svg>
-          </span>
-        </div>
-      </footer>
-    </>
-  );
-};
 
-export default Footer;
+        {/* Bottom Section */}
+        <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-600 text-sm">
+            © Copyright 2025 REDQ All rights reserved
+          </p>
 
-interface ILinkGroupProps {
-  children: React.ReactNode;
-  header: string;
-}
-
-interface INavLinkProps {
-  link: string;
-  label: string;
-}
-
-const LinkGroup: React.FC<ILinkGroupProps> = ({ children, header }) => {
-  return (
-    <>
-      <div className="w-full px-4 sm:w-1/2 lg:w-2/12">
-        <div className="mb-10 w-full text-left">
-          <h4 className="mb-9 text-lg font-semibold text-dark">{header}</h4>
-          <ul className="space-y-3">{children}</ul>
+          {/* Payment Methods */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-6 bg-gradient-to-r from-orange-400 to-red-500 rounded text-white text-xs font-bold flex items-center justify-center">
+              MC
+            </div>
+            <div className="w-10 h-6 bg-blue-600 rounded text-white text-xs font-bold flex items-center justify-center">
+              VISA
+            </div>
+            <div className="w-10 h-6 bg-blue-500 rounded text-white text-xs font-bold flex items-center justify-center">
+              PP
+            </div>
+            <div className="w-10 h-6 bg-green-600 rounded text-white text-xs font-bold flex items-center justify-center">
+              JCB
+            </div>
+            <div className="w-10 h-6 bg-red-600 rounded text-white text-xs font-bold flex items-center justify-center">
+              SK
+            </div>
+          </div>
         </div>
       </div>
-    </>
+    </footer>
   );
-};
-
-const NavLink: React.FC<INavLinkProps> = ({ link, label }) => {
-  return (
-    <li>
-      <a
-        href={link}
-        className="inline-block text-base leading-loose text-body-color hover:text-primary"
-      >
-        {label}
-      </a>
-    </li>
-  );
-};
+}

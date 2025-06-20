@@ -361,7 +361,11 @@ const AuthModal = () => {
               onClick={handleGoogle}
               disabled={isLoading}
             >
-              <img src="/google.webp" alt="Google" className="h-5 w-5" />
+              <img
+                src="/social-media/google.webp"
+                alt="Google"
+                className="h-5 w-5"
+              />
               <span>Google</span>
             </Button>
             <Button
@@ -369,7 +373,11 @@ const AuthModal = () => {
               className="flex items-center space-x-2 rounded-full"
               onClick={() => toast({ description: "Facebook not set up." })}
             >
-              <img src="/facebook.png" alt="Facebook" className="h-5 w-5" />
+              <img
+                src="/social-media/facebook.webp"
+                alt="Facebook"
+                className="h-5 w-5"
+              />
               <span>Facebook</span>
             </Button>
           </div>

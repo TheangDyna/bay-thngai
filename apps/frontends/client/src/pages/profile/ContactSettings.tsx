@@ -51,8 +51,7 @@ export function ContactSettings() {
   const {
     data: contacts = [],
     isLoading: contactsLoading,
-    isError: contactsError,
-    error: contactsFetchError
+    isError: contactsError
   } = useGetContactsQuery();
   const addContactMutation = useAddContactMutation();
   const updateContactMutation = useUpdateContactMutation();

@@ -40,8 +40,7 @@ export function AddressSettings() {
   const {
     data: addresses = [],
     isLoading: addressesLoading,
-    isError: addressesError,
-    error: addressesFetchError
+    isError: addressesError
   } = useGetAddressesQuery();
   const addAddressMutation = useAddAddressMutation();
   const updateAddressMutation = useUpdateAddressMutation();

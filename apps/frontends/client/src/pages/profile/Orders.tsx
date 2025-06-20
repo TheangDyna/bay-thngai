@@ -171,7 +171,9 @@ export const Orders: React.FC = () => {
                         </div>
                       </div>
                       <Button variant="outline" asChild>
-                        <Link to={`/order/${order.tranId}`}>View Details</Link>
+                        <Link to={`/order-track/${order.tranId}`}>
+                          View Details
+                        </Link>
                       </Button>
                     </div>
                   </div>

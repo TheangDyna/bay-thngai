@@ -27,16 +27,16 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
 
   return (
     <div className="group w-full h-20 relative flex items-center gap-2 border-b last:border-none">
-      <div className="w-16 h-16 bg-muted rounded-sm overflow-hidden">
+      <div className="w-16 h-16 bg-muted rounded-sm overflow-hidden relative">
         <img src={image} alt={name} className="w-full h-full object-cover" />
+        <div className="absolute top-0 right-0 group-hover:opacity-30 bg-black opacity-0 w-full h-full transition" />
       </div>
 
       <button
         onClick={onRemove}
-        className="absolute top-1 right-1 p-1 rounded-full bg-destructive
-                   opacity-0 group-hover:opacity-100 transition"
+        className="absolute top-1/3 left-5 p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
       >
-        <X className="w-4 h-4 text-white" />
+        <X className="w-5 h-5 text-white" />
       </button>
 
       <div className="flex-1 flex justify-between items-start p-2">

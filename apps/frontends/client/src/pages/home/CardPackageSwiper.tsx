@@ -55,7 +55,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#ffeed6"
             description="Savor authentic Italian dishes."
-            imageUrl="/package-banner/1.png"
+            imageUrl="/package-banner/1.webp"
             title="Chef’s Italian Feast Package"
           />
         </SwiperSlide>
@@ -63,7 +63,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#d9ebd2"
             description="Enjoy spicy Asian culinary delights."
-            imageUrl="/package-banner/2.png"
+            imageUrl="/package-banner/2.webp"
             title="Asian Fusion Chef Special"
           />
         </SwiperSlide>
@@ -71,7 +71,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#dbe5ef"
             description="Taste gourmet French cuisine."
-            imageUrl="/package-banner/3.png"
+            imageUrl="/package-banner/3.webp"
             title="French Gourmet Meal Set"
           />
         </SwiperSlide>
@@ -79,7 +79,7 @@ const CardPackageSwiper: React.FC = () => {
           <CardPackage
             backgroundColor="#EFD8D4"
             description="Indulge in savory Mediterranean flavors."
-            imageUrl="/package-banner/4.png"
+            imageUrl="/package-banner/4.webp"
             title="Mediterranean Chef’s Delight"
           />
         </SwiperSlide>

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-200">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="lg:col-span-1">
@@ -172,7 +172,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-gray-200 mt-5 pt-2 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 text-sm">
             © Copyright 2025 REDQ All rights reserved
           </p>
@@ -180,17 +180,17 @@ export default function Footer() {
           {/* Payment Methods */}
           <div className="flex items-center gap-3">
             <img
-              src="/payments/mc.png"
+              src="/payments/mc.webp"
               alt="mc"
               className="h-9 w-h-9 object-contain"
             />
             <img
-              src="/payments/visa.png"
+              src="/payments/visa.webp"
               alt="visa"
               className="h-10 w-10 object-contain"
             />
             <img
-              src="/payments/pp.png"
+              src="/payments/pp.webp"
               alt="pp"
               className="h-16 w-16 object-contain"
             />

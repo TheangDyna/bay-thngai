@@ -6,7 +6,8 @@ import {
   ConfirmRegisterSchema,
   LoginSchema,
   RegisterSchema,
-  ResendConfirmCodeSchema
+  ResendConfirmCodeSchema,
+  UpdateInfoSchema
 } from "../validators/auth.validators";
 
 const router = Router();
@@ -35,7 +36,6 @@ router.get("/me", authController.getMe);
 
 router.post("/forgot-password"); // not yet
 router.patch("/update-my-password"); // not yet
-router.patch("/update-me"); // not yet
 router.delete("/delete-me"); // not yet
 
 router.post("/logout", authController.logOut);
@@ -51,5 +51,7 @@ router.route("/me/contacts").get(authController.getAllContacts);
 router.route("/me/contacts").post(authController.addContact);
 router.route("/me/contacts/:contactId").put(authController.updateContact);
 router.route("/me/contacts/:contactId").delete(authController.deleteContact);
+
+router.patch("/me/info", validate(UpdateInfoSchema), authController.updateInfo);
 
 export const authRoutes = router;

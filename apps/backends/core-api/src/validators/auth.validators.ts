@@ -40,3 +40,19 @@ export const ResetPasswordSchema = z
     newPassword: z.string().trim().min(6)
   })
   .strict();
+
+export const UpdateInfoSchema = z
+  .object({
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    age: z.number().int().optional(),
+    gender: z.string().optional(),
+    height: z.number().optional(),
+    weight: z.number().optional(),
+    activityLevel: z.string().optional(),
+    dietaryPreferences: z.array(z.string()).optional(),
+    healthGoals: z.string().optional(),
+    allergies: z.array(z.string()).optional(),
+    dailyCalorieTarget: z.number().optional()
+  })
+  .strict();

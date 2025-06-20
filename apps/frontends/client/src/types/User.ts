@@ -3,15 +3,17 @@ export interface User {
   email: string;
   cognitoId: string;
   role: "admin" | "user";
-  activityLevel:
-    | "sedentary"
-    | "lightly active"
-    | "moderately active"
-    | "very active";
-  dietaryPreferences: string[];
-  healthGoals: "maintenance" | "weight loss" | "weight gain";
-  allergies: string[];
-  dailyCalorieTarget: number;
+  firstName?: string;
+  lastName?: string;
+  age?: number;
+  gender?: string;
+  height?: number;
+  weight?: number;
+  activityLevel?: string;
+  dietaryPreferences?: string[];
+  healthGoals?: string;
+  allergies?: string[];
+  dailyCalorieTarget?: number;
   createdAt: string;
   updatedAt: string;
 }

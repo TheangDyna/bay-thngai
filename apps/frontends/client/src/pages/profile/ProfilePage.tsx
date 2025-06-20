@@ -11,13 +11,18 @@ const VALID_TABS: Tab[] = ["account", "addresses", "contacts"];
 const ProfilePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const paramTab = searchParams.get("tab") as Tab | null;
-  const activeTab: Tab = VALID_TABS.includes(paramTab!) ? paramTab! : "account";
+  const activeTab: Tab =
+    paramTab && VALID_TABS.includes(paramTab) ? paramTab : "account";
 
   const handleTabChange = (tab: Tab) => {
     const next = new URLSearchParams(searchParams);
     next.set("tab", tab);
     setSearchParams(next);
   };
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeTab]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -26,7 +31,6 @@ const ProfilePage: React.FC = () => {
         {activeTab === "account" && <AccountSettings />}
         {activeTab === "addresses" && <AddressSettings />}
         {activeTab === "contacts" && <ContactSettings />}
-        {/* add more tabs here */}
       </main>
     </div>
   );

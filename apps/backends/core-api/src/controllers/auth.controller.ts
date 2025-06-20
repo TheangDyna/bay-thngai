@@ -1,5 +1,5 @@
 import { UserService } from "@/src/services/user.service";
-import { IAddress, IContact } from "@/src/types/user.types";
+import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
 import { Request, Response } from "express";
 import { config } from "../configs/config";
 import { AuthService } from "../services/auth.service";
@@ -197,6 +197,37 @@ export class AuthController {
     async (req: Request, res: Response): Promise<void> => {
       await this.userService.deleteContact(req.user.id, req.params.contactId);
       res.status(204).json({ status: "success", data: null });
+    }
+  );
+
+  public updateInfo = catchAsync(
+    async (req: Request, res: Response): Promise<void> => {
+      // only these keys are allowed in the profile
+      const allowed = [
+        "firstName",
+        "lastName",
+        "age",
+        "gender",
+        "height",
+        "weight",
+        "activityLevel",
+        "dietaryPreferences",
+        "healthGoals",
+        "allergies",
+        "dailyCalorieTarget"
+      ] as const;
+
+      // pick only provided, allowed fields
+      const updates: Partial<IUserDocument> = {};
+      for (const key of allowed) {
+        if (req.body[key] !== undefined) {
+          updates[key] = req.body[key];
+        }
+      }
+
+      // uses existing updateUser → UserRepository.findByIdAndUpdate(…, data) :contentReference[oaicite:0]{index=0}
+      const updated = await this.userService.updateUser(req.user.id, updates);
+      res.status(200).json({ status: "success", data: updated });
     }
   );
 }

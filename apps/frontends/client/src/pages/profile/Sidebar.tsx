@@ -1,6 +1,5 @@
 // src/components/profile/Sidebar.tsx
 import {
-  BellIcon,
   HeartIcon,
   LogOutIcon,
   MapIcon,
@@ -10,13 +9,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-export type Tab =
-  | "account"
-  | "addresses"
-  | "contacts"
-  | "orders"
-  | "wishlist"
-  | "notifications";
+export type Tab = "account" | "addresses" | "contacts" | "orders" | "wishlist";
 
 interface SidebarProps {
   activeTab: Tab;
@@ -32,8 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { tab: "orders", label: "Orders", Icon: ShoppingBagIcon },
     { tab: "wishlist", label: "Wishlist", Icon: HeartIcon },
     { tab: "addresses", label: "Address", Icon: MapIcon },
-    { tab: "contacts", label: "Contacts", Icon: PhoneIcon },
-    { tab: "notifications", label: "Notifications", Icon: BellIcon }
+    { tab: "contacts", label: "Contacts", Icon: PhoneIcon }
   ];
 
   return (

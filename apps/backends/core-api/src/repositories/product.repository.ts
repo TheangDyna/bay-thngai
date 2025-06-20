@@ -40,7 +40,9 @@ export class ProductRepository {
   }
 
   public async getProductById(id: string): Promise<IProductDocument> {
-    const product = await Product.findById(id);
+    const product = await Product.findById(id)
+      .populate("cuisines", "name")
+      .populate("discount", "name type amount startDate endDate active");
     if (!product) {
       throw new AppError("Product not found.", 404);
     }

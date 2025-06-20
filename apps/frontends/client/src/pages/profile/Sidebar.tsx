@@ -1,7 +1,6 @@
 // src/components/profile/Sidebar.tsx
 import {
   HeartIcon,
-  LogOutIcon,
   MapIcon,
   PhoneIcon,
   ShoppingBagIcon,
@@ -47,12 +46,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </li>
           ))}
-          <li>
-            <button className="flex items-center w-full px-4 py-3 rounded-r-lg text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-              <LogOutIcon className="h-5 w-5 mr-3" />
-              <span>Logout</span>
-            </button>
-          </li>
         </ul>
       </nav>
     </aside>

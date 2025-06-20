@@ -4,6 +4,7 @@ import NextButton from "@/components/commons/NextButton";
 import PrevButton from "@/components/commons/PrevButton";
 import ShareLink from "@/components/commons/ShareLink";
 import { WishlistButton } from "@/components/commons/WishlistButton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,7 +19,7 @@ import { ReviewForm } from "@/pages/product/ReviewForm";
 import { ReviewList } from "@/pages/product/ReviewList";
 import { calculateDiscountedPrice } from "@/utils/price";
 import { format } from "date-fns";
-import { Minus, Plus, Share2 } from "lucide-react";
+import { Minus, Plus, Star, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -52,12 +53,6 @@ export default function ProductDetailPage() {
     product?.price ?? 0,
     product?.discount
   );
-
-  const discountPercent = product?.discount
-    ? product.discount.type === "percentage"
-      ? product.discount.amount
-      : Math.round((product.discount.amount / product.price) * 100)
-    : 0;
 
   const qtyInCart =
     cart.find((item) => item.id === product?._id)?.quantity || 0;
@@ -125,7 +120,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Carousel */}
-          <div className="relative flex-1 rounded-2xl border overflow-hidden">
+          <div className="relative flex-1 rounded-2xl border h-fit overflow-hidden">
             <Carousel>
               <CarouselContent>
                 {thumbnails.map((src, i) => (
@@ -165,27 +160,18 @@ export default function ProductDetailPage() {
             <div className="space-y-4">
               {/* Title & Badges */}
               <div>
-                <div className="flex">
+                <div className="flex pr-4">
                   <h2 className="text-2xl font-bold flex-1">{product.name}</h2>
                   {product.inStock ? (
-                    <span className="w-fit h-fit text-white bg-primary text-xs font-semibold px-2 py-1 rounded-full">
-                      In Stock
+                    <span className="text-white w-fit h-fit bg-primary text-xs font-semibold px-2 py-1 rounded-full">
+                      On Sale
                     </span>
                   ) : (
-                    <span className="w-fit h-fit text-white bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
+                    <span className="text-white w-fit h-fit bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
                       Sold Out
                     </span>
                   )}
                 </div>
-                {isDiscountActive && (
-                  <div className="mt-2 text-sm text-orange-600 bg-orange-100 px-2 py-1 inline-block rounded">
-                    {discountPercent}
-                    {product.discount!.type === "percentage"
-                      ? "% OFF"
-                      : "$ OFF"}{" "}
-                    until {format(new Date(product.discount!.endDate), "PPpp")}
-                  </div>
-                )}
               </div>
 
               {/* Pricing */}
@@ -200,14 +186,63 @@ export default function ProductDetailPage() {
                 )}
               </div>
 
+              {isDiscountActive && (
+                <div className="text-sm text-orange-600 bg-orange-100 px-2 py-1 w-fit rounded">
+                  {product.discount.amount}
+                  {product.discount.type === "percentage"
+                    ? "% OFF"
+                    : "$ OFF"}{" "}
+                  until {format(new Date(product.discount!.endDate), "PPpp")}
+                </div>
+              )}
+
+              <div className="flex items-center gap-4">
+                {product.ratingsAverage && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center text-yellow-500">
+                      <Star size={16} fill="currentColor" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {product.ratingsAverage}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      ({product.ratingsQuantity})
+                    </span>
+                  </div>
+                )}
+                {product.sold > 0 && (
+                  <div className="text-sm text-muted-foreground">
+                    {product.sold} Sold
+                  </div>
+                )}
+
+                {isDiscountActive && (
+                  <span className="w-fit bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                    {product.discount.amount}
+                    {product.discount.type === "percentage" ? "% OFF" : "$ OFF"}
+                  </span>
+                )}
+              </div>
               {/* Description */}
               <p className="text-sm text-muted-foreground">
                 {product.description}
               </p>
+              <div className="flex flex-wrap gap-2">
+                {product.cuisines.map((cuisine, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="max-w-[120px]"
+                  >
+                    <span className="text-nowrap truncate">{cuisine.name}</span>
+                  </Badge>
+                ))}
+              </div>
             </div>
 
-            {/* Cart & Actions */}
-            <div className="mt-6 space-y-4">
+            <hr className="mt-6" />
+            {/* Cart + Actions */}
+            <div className="flex flex-col items-center mt-6 space-y-4">
               <div className="flex items-center gap-3">
                 <Button
                   size="icon"
@@ -221,19 +256,13 @@ export default function ProductDetailPage() {
                   <Plus />
                 </Button>
               </div>
+
               <div className="flex gap-2">
                 <WishlistButton productId={product._id} />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setShareOpen(true)}
-                >
-                  <Share2 />
+                <Button variant="outline" onClick={() => setShareOpen(true)}>
+                  <Upload />
+                  Share
                 </Button>
-                <ShareLink
-                  isOpenShareLink={shareOpen}
-                  onCloseShareLink={() => setShareOpen(false)}
-                />
               </div>
             </div>
           </div>
@@ -261,6 +290,10 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+      <ShareLink
+        isOpenShareLink={shareOpen}
+        onCloseShareLink={() => setShareOpen(false)}
+      />
     </div>
   );
 }

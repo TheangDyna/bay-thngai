@@ -86,11 +86,11 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
   return (
     <Button
       variant="outline"
-      size="icon"
       onClick={handleWishlistToggle}
       aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart className={isInWishlist ? "text-primary fill-primary" : ""} />
+      Wishlist
     </Button>
   );
 };

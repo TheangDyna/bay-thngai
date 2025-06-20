@@ -2,6 +2,7 @@ import NextButton from "@/components/commons/NextButton";
 import PrevButton from "@/components/commons/PrevButton";
 import ShareLink from "@/components/commons/ShareLink";
 import { WishlistButton } from "@/components/commons/WishlistButton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -16,7 +17,7 @@ import { ReviewForm } from "@/pages/product/ReviewForm";
 import type { Product } from "@/types/product.types";
 import { calculateDiscountedPrice } from "@/utils/price";
 import { format } from "date-fns";
-import { ExternalLink, Minus, Plus, Share2 } from "lucide-react";
+import { ExternalLink, Minus, Plus, Star, Upload } from "lucide-react";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -57,11 +58,6 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
     product.price,
     product.discount
   );
-  const discountPercent = product.discount
-    ? product.discount.type === "percentage"
-      ? product.discount.amount
-      : Math.round((product.discount.amount / product.price) * 100)
-    : 0;
 
   // 5) quantity in cart
   const qtyInCart = cart.find((item) => item.id === product._id)?.quantity || 0;
@@ -114,7 +110,7 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
           </div>
 
           {/* Carousel */}
-          <div className="relative flex-1 rounded-2xl border overflow-hidden">
+          <div className="relative flex-1 rounded-2xl border h-fit overflow-hidden">
             <Carousel>
               <CarouselContent>
                 {thumbnails.map((src, i) => (
@@ -158,24 +154,12 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
                   <h2 className="text-2xl font-bold flex-1">{product.name}</h2>
                   {product.inStock ? (
                     <span className="text-white w-fit h-fit bg-primary text-xs font-semibold px-2 py-1 rounded-full">
-                      In Stock
+                      On Sale
                     </span>
                   ) : (
                     <span className="text-white w-fit h-fit bg-red-500 text-xs font-semibold px-2 py-1 rounded-full">
                       Sold Out
                     </span>
-                  )}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {isDiscountActive && (
-                    <div className="text-sm text-orange-600 bg-orange-100 px-2 py-1 w-fit rounded">
-                      {discountPercent}
-                      {product.discount!.type === "percentage"
-                        ? "% OFF"
-                        : "$ OFF"}{" "}
-                      until{" "}
-                      {format(new Date(product.discount!.endDate), "PPpp")}
-                    </div>
                   )}
                 </div>
               </div>
@@ -192,43 +176,86 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
                 )}
               </div>
 
+              {isDiscountActive && (
+                <div className="text-sm text-orange-600 bg-orange-100 px-2 py-1 w-fit rounded">
+                  {product.discount.amount}
+                  {product.discount.type === "percentage"
+                    ? "% OFF"
+                    : "$ OFF"}{" "}
+                  until {format(new Date(product.discount!.endDate), "PPpp")}
+                </div>
+              )}
+
+              <div className="flex items-center gap-4">
+                {product.ratingsAverage && (
+                  <div className="flex items-center gap-1">
+                    <div className="flex items-center text-yellow-500">
+                      <Star size={16} fill="currentColor" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {product.ratingsAverage}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      ({product.ratingsQuantity})
+                    </span>
+                  </div>
+                )}
+                {product.sold > 0 && (
+                  <div className="text-sm text-muted-foreground">
+                    {product.sold} Sold
+                  </div>
+                )}
+
+                {isDiscountActive && (
+                  <span className="w-fit bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                    {product.discount.amount}
+                    {product.discount.type === "percentage" ? "% OFF" : "$ OFF"}
+                  </span>
+                )}
+              </div>
               {/* Description */}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground line-clamp-3">
                 {product.description}
               </p>
+              <div className="flex flex-wrap gap-2">
+                {product.cuisines.slice(0, 5).map((cuisine, index) => (
+                  <Badge
+                    key={index}
+                    variant="secondary"
+                    className="max-w-[120px]"
+                  >
+                    <span className="text-nowrap truncate">{cuisine.name}</span>
+                  </Badge>
+                ))}
+                {product.cuisines.length > 5 && (
+                  <Badge variant="secondary">
+                    <span className="text-nowrap">{`+ ${product.cuisines.length - 5}`}</span>
+                  </Badge>
+                )}
+              </div>
             </div>
-
+            <hr className="mt-6" />
             {/* Cart + Actions */}
-            <div className="mt-6 space-y-4">
+            <div className="flex flex-col items-center mt-6 space-y-4">
               <div className="flex items-center gap-3">
-                <Button
-                  size="icon"
-                  onClick={() => changeQty(-1)}
-                  disabled={qtyInCart <= 0}
-                >
+                <Button onClick={() => changeQty(-1)} disabled={qtyInCart <= 0}>
                   <Minus />
                 </Button>
                 <span className="text-lg w-10 text-center">{qtyInCart}</span>
-                <Button size="icon" onClick={() => changeQty(1)}>
+                <Button onClick={() => changeQty(1)}>
                   <Plus />
                 </Button>
               </div>
 
               <div className="flex gap-2">
                 <WishlistButton productId={product._id} />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setShareOpen(true)}
-                >
-                  <Share2 />
+                <Button variant="outline" onClick={() => setShareOpen(true)}>
+                  <Upload />
+                  Share
                 </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleOpenDetail}
-                >
+                <Button variant="outline" onClick={handleOpenDetail}>
                   <ExternalLink />
+                  Detail
                 </Button>
               </div>
             </div>

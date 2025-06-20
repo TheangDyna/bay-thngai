@@ -18,10 +18,6 @@ export const UserNav: React.FC = () => {
   const initials = user?.email[0].toUpperCase();
   const navigate = useNavigate();
 
-  const goToProfile = () => {
-    navigate("/profile");
-  };
-
   return (
     <div>
       {user ? (
@@ -44,8 +40,29 @@ export const UserNav: React.FC = () => {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={goToProfile}>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/profile?tab=account")}
+              >
+                Account
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/profile?tab=orders")}>
+                Orders
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/profile?tab=wishlist")}
+              >
+                Wishlist
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/profile?tab=addresses")}
+              >
+                Addresses
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => navigate("/profile?tab=contacts")}
+              >
+                Contacts
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>

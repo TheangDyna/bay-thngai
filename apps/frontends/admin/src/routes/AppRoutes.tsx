@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
+import ComingSoon from "@/pages/ComingSoon";
 import CuisineEdit from "@/pages/cuisines/CuisineEdit";
 import ApplyDiscount from "@/pages/discounts/apply/ApplyDiscount";
 import DiscountCreate from "@/pages/discounts/DiscountCreate";
@@ -96,6 +97,45 @@ const AppRoutes: React.FC = () => {
                   <Route path=":discountId/edit" element={<DiscountEdit />} />
                   <Route path=":discountId/edit" element={<DiscountEdit />} />
                 </Route>
+
+                {/* Coming Soon */}
+                <Route
+                  path="/analytic"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/return"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/inventory"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/customer"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/segment"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/setting"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/user-management"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/notification"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route
+                  path="/report"
+                  element={<Navigate to="/coming-soon" replace />}
+                />
+                <Route path="/coming-soon" element={<ComingSoon />} />
 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFound />} />

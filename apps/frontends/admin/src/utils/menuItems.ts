@@ -4,16 +4,20 @@ import {
   Box,
   Boxes,
   ChartPie,
+  CirclePlus,
   Gauge,
   History,
   Inbox,
   LogOut,
   MessageSquareWarning,
+  Pencil,
   Percent,
+  ScanSearch,
   Settings2,
   Undo2,
   User,
-  Users
+  Users,
+  Wand
 } from "lucide-react";
 
 type MenuSection = {
@@ -40,7 +44,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Analytics",
         icon: ChartPie,
-        path: "#"
+        path: "/analytic"
       }
     ]
   },
@@ -54,19 +58,19 @@ export const menuItems: MenuSection[] = [
       },
       {
         title: "Create Product",
-        icon: Box,
+        icon: CirclePlus,
         path: "/products/new"
       },
       {
         title: "Detail Product",
         path: "/products/:id",
-        icon: Box,
+        icon: ScanSearch,
         disabled: true
       },
       {
         title: "Edit Product",
         path: "/products/:id/edit",
-        icon: Box,
+        icon: Pencil,
         disabled: true
       }
     ]
@@ -81,13 +85,13 @@ export const menuItems: MenuSection[] = [
       },
       {
         title: "Create Cuisine",
-        icon: Boxes,
+        icon: CirclePlus,
         path: "/cuisines/new"
       },
       {
         title: "Edit Cuisine",
         path: "/cuisines/:id/edit",
-        icon: Boxes,
+        icon: Pencil,
         disabled: true
       }
     ]
@@ -103,7 +107,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Returns",
         icon: Undo2,
-        path: "#"
+        path: "/return"
       }
     ]
   },
@@ -117,19 +121,19 @@ export const menuItems: MenuSection[] = [
       },
       {
         title: "Create Discount",
-        icon: Percent,
+        icon: CirclePlus,
         path: "/discount/new"
       },
       {
         title: "Edit Discount",
         path: "/discount/:id/edit",
-        icon: Percent,
+        icon: Pencil,
         disabled: true
       },
       {
         title: "Apply Discount",
         path: "/discount/apply",
-        icon: Percent
+        icon: Wand
       }
     ]
   },
@@ -139,7 +143,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Inventory",
         icon: Inbox,
-        path: "#"
+        path: "/inventory"
       }
     ]
   },
@@ -149,12 +153,12 @@ export const menuItems: MenuSection[] = [
       {
         title: "All Customers",
         icon: User,
-        path: "#"
+        path: "/customer"
       },
       {
         title: "Segments",
         icon: History,
-        path: "#"
+        path: "/segment"
       }
     ]
   },
@@ -165,17 +169,17 @@ export const menuItems: MenuSection[] = [
       {
         title: "Store Settings",
         icon: Settings2,
-        path: "#"
+        path: "/setting"
       },
       {
         title: "User Management",
         icon: Users,
-        path: "#"
+        path: "/user-management"
       },
       {
         title: "Notifications",
         icon: Bell,
-        path: "#"
+        path: "/notification"
       }
     ]
   },
@@ -185,7 +189,7 @@ export const menuItems: MenuSection[] = [
       {
         title: "Reports",
         icon: MessageSquareWarning,
-        path: "#"
+        path: "/report"
       }
     ]
   },

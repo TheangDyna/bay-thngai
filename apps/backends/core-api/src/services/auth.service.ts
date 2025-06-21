@@ -14,21 +14,21 @@ import {
   SignUpCommand,
   SignUpCommandInput
 } from "@aws-sdk/client-cognito-identity-provider";
+import axios from "axios";
+import crypto from "crypto";
 import { cognitoClient } from "../configs/cognito.config";
 import { config } from "../configs/config";
 import {
   CognitoToken,
   ConfirmRegisterInput,
-  ResendConfirmCodeUpInput,
   LoginInput,
-  RegisterInput
+  RegisterInput,
+  ResendConfirmCodeUpInput
 } from "../types/auth.types";
-import { UserService } from "./user.service";
 import { AppError } from "../utils/appError";
 import { decodeIdToken } from "../utils/decodeIdToken";
-import crypto from "crypto";
-import axios from "axios";
 import { CreateUserSchema } from "../validators/user.validators";
+import { UserService } from "./user.service";
 
 export class AuthService {
   private userService = new UserService();
@@ -145,15 +145,14 @@ export class AuthService {
     return { idToken, accessToken, refreshToken, username };
   }
 
-  public async googleLogin(): Promise<string> {
-    const state = crypto.randomBytes(16).toString("hex");
+  public async googleLogin(target: string): Promise<string> {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: config.awsCognitoClientId,
       redirect_uri: config.awsRedirectUri,
       identity_provider: "Google",
       scope: "profile email openid aws.cognito.signin.user.admin",
-      state: state,
+      state: target,
       prompt: "select_account"
     });
     const cognitoOAuthURL = `${

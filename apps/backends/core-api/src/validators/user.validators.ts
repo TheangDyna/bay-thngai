@@ -62,7 +62,7 @@ export const UserSchema = z
     dailyCalorieTarget: z.number().positive().optional().default(2000),
     addresses: z.array(AddressSchema).optional().default([]),
     contacts: z.array(ContactSchema).optional().default([]),
-    wishlist: ObjectIdSchema
+    wishlist: z.array(ObjectIdSchema).optional().default([])
   })
   .strict();
 

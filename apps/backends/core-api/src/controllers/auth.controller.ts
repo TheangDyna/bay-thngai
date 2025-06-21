@@ -60,8 +60,15 @@ export class AuthController {
     });
   });
 
-  public googleLogin = catchAsync(async (_req: Request, res: Response) => {
-    const cognitoOAuthURL = await this.authService.googleLogin();
+  public googleLogin = catchAsync(async (req: Request, res: Response) => {
+    const { target } = req.query;
+    const targetStr =
+      typeof target === "string"
+        ? target
+        : Array.isArray(target) && typeof target[0] === "string"
+          ? target[0]
+          : "client";
+    const cognitoOAuthURL = await this.authService.googleLogin(targetStr);
 
     res.status(200).json({
       status: "success",
@@ -74,10 +81,9 @@ export class AuthController {
 
     setAuthCookies(res, cognitoToken);
 
-    // redirect specific target
-    const { target } = req.query;
+    const { state } = req.query;
 
-    if (target === "admin") {
+    if (state === "admin") {
       res.redirect(config.adminUrl);
     } else {
       res.redirect(config.clientUrl);

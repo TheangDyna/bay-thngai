@@ -16,14 +16,16 @@ export default class OrderRepository {
   public async getAllOrders(
     queryString: Record<string, any>
   ): Promise<{ orders: OrderDoc[]; total: number }> {
-    console.log(queryString);
     const features = new APIFeatures<OrderDoc>(OrderModel.find(), queryString)
       .filter()
       .search(this.searchFields);
 
-    const total = await OrderModel.countDocuments(
-      features.getQuery().getFilter()
-    );
+    const queryWithFilters = features
+      .getQuery()
+      .or([{ paymentMethod: "cod" }, { paymentStatus: { $ne: "pending" } }]);
+
+    // Count total documents matching the filters
+    const total = await OrderModel.countDocuments(queryWithFilters.getFilter());
 
     features.sort().select().paginate();
 

@@ -1,9 +1,9 @@
+import axiosInstance from "@/utils/axiosInstance";
 import {
   useMutation,
   UseMutationResult,
   useQuery
 } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axiosInstance";
 
 export const useLoginMutation = (): UseMutationResult<any, any, any> => {
   return useMutation({
@@ -17,7 +17,7 @@ export const useLoginMutation = (): UseMutationResult<any, any, any> => {
 export const useGoogleLoginMutation = (): UseMutationResult<any, any, any> => {
   return useMutation({
     mutationFn: async () => {
-      const response = await axiosInstance.get("/auth/google");
+      const response = await axiosInstance.get("/auth/google?target=admin");
       return response.data;
     }
   });

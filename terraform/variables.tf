@@ -1,13 +1,7 @@
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  default     = "ap-southeast-1"
-}
-
 variable "project_name" {
   description = "Project name for resource tagging"
   type        = string
-  default     = "iot-dev"
+  default     = "baythngai"
 }
 
 variable "key_name" {
@@ -20,10 +14,23 @@ variable "mongo_uri" {
   description = "MongoDB connection string"
   type        = string
   sensitive   = true
+  default     = "mongodb+srv://theangdyna365:7Q8lXqF71iZszmcs@cluster0.p0lrk.mongodb.net/baythngai-db"
+}
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+  default     = "ap-southeast-2"
 }
 
 variable "cognito_user_pool_id" {
   description = "AWS Cognito User Pool ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "cognito_domain" {
+  description = "AWS Cognito Domain"
   type        = string
   sensitive   = true
 }
@@ -40,32 +47,68 @@ variable "cognito_client_secret" {
   sensitive   = true
 }
 
-variable "cognito_domain" {
-  description = "AWS Cognito Domain"
+variable "aws_redirect_uri" {
+  description = "AWS Cognito Redirect URI"
+  type        = string
+}
+
+variable "aws_s3_bucket_name" {
+  description = "AWS S3 bucket name"
+  type        = string
+  default     = "baythgnai-bucket"
+}
+
+variable "aws_access_key" {
+  description = "AWS Access Key"
   type        = string
   sensitive   = true
 }
 
-variable "mqtt_host" {
-  description = "MQTT broker host"
+variable "aws_secret_access_key" {
+  description = "AWS Secret Access Key"
   type        = string
   sensitive   = true
 }
 
-variable "mqtt_port" {
-  description = "MQTT broker port"
+variable "aba_merchant_id" {
+  description = "ABA Merchant ID"
+  type        = string
+  default     = "ec460577"
+}
+
+variable "aba_public_key" {
+  description = "ABA Public Key"
+  type        = string
+}
+
+variable "aba_endpoint" {
+  description = "ABA Endpoint"
+  type        = string
+}
+
+variable "backend_callback_url" {
+  description = "Backend callback URL"
+  type        = string
+}
+
+variable "frontend_return_success_url" {
+  description = "Frontend payment return success URL"
+  type        = string
+}
+
+variable "frontend_return_cancel_url" {
+  description = "Frontend payment return cancel URL"
+  type        = string
+}
+
+variable "vapid_public_key" {
+  description = "VAPID public key"
   type        = string
   sensitive   = true
 }
 
-variable "mqtt_username" {
-  description = "MQTT username"
-  type        = string
-  sensitive   = true
-}
-
-variable "mqtt_password" {
-  description = "MQTT password"
+variable "vapid_private_key" {
+  description = "VAPID private key"
   type        = string
   sensitive   = true
 }

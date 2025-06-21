@@ -9,11 +9,6 @@ variable "project_name" {
   default = "baythngai"
 }
 
-variable "environment" {
-  type    = string
-  default = "dev"
-}
-
 variable "key_name" {
   type      = string
   sensitive = true

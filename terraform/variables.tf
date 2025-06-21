@@ -14,13 +14,11 @@ variable "mongo_uri" {
   description = "MongoDB connection string"
   type        = string
   sensitive   = true
-  default     = "mongodb+srv://theangdyna365:7Q8lXqF71iZszmcs@cluster0.p0lrk.mongodb.net/baythngai-db"
 }
 
 variable "aws_region" {
   description = "AWS region"
   type        = string
-  default     = "ap-southeast-2"
 }
 
 variable "cognito_user_pool_id" {
@@ -55,7 +53,6 @@ variable "aws_redirect_uri" {
 variable "aws_s3_bucket_name" {
   description = "AWS S3 bucket name"
   type        = string
-  default     = "baythgnai-bucket"
 }
 
 variable "aws_access_key" {
@@ -73,7 +70,6 @@ variable "aws_secret_access_key" {
 variable "aba_merchant_id" {
   description = "ABA Merchant ID"
   type        = string
-  default     = "ec460577"
 }
 
 variable "aba_public_key" {

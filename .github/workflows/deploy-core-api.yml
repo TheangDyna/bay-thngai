@@ -39,6 +39,9 @@ jobs:
           echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
           echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
           echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
+          echo "BACKEND_CALLBACK_URL=$(terraform output -raw backend_callback_url)" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_SUCCESS_URL=$(terraform output -raw frontend_return_success_url)" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_CANCEL_URL=$(terraform output -raw frontend_return_cancel_url)" >> $GITHUB_ENV
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

@@ -46,3 +46,14 @@ output "client_cloudfront_id" {
   value       = aws_cloudfront_distribution.client.id
   sensitive   = true
 }
+
+locals {
+  backend_callback_url        = "https://${aws_cloudfront_distribution.api.domain_name}/api/v1/payment/callback"
+  frontend_return_success_url = "https://${aws_cloudfront_distribution.client.domain_name}/payment-return"
+  frontend_return_cancel_url  = "https://${aws_cloudfront_distribution.client.domain_name}/payment-cancel"
+}
+
+output "backend_callback_url" {
+  description = "Backend callback URL for payment gateway"
+  value       = local.backend_callback_url
+}

@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "CLIENT_BUCKET=$(terraform output -raw client_bucket_name)" >> $GITHUB_ENV
           echo "CLIENT_DIST_ID=$(terraform output -raw client_cloudfront_id)" >> $GITHUB_ENV
-          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)"  >> $GITHUB_ENV
+          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -48,18 +48,19 @@ jobs:
 
       - name: Build Client
         working-directory: apps/frontends/client
+        env:
+          VITE_API_URL: ${{ env.API_URL }}
+          VITE_NODE_ENV: ${{ secrets.NODE_ENV }}
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
         run: |
           npm install
-          VITE_API_URL=${{ env.API_URL }} \
-          VITE_NODE_ENV=${{ secrets.NODE_ENV }} \
-          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }} \
           npm run build
 
       - name: Sync to S3
         run: |
           aws s3 sync apps/frontends/client/dist/ s3://${{ env.CLIENT_BUCKET }} \
             --delete \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ secrets.AWS_REGION }}
 
       - name: Invalidate CloudFront cache
         run: |

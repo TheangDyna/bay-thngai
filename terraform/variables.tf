@@ -85,23 +85,3 @@ variable "vapid_private_key" {
   type      = string
   sensitive = true
 }
-
-variable "mqtt_host" {
-  type      = string
-  sensitive = true
-}
-
-variable "mqtt_port" {
-  type      = string
-  sensitive = true
-}
-
-variable "mqtt_username" {
-  type      = string
-  sensitive = true
-}
-
-variable "mqtt_password" {
-  type      = string
-  sensitive = true
-}

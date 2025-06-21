@@ -1,0 +1,68 @@
+name: Deploy Infrastructure with Terraform
+
+on:
+  push:
+    branches: [deploy]
+    paths:
+      - "terraform/**"
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: infra
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: terraform
+        env:
+          TF_VAR_mongo_uri: ${{ secrets.MONGO_URI }}
+          TF_VAR_cognito_user_pool_id: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}
+          TF_VAR_cognito_client_id: ${{ secrets.AWS_COGNITO_CLIENT_ID }}
+          TF_VAR_cognito_client_secret: ${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
+          TF_VAR_cognito_domain: ${{ secrets.AWS_COGNITO_DOMAIN }}
+          TF_VAR_mqtt_host: ${{ secrets.MQTT_HOST }}
+          TF_VAR_mqtt_port: ${{ secrets.MQTT_PORT }}
+          TF_VAR_mqtt_username: ${{ secrets.MQTT_USERNAME }}
+          TF_VAR_mqtt_password: ${{ secrets.MQTT_PASSWORD }}
+          TF_VAR_key_name: ${{ secrets.EC2_KEY_NAME }}
+        run: terraform plan -lock-timeout=5m
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/deploy'
+        working-directory: terraform
+        env:
+          TF_VAR_mongo_uri: ${{ secrets.MONGO_URI }}
+          TF_VAR_cognito_user_pool_id: ${{ secrets.AWS_COGNITO_USER_POOL_ID }}
+          TF_VAR_cognito_client_id: ${{ secrets.AWS_COGNITO_CLIENT_ID }}
+          TF_VAR_cognito_client_secret: ${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
+          TF_VAR_cognito_domain: ${{ secrets.AWS_COGNITO_DOMAIN }}
+          TF_VAR_mqtt_host: ${{ secrets.MQTT_HOST }}
+          TF_VAR_mqtt_port: ${{ secrets.MQTT_PORT }}
+          TF_VAR_mqtt_username: ${{ secrets.MQTT_USERNAME }}
+          TF_VAR_mqtt_password: ${{ secrets.MQTT_PASSWORD }}
+          TF_VAR_key_name: ${{ secrets.EC2_KEY_NAME }}
+        run: terraform apply -auto-approve -lock-timeout=5m

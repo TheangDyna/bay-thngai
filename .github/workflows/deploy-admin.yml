@@ -1,4 +1,4 @@
-name: Deploy Admin Frontend
+name: Deploy Admin Frontend to S3
 
 on:
   push:
@@ -9,13 +9,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: admin-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy-admin:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -39,7 +44,7 @@ jobs:
         run: |
           echo "ADMIN_BUCKET=$(terraform output -raw admin_bucket_name)" >> $GITHUB_ENV
           echo "ADMIN_DIST_ID=$(terraform output -raw admin_cloudfront_id)" >> $GITHUB_ENV
-          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)"  >> $GITHUB_ENV
+          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -48,10 +53,11 @@ jobs:
 
       - name: Build Admin
         working-directory: apps/frontends/admin
+        env:
+          VITE_API_URL: ${{ env.API_URL }}
+          VITE_NODE_ENV: ${{ secrets.NODE_ENV }}
         run: |
           npm install
-          VITE_API_URL=${{ env.API_URL }} \
-          VITE_NODE_ENV=${{ secrets.NODE_ENV }} \
           npm run build
 
       - name: Sync to S3

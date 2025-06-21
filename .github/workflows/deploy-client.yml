@@ -1,4 +1,4 @@
-name: Deploy Client Frontend
+name: Deploy Client Frontend to S3
 
 on:
   push:
@@ -9,13 +9,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: client-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy-client:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

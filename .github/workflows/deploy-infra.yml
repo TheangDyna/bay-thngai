@@ -9,12 +9,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: terraform-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy-infra:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -30,7 +36,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Plan
         working-directory: terraform
@@ -53,7 +59,7 @@ jobs:
           TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
-        run: terraform plan -lock-timeout=5m
+        run: terraform plan -lock-timeout=10m
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/deploy'
@@ -77,226 +83,22 @@ jobs:
           TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
-        run: terraform apply -auto-approve -lock-timeout=5m
+        run: terraform apply -auto-approve -lock-timeout=10m
 
-  deploy-core-api:
-    needs: deploy-infra
-    runs-on: ubuntu-latest
-    if: contains(github.event.commits[0].message, 'apps/backends/core-api') || contains(github.event.head_commit.message, 'apps/backends/core-api')
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Setup Terraform CLI
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
-
-      - name: Terraform Init
+      - name: Cleanup Stale Lock
+        if: failure()
         working-directory: terraform
-        run: terraform init -input=false
-
-      - name: Load TF outputs into env
-        id: tf
-        working-directory: terraform
-        run: |
-          echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
-          echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
-          echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install dependencies
-        working-directory: apps/backends/core-api
-        run: npm install
-
-      - name: Build Core API
-        working-directory: apps/backends/core-api
-        run: npm run build
-
-      - name: Prepare remote folder
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ env.EC2_IP }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            mkdir -p /home/ec2-user/app
-            rm -rf /home/ec2-user/app/*
-
-      - name: Copy build to EC2 via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ env.EC2_IP }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: "apps/backends/core-api/*"
-          target: "/home/ec2-user/app/"
-
-      - name: Install deps & reload with PM2
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ env.EC2_IP }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
-            export PATH=$PATH:/usr/local/bin
-            export NODE_ENV=${{ secrets.NODE_ENV }}
-            export PORT=${{ secrets.PORT }}
-            export MONGO_URI=${{ secrets.MONGO_URI }}
-            export AWS_REGION=${{ secrets.AWS_REGION }}
-            export AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}
-            export AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
-            export AWS_COGNITO_CLIENT_SECRET=${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
-            export AWS_COGNITO_DOMAIN=${{ secrets.AWS_COGNITO_DOMAIN }}
-            export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
-            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            export MQTT_HOST=${{ secrets.MQTT_HOST }}
-            export MQTT_PORT=${{ secrets.MQTT_PORT }}
-            export MQTT_USERNAME=${{ secrets.MQTT_USERNAME }}
-            export MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }}
-            export CLIENT_URL=${{ env.CLIENT_URL }}
-            export ADMIN_URL=${{ env.ADMIN_URL }}
-            export AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}
-            export AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
-            export ABA_MERCHANT_ID=${{ secrets.ABA_MERCHANT_ID }}
-            export ABA_PUBLIC_KEY=${{ secrets.ABA_PUBLIC_KEY }}
-            export ABA_ENDPOINT=${{ secrets.ABA_ENDPOINT }}
-            export BACKEND_CALLBACK_URL=${{ secrets.BACKEND_CALLBACK_URL }}
-            export FRONTEND_RETURN_SUCCESS_URL=${{ secrets.FRONTEND_RETURN_SUCCESS_URL }}
-            export FRONTEND_RETURN_CANCEL_URL=${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
-            export VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
-            export VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
-            cd /home/ec2-user/app/apps/backends/core-api
-            npm install
-            pm2 startOrReload ecosystem.config.js
-            pm2 save
-
-  deploy-admin:
-    needs: deploy-infra
-    runs-on: ubuntu-latest
-    if: contains(github.event.commits[0].message, 'apps/frontends/admin') || contains(github.event.head_commit.message, 'apps/frontends/admin')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Setup Terraform CLI
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
-
-      - name: Terraform Init
-        working-directory: terraform
-        run: terraform init -input=false
-
-      - name: Load Terraform outputs
-        id: tf
-        working-directory: terraform
-        run: |
-          echo "ADMIN_BUCKET=$(terraform output -raw admin_bucket_name)" >> $GITHUB_ENV
-          echo "ADMIN_DIST_ID=$(terraform output -raw admin_cloudfront_id)" >> $GITHUB_ENV
-          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Build Admin
-        working-directory: apps/frontends/admin
-        run: |
-          npm install
-          VITE_API_URL=${{ env.API_URL }} \
-          VITE_NODE_ENV=${{ secrets.NODE_ENV }} \
-          npm run build
-
-      - name: Sync to S3
-        run: |
-          aws s3 sync apps/frontends/admin/dist/ s3://${{ env.ADMIN_BUCKET }} \
-            --delete \
-            --region ${{ secrets.AWS_REGION }}
-
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ env.ADMIN_DIST_ID }} \
-            --paths "/*"
-
-  deploy-client:
-    needs: deploy-infra
-    runs-on: ubuntu-latest
-    if: contains(github.event.commits[0].message, 'apps/frontends/client') || contains(github.event.head_commit.message, 'apps/frontends/client')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Setup Terraform CLI
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.8
-
-      - name: Terraform Init
-        working-directory: terraform
-        run: terraform init -input=false
-
-      - name: Load Terraform outputs
-        id: tf
-        working-directory: terraform
-        run: |
-          echo "CLIENT_BUCKET=$(terraform output -raw client_bucket_name)" >> $GITHUB_ENV
-          echo "CLIENT_DIST_ID=$(terraform output -raw client_cloudfront_id)" >> $GITHUB_ENV
-          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Build Client
-        working-directory: apps/frontends/client
         env:
-          VITE_API_URL: ${{ env.API_URL }}
-          VITE_NODE_ENV: ${{ secrets.NODE_ENV }}
-          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-southeast-2
         run: |
-          npm install
-          npm run build
-
-      - name: Sync to S3
-        run: |
-          aws s3 sync apps/frontends/client/dist/ s3://${{ env.CLIENT_BUCKET }} \
-            --delete \
-            --region ${{ secrets.AWS_REGION }}
-
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ env.CLIENT_DIST_ID }} \
-            --paths "/*"
+          LOCK_ID=$(aws dynamodb query \
+            --table-name terraform-locks \
+            --key-condition-expression "LockID = :id" \
+            --expression-attribute-values '{":id":{"S":"terraform-state-bucket-***-390402568377/baythngai/terraform.tfstate"}}' \
+            --query 'Items[0].LockID.S' \
+            --output text 2>/dev/null || echo "")
+          if [ ! -z "$LOCK_ID" ]; then
+            terraform force-unlock $LOCK_ID || true
+          fi

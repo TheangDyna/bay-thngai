@@ -12,7 +12,6 @@ permissions:
 jobs:
   deploy-core-api:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,12 +36,9 @@ jobs:
         id: tf
         working-directory: terraform
         run: |
-          EC2_IP=$(terraform output -raw ec2_public_ip)
-          ADMIN_CF=$(terraform output -raw admin_cloudfront_domain)
-          CLIENT_CF=$(terraform output -raw client_cloudfront_domain)
-          echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
-          echo "ADMIN_URL=https://$ADMIN_CF" >> $GITHUB_ENV
-          echo "CLIENT_URL=https://$CLIENT_CF" >> $GITHUB_ENV
+          echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+          echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
+          echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -64,9 +60,13 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
+          debug: true
           script: |
+            whoami
             mkdir -p /home/ec2-user/app
             rm -rf /home/ec2-user/app/*
+            df -h
+            free -m
 
       - name: Copy build to EC2 via SCP
         uses: appleboy/scp-action@v0.1.7
@@ -85,26 +85,38 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
+          debug: true
           script: |
             export PATH=$PATH:/usr/local/bin
-            export NODE_ENV=${{ secrets.NODE_ENV }} \
-            export PORT="${{ secrets.PORT }}"
-            export MONGO_URI="${{ secrets.MONGO_URI }}"
-            export AWS_REGION="${{ secrets.AWS_REGION }}"
-            export AWS_COGNITO_USER_POOL_ID="${{ secrets.AWS_COGNITO_USER_POOL_ID }}"
-            export AWS_COGNITO_CLIENT_ID="${{ secrets.AWS_COGNITO_CLIENT_ID }}"
-            export AWS_COGNITO_CLIENT_SECRET="${{ secrets.AWS_COGNITO_CLIENT_SECRET }}"
-            export AWS_COGNITO_DOMAIN="${{ secrets.AWS_COGNITO_DOMAIN }}"
-            export AWS_ACCESS_KEY="${{ secrets.AWS_ACCESS_KEY }}"
-            export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-            export MQTT_HOST="${{ secrets.MQTT_HOST }}"
-            export MQTT_PORT="${{ secrets.MQTT_PORT }}"
-            export MQTT_USERNAME="${{ secrets.MQTT_USERNAME }}"
-            export MQTT_PASSWORD="${{ secrets.MQTT_PASSWORD }}"
-            export CLIENT_URL="${{ env.CLIENT_URL }}"
-            export ADMIN_URL="${{ env.ADMIN_URL }}"
-
+            export NODE_ENV=${{ secrets.NODE_ENV }}
+            export PORT=${{ secrets.PORT }}
+            export MONGO_URI=${{ secrets.MONGO_URI }}
+            export AWS_REGION=${{ secrets.AWS_REGION }}
+            export AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}
+            export AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
+            export AWS_COGNITO_CLIENT_SECRET=${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
+            export AWS_COGNITO_DOMAIN=${{ secrets.AWS_COGNITO_DOMAIN }}
+            export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            export MQTT_HOST=${{ secrets.MQTT_HOST }}
+            export MQTT_PORT=${{ secrets.MQTT_PORT }}
+            export MQTT_USERNAME=${{ secrets.MQTT_USERNAME }}
+            export MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }}
+            export CLIENT_URL=${{ env.CLIENT_URL }}
+            export ADMIN_URL=${{ env.ADMIN_URL }}
+            export AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}
+            export AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
+            export ABA_MERCHANT_ID=${{ secrets.ABA_MERCHANT_ID }}
+            export ABA_PUBLIC_KEY=${{ secrets.ABA_PUBLIC_KEY }}
+            export ABA_ENDPOINT=${{ secrets.ABA_ENDPOINT }}
+            export BACKEND_CALLBACK_URL=${{ secrets.BACKEND_CALLBACK_URL }}
+            export FRONTEND_RETURN_SUCCESS_URL=${{ secrets.FRONTEND_RETURN_SUCCESS_URL }}
+            export FRONTEND_RETURN_CANCEL_URL=${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
+            export VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
+            export VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
             cd /home/ec2-user/app/apps/backends/core-api
             npm install
+            npm run build
             pm2 startOrReload ecosystem.config.js
             pm2 save
+            pm2 logs core-api --lines 20

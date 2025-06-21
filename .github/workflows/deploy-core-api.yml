@@ -24,7 +24,7 @@ jobs:
           terraform_version: 1.9.8
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -backend-config="key=baythngai/dev/terraform.tfstate" -input=false -lock-timeout=10m
+        run: terraform init -backend-config="key=baythngai/v-1/terraform.tfstate" -input=false -lock-timeout=10m
       - name: Load TF outputs into env
         id: tf
         working-directory: terraform

@@ -37,7 +37,7 @@ jobs:
         run: |
           LOCK_ID=$(aws dynamodb get-item \
             --table-name terraform-locks \
-            --key '{"LockID":{"S":"terraform-state-bucket-ap-southeast-2-390402568377/baythngai/dev/terraform.tfstate"}}' \
+            --key '{"LockID":{"S":"terraform-state-bucket-ap-southeast-2-390402568377/baythngai/v-1/terraform.tfstate"}}' \
             --query 'Item.LockID.S' --output text 2>/dev/null || echo "")
           if [ ! -z "$LOCK_ID" ]; then
             echo "Releasing lock: $LOCK_ID"
@@ -45,7 +45,7 @@ jobs:
           fi
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -backend-config="key=baythngai/dev/terraform.tfstate" -input=false
+        run: terraform init -backend-config="key=baythngai/v-1/terraform.tfstate" -input=false
       - name: Terraform Plan
         working-directory: terraform
         env:

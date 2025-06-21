@@ -1,37 +1,30 @@
 name: Deploy Core API to EC2
-
 on:
   push:
     branches: [deploy]
     paths:
       - "apps/backends/core-api/**"
-
 permissions:
   contents: read
-
 jobs:
   deploy-core-api:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2
-
       - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
-
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init -input=false
-
+        run: terraform init -backend-config="key=baythngai/dev/terraform.tfstate" -input=false -lock-timeout=10m
       - name: Load TF outputs into env
         id: tf
         working-directory: terraform
@@ -39,23 +32,16 @@ jobs:
           echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
           echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
           echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
-          echo "BACKEND_CALLBACK_URL=$(terraform output -raw backend_callback_url)" >> $GITHUB_ENV
-          echo "FRONTEND_RETURN_SUCCESS_URL=$(terraform output -raw frontend_return_success_url)" >> $GITHUB_ENV
-          echo "FRONTEND_RETURN_CANCEL_URL=$(terraform output -raw frontend_return_cancel_url)" >> $GITHUB_ENV
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-
       - name: Install dependencies
         working-directory: apps/backends/core-api
         run: npm install
-
       - name: Build Core API
         working-directory: apps/backends/core-api
         run: npm run build
-
       - name: Prepare remote folder
         uses: appleboy/ssh-action@v1
         with:
@@ -65,12 +51,8 @@ jobs:
           port: 22
           debug: true
           script: |
-            whoami
             mkdir -p /home/ec2-user/app
             rm -rf /home/ec2-user/app/*
-            df -h
-            free -m
-
       - name: Copy build to EC2 via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -80,7 +62,6 @@ jobs:
           port: 22
           source: "apps/backends/core-api/*"
           target: "/home/ec2-user/app/"
-
       - name: Install deps & reload with PM2
         uses: appleboy/ssh-action@v1
         with:
@@ -94,7 +75,7 @@ jobs:
             export NODE_ENV=${{ secrets.NODE_ENV }}
             export PORT=${{ secrets.PORT }}
             export MONGO_URI=${{ secrets.MONGO_URI }}
-            export AWS_REGION=${{ secrets.AWS_REGION }}
+            export AWS_REGION=ap-southeast-2
             export AWS_COGNITO_USER_POOL_ID=${{ secrets.AWS_COGNITO_USER_POOL_ID }}
             export AWS_COGNITO_CLIENT_ID=${{ secrets.AWS_COGNITO_CLIENT_ID }}
             export AWS_COGNITO_CLIENT_SECRET=${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
@@ -112,14 +93,15 @@ jobs:
             export ABA_MERCHANT_ID=${{ secrets.ABA_MERCHANT_ID }}
             export ABA_PUBLIC_KEY=${{ secrets.ABA_PUBLIC_KEY }}
             export ABA_ENDPOINT=${{ secrets.ABA_ENDPOINT }}
-            export BACKEND_CALLBACK_URL=${{ secrets.BACKEND_CALLBACK_URL }}
-            export FRONTEND_RETURN_SUCCESS_URL=${{ secrets.FRONTEND_RETURN_SUCCESS_URL }}
-            export FRONTEND_RETURN_CANCEL_URL=${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
+            export BACKEND_CALLBACK_URL=https://${{ terraform output -raw api_cloudfront_domain }}/api/v1/payment/callback
+            export FRONTEND_RETURN_SUCCESS_URL=https://${{ terraform output -raw client_cloudfront_domain }}/payment-return
+            export FRONTEND_RETURN_CANCEL_URL=https://${{ terraform output -raw client_cloudfront_domain }}/payment-cancel
             export VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
             export VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
             cd /home/ec2-user/app/apps/backends/core-api
             npm install
-            npm run build
             pm2 startOrReload ecosystem.config.js
             pm2 save
+            sleep 5
+            curl -f http://localhost:${{ secrets.PORT }}/health || exit 1
             pm2 logs core-api --lines 20

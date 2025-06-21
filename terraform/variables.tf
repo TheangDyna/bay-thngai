@@ -1,3 +1,9 @@
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+  default     = "ap-southeast-2"
+}
+
 variable "project_name" {
   description = "Project name for resource tagging"
   type        = string
@@ -14,11 +20,6 @@ variable "mongo_uri" {
   description = "MongoDB connection string"
   type        = string
   sensitive   = true
-}
-
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
 }
 
 variable "cognito_user_pool_id" {
@@ -107,10 +108,4 @@ variable "vapid_private_key" {
   description = "VAPID private key"
   type        = string
   sensitive   = true
-}
-
-variable "environment" {
-  description = "Environment (e.g., dev, prod)"
-  type        = string
-  default     = "production"
 }

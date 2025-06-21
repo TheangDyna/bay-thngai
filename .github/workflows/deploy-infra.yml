@@ -59,7 +59,7 @@ jobs:
           TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
-        run: terraform plan -lock-timeout=10m
+        run: terraform plan -lock-timeout=3m
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/deploy'
@@ -83,7 +83,7 @@ jobs:
           TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
-        run: terraform apply -auto-approve -lock-timeout=10m
+        run: terraform apply -auto-approve -lock-timeout=3m
 
       - name: Cleanup Stale Lock
         if: failure()

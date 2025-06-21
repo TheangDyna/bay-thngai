@@ -243,60 +243,60 @@ jobs:
             --paths "/*"
 
   deploy-client:
-  needs: deploy-infra
-  runs-on: ubuntu-latest
-  if: contains(github.event.commits[0].message, 'apps/frontends/client') || contains(github.event.head_commit.message, 'apps/frontends/client')
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    needs: deploy-infra
+    runs-on: ubuntu-latest
+    if: contains(github.event.commits[0].message, 'apps/frontends/client') || contains(github.event.head_commit.message, 'apps/frontends/client')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ secrets.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    - name: Setup Terraform CLI
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: 1.9.8
+      - name: Setup Terraform CLI
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
 
-    - name: Terraform Init
-      working-directory: terraform
-      run: terraform init -input=false
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -input=false
 
-    - name: Load Terraform outputs
-      id: tf
-      working-directory: terraform
-      run: |
-        echo "CLIENT_BUCKET=$(terraform output -raw client_bucket_name)" >> $GITHUB_ENV
-        echo "CLIENT_DIST_ID=$(terraform output -raw client_cloudfront_id)" >> $GITHUB_ENV
-        echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
+      - name: Load Terraform outputs
+        id: tf
+        working-directory: terraform
+        run: |
+          echo "CLIENT_BUCKET=$(terraform output -raw client_bucket_name)" >> $GITHUB_ENV
+          echo "CLIENT_DIST_ID=$(terraform output -raw client_cloudfront_id)" >> $GITHUB_ENV
+          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "22"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
-    - name: Build Client
-      working-directory: apps/frontends/client
-      env:
-        VITE_API_URL: ${{ env.API_URL }}
-        VITE_NODE_ENV: ${{ secrets.NODE_ENV }}
-        VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
-      run: |
-        npm install
-        npm run build
+      - name: Build Client
+        working-directory: apps/frontends/client
+        env:
+          VITE_API_URL: ${{ env.API_URL }}
+          VITE_NODE_ENV: ${{ secrets.NODE_ENV }}
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+        run: |
+          npm install
+          npm run build
 
-    - name: Sync to S3
-      run: |
-        aws s3 sync apps/frontends/client/dist/ s3://${{ env.CLIENT_BUCKET }} \
-          --delete \
-          --region ${{ secrets.AWS_REGION }}
+      - name: Sync to S3
+        run: |
+          aws s3 sync apps/frontends/client/dist/ s3://${{ env.CLIENT_BUCKET }} \
+            --delete \
+            --region ${{ secrets.AWS_REGION }}
 
-    - name: Invalidate CloudFront cache
-      run: |
-        aws cloudfront create-invalidation \
-          --distribution-id ${{ env.CLIENT_DIST_ID }} \
-          --paths "/*"
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CLIENT_DIST_ID }} \
+            --paths "/*"

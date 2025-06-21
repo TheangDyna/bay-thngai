@@ -1,7 +1,7 @@
-import { Cuisine } from "@/src/models/cuisine.model";
-import { ICuisineDocument } from "@/src/types/cuisine.types";
-import { APIFeatures } from "@/src/utils/apiFeatures";
-import { AppError } from "@/src/utils/appError";
+import { Cuisine } from "@/models/cuisine.model";
+import { ICuisineDocument } from "@/types/cuisine.types";
+import { APIFeatures } from "@/utils/apiFeatures";
+import { AppError } from "@/utils/appError";
 
 export class CuisineRepository {
   private searchFields: string[];

@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/hooks/use-toast";
 import { useDeleteDialog } from "@/hooks/useDeleteDialog";
 import { useNavigate } from "react-router-dom";
 
@@ -30,12 +31,8 @@ export function DataTableRowActions<TData extends { _id: string }>({
     navigate(`/cuisines/${row.original._id}/edit`);
   };
 
-  const handleDeleteClick = (event: React.MouseEvent) => {
-    // don't allow to delete yet (think about relationship)
-    // event.stopPropagation();
-    // deleteDialog.openDialog({
-    //   onDelete: handleDelete
-    // });
+  const handleDeleteClick = () => {
+    toast({ description: "Can not delete cuisine now!" });
   };
 
   const handleDelete = () => {

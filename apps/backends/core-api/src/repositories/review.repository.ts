@@ -1,7 +1,7 @@
-import { Review } from "@/src/models/review.model";
-import { IReviewDocument } from "@/src/types/review.types";
-import { APIFeatures } from "@/src/utils/apiFeatures";
-import { AppError } from "@/src/utils/appError";
+import { Review } from "@/models/review.model";
+import { IReviewDocument } from "@/types/review.types";
+import { APIFeatures } from "@/utils/apiFeatures";
+import { AppError } from "@/utils/appError";
 
 export class ReviewRepository {
   private searchFields: string[];

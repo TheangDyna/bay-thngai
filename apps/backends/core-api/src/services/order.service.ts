@@ -4,16 +4,16 @@ import {
   Item,
   OrderDoc,
   PaymentStatus
-} from "@/src/models/order.model";
-import OrderRepository from "@/src/repositories/order.repository";
+} from "@/models/order.model";
+import OrderRepository from "@/repositories/order.repository";
 import PaymentService, {
   PaymentConfig,
   PurchaseParams
-} from "@/src/services/payment.service";
-import { ProductService } from "@/src/services/product.service";
-import { emitOrderUpdate } from "@/src/socket";
-import { AppError } from "@/src/utils/appError";
-import { CreateOrderInput } from "@/src/validators/order.validators";
+} from "@/services/payment.service";
+import { ProductService } from "@/services/product.service";
+import { emitOrderUpdate } from "@/socket";
+import { AppError } from "@/utils/appError";
+import { CreateOrderInput } from "@/validators/order.validators";
 import { Types } from "mongoose";
 import { customAlphabet } from "nanoid";
 

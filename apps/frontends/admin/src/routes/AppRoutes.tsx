@@ -2,14 +2,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/contexts/theme/ThemeContext";
-import ComingSoon from "@/pages/ComingSoon";
-import CuisineEdit from "@/pages/cuisines/CuisineEdit";
-import ApplyDiscount from "@/pages/discounts/apply/ApplyDiscount";
-import DiscountCreate from "@/pages/discounts/DiscountCreate";
-import DiscountEdit from "@/pages/discounts/DiscountEdit";
-import DiscountList from "@/pages/discounts/DiscountList";
 import Loading from "@/pages/Loading";
-import OrderList from "@/pages/order/OrderList";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import React, { lazy, Suspense } from "react";
@@ -22,15 +15,40 @@ import {
 } from "react-router-dom";
 
 // Lazy-loaded components
-const Login = lazy(() => import("@/pages/auths/Login"));
-const NotFound = lazy(() => import("@/pages/NotFound"));
-const Dashboard = lazy(() => import("@/pages/dashboards/Dashboard"));
-const ProductList = lazy(() => import("@/pages/products/ProductList"));
-const ProductCreate = lazy(() => import("@/pages/products/ProductCreate"));
-const CuisineCreate = lazy(() => import("@/pages/cuisines/CuisineCreate"));
-const CuisineList = lazy(() => import("@/pages/cuisines/CuisineList"));
-const ProductDetail = lazy(() => import("@/pages/products/ProductDetail"));
-const ProductEdit = lazy(() => import("@/pages/products/ProductEdit"));
+const Login = lazy(async () => await import("@/pages/auths/Login"));
+const NotFound = lazy(async () => await import("@/pages/NotFound"));
+const Dashboard = lazy(
+  async () => await import("@/pages/dashboards/Dashboard")
+);
+const ProductList = lazy(
+  async () => await import("@/pages/products/ProductList")
+);
+const ProductCreate = lazy(
+  async () => await import("@/pages/products/ProductCreate")
+);
+const CuisineCreate = lazy(
+  async () => await import("@/pages/cuisines/CuisineCreate")
+);
+const CuisineList = lazy(
+  async () => await import("@/pages/cuisines/CuisineList")
+);
+const ProductDetail = lazy(
+  async () => await import("@/pages/products/ProductDetail")
+);
+const ProductEdit = lazy(
+  async () => await import("@/pages/products/ProductEdit")
+);
+const ComingSoon = lazy(async () => await import("@/pages/ComingSoon"));
+const CuisineEdit = lazy(
+  async () => await import("@/pages/cuisines/CuisineEdit")
+);
+const ApplyDiscount = lazy(
+  async () => await import("@/pages/discounts/apply/ApplyDiscount")
+);
+const DiscountCreate = lazy(() => import("@/pages/discounts/DiscountCreate"));
+const DiscountEdit = lazy(() => import("@/pages/discounts/DiscountEdit"));
+const DiscountList = lazy(() => import("@/pages/discounts/DiscountList"));
+const OrderList = lazy(() => import("@/pages/order/OrderList"));
 
 const queryClient = new QueryClient({
   defaultOptions: {

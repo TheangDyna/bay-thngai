@@ -1,5 +1,5 @@
 // src/routes/pushSubscription.routes.ts
-import { PushSubscriptionController } from "@/src/controllers/pushSubscription.controller";
+import { PushSubscriptionController } from "@/controllers/pushSubscription.controller";
 import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validation.middleware";

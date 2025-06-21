@@ -1,4 +1,4 @@
-import { ObjectIdSchema } from "@/src/utils/objectIdSchema";
+import { ObjectIdSchema } from "@/utils/objectIdSchema";
 import { z } from "zod";
 
 export const UserRoleSchema = z.enum(["user", "admin"]);

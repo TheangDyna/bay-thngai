@@ -1,5 +1,5 @@
-import PaymentService from "@/src/services/payment.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import PaymentService from "@/services/payment.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export default class PaymentController {

@@ -1,6 +1,6 @@
 // src/services/pushSubscription.service.ts
-import { PushSubscriptionRepository } from "@/src/repositories/pushSubscription.repository";
-import { IPushSubscription } from "@/src/types/pushSubscription.types";
+import { PushSubscriptionRepository } from "@/repositories/pushSubscription.repository";
+import { IPushSubscription } from "@/types/pushSubscription.types";
 
 export class PushSubscriptionService {
   private repository: PushSubscriptionRepository;

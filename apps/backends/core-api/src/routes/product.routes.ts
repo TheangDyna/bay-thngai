@@ -1,4 +1,4 @@
-import { ProductController } from "@/src/controllers/product.controller";
+import { ProductController } from "@/controllers/product.controller";
 import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { cleanupUploadOnError } from "../middlewares/cleanupUploadOnError.middleware";

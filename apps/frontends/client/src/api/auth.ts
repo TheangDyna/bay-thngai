@@ -99,7 +99,7 @@ export const useLogoutMutation = (): UseMutationResult<any, any, any> =>
 
 interface UserWithAddresses {
   id: string;
-  addresses: AddressRecord[];
+  data: AddressRecord[];
 }
 
 export const useGetAddressesQuery = (): UseQueryResult<

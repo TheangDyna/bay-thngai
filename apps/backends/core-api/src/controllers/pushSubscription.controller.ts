@@ -1,6 +1,6 @@
 // src/controllers/pushSubscription.controller.ts
-import { PushSubscriptionService } from "@/src/services/pushSubscription.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import { PushSubscriptionService } from "@/services/pushSubscription.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 import webpush from "web-push";
 

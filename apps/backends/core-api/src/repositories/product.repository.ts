@@ -1,7 +1,7 @@
-import { Product } from "@/src/models/product.model";
-import { IProductDocument } from "@/src/types/product.types";
-import { APIFeatures } from "@/src/utils/apiFeatures";
-import { AppError } from "@/src/utils/appError";
+import { Product } from "@/models/product.model";
+import { IProductDocument } from "@/types/product.types";
+import { APIFeatures } from "@/utils/apiFeatures";
+import { AppError } from "@/utils/appError";
 
 export class ProductRepository {
   private searchFields: string[];

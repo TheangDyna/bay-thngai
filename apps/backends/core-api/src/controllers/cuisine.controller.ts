@@ -1,5 +1,5 @@
-import { CuisineService } from "@/src/services/cuisine.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import { CuisineService } from "@/services/cuisine.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export class CuisineController {

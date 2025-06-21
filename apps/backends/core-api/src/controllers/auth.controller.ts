@@ -1,5 +1,5 @@
-import { UserService } from "@/src/services/user.service";
-import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
+import { UserService } from "@/services/user.service";
+import { IAddress, IContact, IUserDocument } from "@/types/user.types";
 import { Request, Response } from "express";
 import { config } from "../configs/config";
 import { AuthService } from "../services/auth.service";

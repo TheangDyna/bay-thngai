@@ -1,7 +1,7 @@
 // src/repositories/pushSubscription.repository.ts
-import { PushSubscription } from "@/src/models/pushSubscription.model";
-import { IPushSubscriptionDocument } from "@/src/types/pushSubscription.types";
-import { AppError } from "@/src/utils/appError";
+import { PushSubscription } from "@/models/pushSubscription.model";
+import { IPushSubscriptionDocument } from "@/types/pushSubscription.types";
+import { AppError } from "@/utils/appError";
 
 export class PushSubscriptionRepository {
   public async createOrUpdateSubscription(

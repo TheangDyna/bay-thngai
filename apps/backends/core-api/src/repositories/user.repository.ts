@@ -1,8 +1,8 @@
-import { User } from "@/src/models/user.model";
-import { IProduct } from "@/src/types/product.types";
-import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
-import { APIFeatures } from "@/src/utils/apiFeatures";
-import { AppError } from "@/src/utils/appError";
+import { User } from "@/models/user.model";
+import { IProduct } from "@/types/product.types";
+import { IAddress, IContact, IUserDocument } from "@/types/user.types";
+import { APIFeatures } from "@/utils/apiFeatures";
+import { AppError } from "@/utils/appError";
 import { Types } from "mongoose";
 
 export class UserRepository {

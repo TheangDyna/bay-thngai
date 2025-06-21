@@ -1,5 +1,5 @@
-import { ProductService } from "@/src/services/product.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import { ProductService } from "@/services/product.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export class ProductController {

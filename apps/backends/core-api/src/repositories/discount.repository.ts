@@ -1,6 +1,6 @@
-import { Discount } from "@/src/models/discount.model";
-import { Product } from "@/src/models/product.model";
-import { APIFeatures } from "@/src/utils/apiFeatures";
+import { Discount } from "@/models/discount.model";
+import { Product } from "@/models/product.model";
+import { APIFeatures } from "@/utils/apiFeatures";
 
 export class DiscountRepository {
   private searchFields: string[];

@@ -19,7 +19,6 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Coordinates } from "@/types/Coordinates";
 import { Edit, MapPin, Plus } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useCallback, useEffect, useState } from "react";
@@ -67,12 +66,6 @@ export default function AddressSettingsPage() {
   const [formDialogOpen, setFormDialogOpen] = useState<boolean>(false);
   const [currentAddress, setCurrentAddress] = useState<Address | null>(null);
 
-  // Map coordinates / form defaults
-  const [mapCoords, setMapCoords] = useState<Coordinates>({
-    lat: 11.5564,
-    lng: 104.9327
-  });
-
   const form = useForm<AddressFormValues>({
     defaultValues: {
       label: "",
@@ -86,7 +79,6 @@ export default function AddressSettingsPage() {
   // Watch lat / lng / address fields
   const watchedLat = watch("lat");
   const watchedLng = watch("lng");
-  const watchedAddress = watch("address");
 
   // Fetch reverse-geocoded address whenever coordinates change
   const {
@@ -114,10 +106,6 @@ export default function AddressSettingsPage() {
         lng: currentAddress.location.lng,
         address: currentAddress.location.address
       });
-      setMapCoords({
-        lat: currentAddress.location.lat,
-        lng: currentAddress.location.lng
-      });
     } else {
       reset({
         label: "",
@@ -125,7 +113,6 @@ export default function AddressSettingsPage() {
         lng: 104.9327,
         address: ""
       });
-      setMapCoords({ lat: 11.5564, lng: 104.9327 });
     }
   }, [currentAddress, reset]);
 
@@ -134,7 +121,6 @@ export default function AddressSettingsPage() {
     (lat: number, lng: number) => {
       setValue("lat", lat);
       setValue("lng", lng);
-      setMapCoords({ lat, lng });
       // address will update automatically via useGetAddressQuery
     },
     [setValue]

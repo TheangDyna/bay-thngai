@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { cognitoErrorMap } from "@/utils/cognitoErrorMap";
+import { CognitoIdentityProviderServiceException } from "@aws-sdk/client-cognito-identity-provider";
+import { NextFunction, Request, Response } from "express";
 import { MongoServerError } from "mongodb";
 import { Error as MongooseError } from "mongoose";
-import { CognitoIdentityProviderServiceException } from "@aws-sdk/client-cognito-identity-provider";
-import { config } from "../configs/config";
-import logger from "../utils/logger";
-import { AppError } from "../utils/appError";
 import { z } from "zod";
+import { config } from "../configs/config";
+import { AppError } from "../utils/appError";
 import { formatZodErrors } from "../utils/formatZodErrors";
-import { cognitoErrorMap } from "@/src/utils/cognitoErrorMap";
+import logger from "../utils/logger";
 
 class ErrorHandler {
   private static instance: ErrorHandler;

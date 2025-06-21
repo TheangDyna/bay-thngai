@@ -1,6 +1,6 @@
 // src/controllers/user.controller.ts
-import { UserService } from "@/src/services/user.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import { UserService } from "@/services/user.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export class UserController {

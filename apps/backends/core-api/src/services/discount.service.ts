@@ -1,6 +1,6 @@
-import { DiscountRepository } from "@/src/repositories/discount.repository";
-import { ProductService } from "@/src/services/product.service";
-import { AppError } from "@/src/utils/appError";
+import { DiscountRepository } from "@/repositories/discount.repository";
+import { ProductService } from "@/services/product.service";
+import { AppError } from "@/utils/appError";
 
 export class DiscountService {
   private repository: DiscountRepository;

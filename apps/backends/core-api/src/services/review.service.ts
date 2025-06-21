@@ -1,4 +1,4 @@
-import { ReviewRepository } from "@/src/repositories/review.repository";
+import { ReviewRepository } from "@/repositories/review.repository";
 import { Types } from "mongoose";
 import { Review } from "../models/review.model";
 import { IReviewDocument } from "../types/review.types";

@@ -1,8 +1,8 @@
 // src/services/user.service.ts
-import { UserRepository } from "@/src/repositories/user.repository";
-import { IProduct } from "@/src/types/product.types";
-import { IAddress, IContact, IUserDocument } from "@/src/types/user.types";
-import { AppError } from "@/src/utils/appError";
+import { UserRepository } from "@/repositories/user.repository";
+import { IProduct } from "@/types/product.types";
+import { IAddress, IContact, IUserDocument } from "@/types/user.types";
+import { AppError } from "@/utils/appError";
 import { Types } from "mongoose";
 
 export class UserService {

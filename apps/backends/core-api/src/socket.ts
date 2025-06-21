@@ -1,5 +1,5 @@
-import { config } from "@/src/configs/config";
-import { OrderDoc } from "@/src/models/order.model";
+import { config } from "@/configs/config";
+import { OrderDoc } from "@/models/order.model";
 import { Server as HTTPServer } from "http";
 import { Server } from "socket.io";
 

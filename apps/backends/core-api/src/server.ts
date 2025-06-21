@@ -1,7 +1,7 @@
-import { server } from "@/src/app";
-import { config } from "@/src/configs/config";
-import { connectDatabase } from "@/src/configs/database.config";
-import logger from "@/src/utils/logger";
+import { server } from "@/app";
+import { config } from "@/configs/config";
+import { connectDatabase } from "@/configs/database.config";
+import logger from "@/utils/logger";
 import http from "http";
 
 const GRACEFUL_TIMEOUT = 10_000; // 10 seconds

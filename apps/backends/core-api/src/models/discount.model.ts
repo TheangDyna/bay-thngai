@@ -1,4 +1,4 @@
-import { IDiscountDocument } from "@/src/types/discount.types";
+import { IDiscountDocument } from "@/types/discount.types";
 import mongoose, { Schema } from "mongoose";
 
 const discountSchema = new Schema<IDiscountDocument>(

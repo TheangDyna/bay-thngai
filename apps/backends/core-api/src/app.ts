@@ -1,11 +1,11 @@
 import "dotenv/config";
 
 // import "dotenv/config"; always on the top
-import { discountRoutes } from "@/src/routes/discount.routes";
-import { orderRoutes } from "@/src/routes/order.routes";
-import { paymentRoutes } from "@/src/routes/payment.routes";
-import { pushSubscriptionRoutes } from "@/src/routes/pushSubscription.routes";
-import { initSocket } from "@/src/socket";
+import { discountRoutes } from "@/routes/discount.routes";
+import { orderRoutes } from "@/routes/order.routes";
+import { paymentRoutes } from "@/routes/payment.routes";
+import { pushSubscriptionRoutes } from "@/routes/pushSubscription.routes";
+import { initSocket } from "@/socket";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";

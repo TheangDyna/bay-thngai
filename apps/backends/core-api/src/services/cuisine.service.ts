@@ -1,5 +1,5 @@
-import { CuisineRepository } from "@/src/repositories/cuisine.repository";
-import { ICuisineDocument } from "@/src/types/cuisine.types";
+import { CuisineRepository } from "@/repositories/cuisine.repository";
+import { ICuisineDocument } from "@/types/cuisine.types";
 
 export class CuisineService {
   private repository: CuisineRepository;

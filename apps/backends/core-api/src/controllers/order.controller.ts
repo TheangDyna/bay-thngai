@@ -1,5 +1,5 @@
-import OrderService from "@/src/services/order.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import OrderService from "@/services/order.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export default class OrderController {

@@ -1,5 +1,5 @@
-import { DiscountService } from "@/src/services/discount.service";
-import { catchAsync } from "@/src/utils/catchAsync";
+import { DiscountService } from "@/services/discount.service";
+import { catchAsync } from "@/utils/catchAsync";
 import { Request, Response } from "express";
 
 export class DiscountController {

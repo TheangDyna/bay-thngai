@@ -1,4 +1,4 @@
-import { DiscountSchema } from "@/src/validators/discount.validators";
+import { DiscountSchema } from "@/validators/discount.validators";
 import { Document } from "mongoose";
 import { z } from "zod";
 

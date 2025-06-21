@@ -1,5 +1,5 @@
-import { OrderDoc, OrderModel } from "@/src/models/order.model";
-import { APIFeatures } from "@/src/utils/apiFeatures";
+import { OrderDoc, OrderModel } from "@/models/order.model";
+import { APIFeatures } from "@/utils/apiFeatures";
 
 export default class OrderRepository {
   private searchFields: string[];

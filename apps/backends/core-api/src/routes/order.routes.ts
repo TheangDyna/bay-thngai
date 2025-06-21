@@ -1,7 +1,7 @@
-import OrderController from "@/src/controllers/order.controller";
-import { protect } from "@/src/middlewares/auth.middleware";
-import { validate } from "@/src/middlewares/validation.middleware";
-import { CreateOrderSchema } from "@/src/validators/order.validators";
+import OrderController from "@/controllers/order.controller";
+import { protect } from "@/middlewares/auth.middleware";
+import { validate } from "@/middlewares/validation.middleware";
+import { CreateOrderSchema } from "@/validators/order.validators";
 import { Router } from "express";
 
 const router = Router();

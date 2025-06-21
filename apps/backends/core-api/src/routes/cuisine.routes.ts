@@ -1,9 +1,9 @@
-import { CuisineController } from "@/src/controllers/cuisine.controller";
-import { cleanupUploadOnError } from "@/src/middlewares/cleanupUploadOnError.middleware";
+import { CuisineController } from "@/controllers/cuisine.controller";
+import { cleanupUploadOnError } from "@/middlewares/cleanupUploadOnError.middleware";
 import {
   processThumbnailAndImages,
   upload
-} from "@/src/middlewares/upload.middleware";
+} from "@/middlewares/upload.middleware";
 import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validation.middleware";

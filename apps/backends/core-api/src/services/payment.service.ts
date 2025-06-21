@@ -1,6 +1,6 @@
-import { OrderDoc } from "@/src/models/order.model";
-import OrderRepository from "@/src/repositories/order.repository";
-import { AppError } from "@/src/utils/appError";
+import { OrderDoc } from "@/models/order.model";
+import OrderRepository from "@/repositories/order.repository";
+import { AppError } from "@/utils/appError";
 import crypto from "crypto";
 
 export interface PurchaseParams {

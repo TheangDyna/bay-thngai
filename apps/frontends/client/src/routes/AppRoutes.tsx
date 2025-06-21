@@ -4,21 +4,32 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/auth.context";
 import { CartProvider } from "@/contexts/cart.context";
 import { ThemeProvider } from "@/contexts/theme.context";
-import CheckoutPage from "@/pages/checkout/CheckoutPage";
-import Home from "@/pages/home/Home";
 import Loading from "@/pages/Loading";
-import NotFound from "@/pages/NotFound";
-import OrderTrackingPage from "@/pages/order/order-track";
-import PaymentCancel from "@/pages/payment/payment-cancel";
-import PaymentReturn from "@/pages/payment/payment-return";
-import ProductDetailPage from "@/pages/product/ProductDetailPage";
-import ProfilePage from "@/pages/profile/ProfilePage";
-import Search from "@/pages/search/SearchPage";
+import CheckoutPage from "@/pages/checkout/CheckoutPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 
+// Lazy-loaded components
+const Home = lazy(async () => await import("@/pages/home/Home"));
+const NotFound = lazy(async () => await import("@/pages/NotFound"));
+const OrderTrackingPage = lazy(
+  async () => await import("@/pages/order/order-track")
+);
+const PaymentCancel = lazy(
+  async () => await import("@/pages/payment/payment-cancel")
+);
+const PaymentReturn = lazy(
+  async () => await import("@/pages/payment/payment-return")
+);
+const ProductDetailPage = lazy(
+  async () => await import("@/pages/product/ProductDetailPage")
+);
+const ProfilePage = lazy(
+  async () => await import("@/pages/profile/ProfilePage")
+);
+const Search = lazy(async () => await import("@/pages/search/SearchPage"));
 const queryClient = new QueryClient();
 
 const AppRoutes: React.FC = () => {

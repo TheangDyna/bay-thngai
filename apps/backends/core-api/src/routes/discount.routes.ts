@@ -1,9 +1,9 @@
-import { DiscountController } from "@/src/controllers/discount.controller";
-import { validate } from "@/src/middlewares/validation.middleware";
+import { DiscountController } from "@/controllers/discount.controller";
+import { validate } from "@/middlewares/validation.middleware";
 import {
   CreateDiscountSchema,
   UpdateDiscountSchema
-} from "@/src/validators/discount.validators";
+} from "@/validators/discount.validators";
 import { Router } from "express";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 

@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useDeleteDialog } from "@/hooks/useDeleteDialog";
-import { useNavigate } from "react-router-dom";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -20,7 +19,6 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData extends { _id: string }>({
   row
 }: DataTableRowActionsProps<TData>) {
-  const navigate = useNavigate();
   const deleteDialog = useDeleteDialog();
 
   const deleteProductMutation = useDeleteProductMutation(row.original._id);

@@ -1,5 +1,5 @@
-import { ProductRepository } from "@/src/repositories/product.repository";
-import { IProductDocument } from "@/src/types/product.types";
+import { ProductRepository } from "@/repositories/product.repository";
+import { IProductDocument } from "@/types/product.types";
 
 export class ProductService {
   private repository: ProductRepository;

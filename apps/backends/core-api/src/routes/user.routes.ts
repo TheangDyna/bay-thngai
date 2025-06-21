@@ -1,6 +1,6 @@
 // src/routes/user.routes.ts
-import { UserController } from "@/src/controllers/user.controller";
-import { protect, restrictTo } from "@/src/middlewares/auth.middleware";
+import { UserController } from "@/controllers/user.controller";
+import { protect, restrictTo } from "@/middlewares/auth.middleware";
 import { Router } from "express";
 
 const userController = new UserController();

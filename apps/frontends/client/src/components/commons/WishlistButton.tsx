@@ -7,7 +7,6 @@ import { useAuth } from "@/contexts/auth.context";
 import { useToast } from "@/hooks/use-toast";
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface WishlistButtonProps {
   productId: string;
@@ -17,7 +16,6 @@ export const WishlistButton: React.FC<WishlistButtonProps> = ({
   productId
 }) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const addToWishlistMutation = useAddToWishlistMutation();
   const removeFromWishlistMutation = useRemoveFromWishlistMutation();
   const { user } = useAuth();

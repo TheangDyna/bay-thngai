@@ -77,15 +77,11 @@ const CardProductCart: React.FC<CardProductCartProps> = ({
           {discount && isDiscountActive && (
             <Badge
               variant="outline"
-              className={`text-xs ${
-                discount.type === "percentage"
-                  ? "border-orange-500 text-orange-500"
-                  : "border-green-500 text-green-500"
-              }`}
+              className="text-xs border-orange-500 text-orange-500"
             >
               {discount.type === "percentage"
-                ? `${discount.amount}% off`
-                : `$${discount.amount} off`}
+                ? `${discount.amount}% OFF`
+                : `$${discount.amount} OFF`}
             </Badge>
           )}
           <span className="font-semibold mt-1">${lineTotal.toFixed(2)}</span>

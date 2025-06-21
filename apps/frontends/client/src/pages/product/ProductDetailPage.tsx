@@ -97,8 +97,8 @@ export default function ProductDetailPage() {
 
   // 3) Render once we know we have a product
   return (
-    <div className="bg-gray-100">
-      <div className="max-w-5xl mx-auto p-10 space-y-10 bg-background">
+    <div>
+      <div className="max-w-5xl mx-auto p-10 space-y-10 border-x">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Thumbnails */}
           <div className="flex md:flex-col gap-3 overflow-auto">

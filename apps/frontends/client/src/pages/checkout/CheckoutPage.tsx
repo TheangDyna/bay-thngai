@@ -10,6 +10,7 @@ import { PaymentOptions } from "@/pages/checkout/PaymentOptions";
 import { SectionCard } from "@/pages/checkout/SectionCard";
 import { Coordinates } from "@/types/Coordinates";
 import axiosInstance from "@/utils/axiosInstance";
+import { calculateDiscountedPrice } from "@/utils/price";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,11 +51,14 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
     try {
       const { data } = await axiosInstance.post("/orders", {
-        items: cart.map((i) => ({
-          productId: i.id,
-          quantity: i.quantity,
-          price: i.price
-        })),
+        items: cart.map((i) => {
+          const { finalPrice } = calculateDiscountedPrice(i.price, i.discount);
+          return {
+            productId: i.id,
+            quantity: i.quantity,
+            price: finalPrice
+          };
+        }),
         customer: {
           phone: contactNumber
         },

@@ -1,4 +1,3 @@
-// src/components/layout/Cart.tsx
 import CardProductCart from "@/components/commons/CardProductCart";
 import EmptyCartSection from "@/components/commons/EmptyCartSection";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,9 @@ import {
   SheetTitle,
   SheetTrigger
 } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/auth.context";
 import { useCart } from "@/contexts/cart.context";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { ShoppingCart } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,8 @@ const Cart: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = cart.reduce(
@@ -48,7 +50,27 @@ const Cart: React.FC = () => {
   const clr = () => clearCart();
   const ck = () => {
     if (!cart.length) {
-      toast({ description: "Your cart is empty", variant: "destructive" });
+      toast({
+        variant: "destructive",
+        description: "Your cart is empty"
+      });
+      return;
+    }
+    if (!user) {
+      toast({
+        variant: "destructive",
+        description: "Please sign in to proceed to checkout.",
+        action: (
+          <Button
+            variant="link"
+            className="text-secondary"
+            size="sm"
+            onClick={() => navigate("/login")}
+          >
+            Sign In
+          </Button>
+        )
+      });
       return;
     }
     setOpen(false);

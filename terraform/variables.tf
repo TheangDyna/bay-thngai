@@ -108,3 +108,9 @@ variable "vapid_private_key" {
   type        = string
   sensitive   = true
 }
+
+variable "environment" {
+  description = "Environment (e.g., dev, prod)"
+  type        = string
+  default     = "production"
+}

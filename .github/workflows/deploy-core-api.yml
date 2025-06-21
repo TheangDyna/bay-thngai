@@ -32,6 +32,9 @@ jobs:
           echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
           echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
           echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
+          echo "BACKEND_CALLBACK_URL=https://$(terraform output -raw api_cloudfront_domain)/api/v1/payment/callback" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_SUCCESS_URL=https://$(terraform output -raw client_cloudfront_domain)/payment-return" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_CANCEL_URL=https://$(terraform output -raw client_cloudfront_domain)/payment-cancel" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -93,9 +96,9 @@ jobs:
             export ABA_MERCHANT_ID=${{ secrets.ABA_MERCHANT_ID }}
             export ABA_PUBLIC_KEY=${{ secrets.ABA_PUBLIC_KEY }}
             export ABA_ENDPOINT=${{ secrets.ABA_ENDPOINT }}
-            export BACKEND_CALLBACK_URL=https://${{ terraform output -raw api_cloudfront_domain }}/api/v1/payment/callback
-            export FRONTEND_RETURN_SUCCESS_URL=https://${{ terraform output -raw client_cloudfront_domain }}/payment-return
-            export FRONTEND_RETURN_CANCEL_URL=https://${{ terraform output -raw client_cloudfront_domain }}/payment-cancel
+            export BACKEND_CALLBACK_URL=${{ env.BACKEND_CALLBACK_URL }}
+            export FRONTEND_RETURN_SUCCESS_URL=${{ env.FRONTEND_RETURN_SUCCESS_URL }}
+            export FRONTEND_RETURN_CANCEL_URL=${{ env.FRONTEND_RETURN_CANCEL_URL }}
             export VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
             export VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
             cd /home/ec2-user/app/apps/backends/core-api

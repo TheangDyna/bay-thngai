@@ -52,6 +52,7 @@ jobs:
           npm install
           VITE_API_URL=${{ env.API_URL }} \
           VITE_NODE_ENV=${{ secrets.NODE_ENV }} \
+          VITE_VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }} \
           npm run build
 
       - name: Sync to S3

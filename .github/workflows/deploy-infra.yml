@@ -5,9 +5,6 @@ on:
     branches: [deploy]
     paths:
       - "terraform/**"
-      - "apps/backends/core-api/**"
-      - "apps/frontends/admin/**"
-      - "apps/frontends/client/**"
 
 permissions:
   contents: read

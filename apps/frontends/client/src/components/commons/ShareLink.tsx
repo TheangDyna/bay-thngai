@@ -3,10 +3,8 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
@@ -65,7 +63,7 @@ const ShareLink: React.FC<IShareLinkProps> = ({
                 Share on social media to reach the highest traffic and share
                 this product
               </span>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <button className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
                   <img
                     src="/social-media/facebook.webp"
@@ -125,17 +123,6 @@ const ShareLink: React.FC<IShareLinkProps> = ({
               </div>
             </div>
           </div>
-
-          <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button
-                type="button"
-                className="w-full bg-gray-800 text-white hover:bg-gray-700"
-              >
-                Close
-              </Button>
-            </DialogClose>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

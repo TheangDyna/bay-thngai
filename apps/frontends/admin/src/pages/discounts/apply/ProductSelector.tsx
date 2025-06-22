@@ -1,5 +1,6 @@
 import { useCuisinesQuery } from "@/api/cuisine";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
@@ -130,6 +131,14 @@ export const ProductSelector: React.FC<Props> = ({ selected, onChange }) => {
     );
   };
 
+  const toggleAllProducts = () => {
+    if (selected.length === allProducts.length) {
+      onChange([]); // Unselect all
+    } else {
+      onChange(allProducts.map((p) => p._id)); // Select all
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -153,6 +162,17 @@ export const ProductSelector: React.FC<Props> = ({ selected, onChange }) => {
               })) ?? []
             }
           />
+          {/* Add Select All/Unselect All button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleAllProducts}
+            className="h-8"
+          >
+            {selected.length === allProducts.length
+              ? "Unselect All"
+              : "Select All"}
+          </Button>
         </div>
 
         <Select value={sortBy} onValueChange={setSortBy}>

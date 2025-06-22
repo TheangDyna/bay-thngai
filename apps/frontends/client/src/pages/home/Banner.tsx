@@ -17,7 +17,7 @@ const Banner = () => {
 
   return (
     <div
-      className="w-full bg-no-repeat bg-cover bg-center flex items-center bg-fill-thumbnail hero-banner-six min-h-[400px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[650px] py-20 py:pt-24 mb-5 2xl:bg-center"
+      className="w-full bg-no-repeat bg-cover bg-center bg-gray-100 flex items-center bg-fill-thumbnail hero-banner-six min-h-[400px] md:min-h-[460px] lg:min-h-[500px] xl:min-h-[650px] py-20 py:pt-24 mb-5 2xl:bg-center"
       style={{
         backgroundImage: "url(/banner-1.webp)",
         backgroundPosition: "center center"

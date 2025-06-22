@@ -11,6 +11,7 @@ import { SectionCard } from "@/pages/checkout/SectionCard";
 import { Coordinates } from "@/types/Coordinates";
 import axiosInstance from "@/utils/axiosInstance";
 import { calculateDiscountedPrice } from "@/utils/price";
+import { CreateOrderSchema } from "@/validators/order.validators";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +20,7 @@ const CheckoutPage: React.FC = () => {
   const { cart, clearCart } = useCart();
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  // form state
+  // Form state
   const [loading, setLoading] = useState(false);
   const [addressInfo, setAddressInfo] = useState<{
     id: string;
@@ -35,6 +36,7 @@ const CheckoutPage: React.FC = () => {
   const [instructions, setInstructions] = useState<string>("");
   const [leaveAtDoor, setLeaveAtDoor] = useState<boolean>(false);
   const [selectedTip, setSelectedTip] = useState(5);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shippingFee = 0;
@@ -45,12 +47,60 @@ const CheckoutPage: React.FC = () => {
       toast({ description: "Your cart is empty.", variant: "destructive" });
       navigate("/");
     }
-  }, [cart]);
+  }, [cart, navigate]);
+
+  const validateForm = () => {
+    const orderData = {
+      items: cart.map((i) => {
+        const { finalPrice } = calculateDiscountedPrice(i.price, i.discount);
+        return {
+          productId: i.id,
+          quantity: i.quantity,
+          price: finalPrice
+        };
+      }),
+      customer: { phone: contactNumber },
+      shipping: shippingFee,
+      tip: selectedTip,
+      paymentMethod,
+      deliveryAddress: {
+        type: "Point" as const,
+        coordinates: addressInfo.coords
+          ? [addressInfo.coords.lng, addressInfo.coords.lat]
+          : [NaN, NaN],
+        address: addressInfo.address
+      },
+      deliveryTimeSlot,
+      instructions,
+      leaveAtDoor
+    };
+
+    const validation = CreateOrderSchema.safeParse(orderData);
+    if (!validation.success) {
+      const errorMap: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        const path = err.path.join(".");
+        errorMap[path] = err.message;
+      });
+      setErrors(errorMap);
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
 
   const handlePlaceOrder = async () => {
+    if (!validateForm()) {
+      toast({
+        description: "Please fix the errors in the form.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data } = await axiosInstance.post("/orders", {
+      const orderData = {
         items: cart.map((i) => {
           const { finalPrice } = calculateDiscountedPrice(i.price, i.discount);
           return {
@@ -59,25 +109,21 @@ const CheckoutPage: React.FC = () => {
             price: finalPrice
           };
         }),
-        customer: {
-          phone: contactNumber
-        },
+        customer: { phone: contactNumber },
         shipping: shippingFee,
         tip: selectedTip,
         paymentMethod,
         deliveryAddress: {
           type: "Point" as const,
-          coordinates: [addressInfo.coords?.lng, addressInfo.coords?.lat] as [
-            number,
-            number
-          ],
+          coordinates: [addressInfo.coords!.lng, addressInfo.coords!.lat],
           address: addressInfo.address
         },
         deliveryTimeSlot,
         instructions,
         leaveAtDoor
-      });
+      };
 
+      const { data } = await axiosInstance.post("/orders", orderData);
       const { order, paymentConfig } = data;
 
       if (paymentMethod === "cod") {
@@ -119,6 +165,11 @@ const CheckoutPage: React.FC = () => {
       <div className="lg:col-span-2 space-y-6">
         <SectionCard title="1. Delivery Address">
           <DeliveryAddressSelector onAddressChange={setAddressInfo} />
+          {errors["deliveryAddress.coordinates"] && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors["deliveryAddress.coordinates"]}
+            </p>
+          )}
         </SectionCard>
 
         <SectionCard title="2. Delivery Schedule">
@@ -128,6 +179,11 @@ const CheckoutPage: React.FC = () => {
             slotCount={5}
             slotStepMins={30}
           />
+          {errors["deliveryTimeSlot"] && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors["deliveryTimeSlot"]}
+            </p>
+          )}
         </SectionCard>
 
         <SectionCard title="3. Contact Number">
@@ -137,6 +193,11 @@ const CheckoutPage: React.FC = () => {
             onSelectContact={setSelectedContactId}
             onEnterNumber={setContactNumber}
           />
+          {errors["customer.phone"] && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors["customer.phone"]}
+            </p>
+          )}
         </SectionCard>
 
         <SectionCard title="4. Payment Option">
@@ -144,6 +205,11 @@ const CheckoutPage: React.FC = () => {
             paymentMethod={paymentMethod}
             onChange={setPaymentMethod}
           />
+          {errors["paymentMethod"] && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors["paymentMethod"]}
+            </p>
+          )}
         </SectionCard>
 
         <SectionCard title="5. Delivery Instructions (optional)">

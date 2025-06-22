@@ -31,7 +31,7 @@ export const Map: React.FC<MapProps> = ({
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-[300px] flex flex-col">
       <div className="flex justify-end">
         <LocationButton onLocation={handleCurrentLocation} />
       </div>
@@ -39,7 +39,7 @@ export const Map: React.FC<MapProps> = ({
         ref={mapRef}
         center={position}
         zoom={16}
-        className="h-[300px] w-full rounded-md"
+        className="h-full w-full rounded-md"
         minZoom={3}
         maxZoom={18}
         bounceAtZoomLimits={true}

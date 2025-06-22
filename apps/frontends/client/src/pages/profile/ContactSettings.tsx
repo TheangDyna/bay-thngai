@@ -1,3 +1,4 @@
+// src/components/ContactSettings.tsx
 import {
   ContactRecord,
   useAddContactMutation,
@@ -32,7 +33,9 @@ interface ContactFormValues {
   label: string;
   value: string;
 }
-const PHONE_REGEX = /^\+855(?:10|11|12|15|16|17|18|19)(?:\d{6}|\d{7})$/;
+
+const PHONE_REGEX = /^\+855\d{8,9}$/;
+
 function formatPhone(raw: string): string {
   const match8 = raw.match(/^\+855(\d{2})(\d{3})(\d{3})$/);
   if (match8) {
@@ -136,15 +139,6 @@ export function ContactSettings() {
           ) : contacts.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 mb-4">No contacts found.</p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center space-x-1"
-                onClick={openAddDialog}
-              >
-                <Plus className="h-5 w-5" />
-                <span>Add New Contact</span>
-              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -182,21 +176,21 @@ export function ContactSettings() {
                   </CardContent>
                 </Card>
               ))}
-              <Card className="border-dashed border-gray-300">
-                <CardContent className="flex justify-center p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center space-x-1"
-                    onClick={openAddDialog}
-                  >
-                    <Plus className="h-5 w-5" />
-                    <span>Add New Contact</span>
-                  </Button>
-                </CardContent>
-              </Card>
             </div>
           )}
+          <Card className="border-dashed border-gray-300">
+            <CardContent className="flex justify-center p-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-1"
+                onClick={openAddDialog}
+              >
+                <Plus className="h-5 w-5" />
+                <span>Add New Contact</span>
+              </Button>
+            </CardContent>
+          </Card>
         </CardContent>
       </Card>
 
@@ -232,7 +226,7 @@ export function ContactSettings() {
                     const raw = val.replace(/\s+/g, "");
                     return (
                       PHONE_REGEX.test(raw) ||
-                      "Use format +855XXXXXXXX or +855XXXXXXXXX"
+                      "Use format +855 followed by 8 or 9 digits"
                     );
                   }
                 }}
@@ -241,7 +235,7 @@ export function ContactSettings() {
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+85512123456"
+                        placeholder="+85512345678"
                         {...field}
                         onBlur={(e) => {
                           const raw = e.target.value.replace(/\s+/g, "");

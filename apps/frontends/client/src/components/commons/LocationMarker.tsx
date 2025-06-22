@@ -1,4 +1,4 @@
-import { Icon, LatLng } from "leaflet";
+import L, { LatLng } from "leaflet";
 import { useCallback, useEffect, useState } from "react";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
 
@@ -6,11 +6,11 @@ interface LocationMarkerProps {
   onLocationSelect: (lat: number, lng: number) => void;
 }
 
-const customIcon = new Icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
+const PinIcon = new L.Icon({
+  iconUrl: "/pin.png", // Place in public/icons/
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
 });
 
 export const LocationMarker: React.FC<LocationMarkerProps> = ({
@@ -51,6 +51,6 @@ export const LocationMarker: React.FC<LocationMarkerProps> = ({
   }, [map]);
 
   return position === null ? null : (
-    <Marker position={position} icon={customIcon} zIndexOffset={1000} />
+    <Marker position={position} icon={PinIcon} zIndexOffset={1000} />
   );
 };

@@ -25,7 +25,7 @@ export function DataTableRowActions<TData extends { _id: string }>({
   };
   const handleApply = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/discount/${row.original._id}/apply`);
+    navigate(`/discount/apply/?discount=${row.original._id}`);
   };
 
   return (

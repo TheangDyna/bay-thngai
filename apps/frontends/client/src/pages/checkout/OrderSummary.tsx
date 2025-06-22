@@ -13,6 +13,7 @@ interface OrderSummaryProps {
   total: number; // already includes discount, shipping & tip
   onPlaceOrder: () => void;
   loading: boolean;
+  hasErrors?: boolean; // Add new prop
 }
 
 export const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -22,9 +23,9 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   tipAmount,
   total,
   onPlaceOrder,
-  loading
+  loading,
+  hasErrors = false
 }) => {
-  // Compute total discount across all cart items:
   const totalDiscount = cart.reduce((acc, item) => {
     const { price: basePrice, discount, quantity } = item;
     const { finalPrice } = calculateDiscountedPrice(basePrice, discount);
@@ -79,14 +80,12 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
             <span>Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
           </div>
-
           {totalDiscount > 0 && (
             <div className="flex justify-between">
               <span>Total Discount</span>
               <span>${totalDiscount.toFixed(2)}</span>
             </div>
           )}
-
           <div className="flex justify-between">
             <span>Shipping</span>
             <span>${shippingFee.toFixed(2)}</span>
@@ -103,7 +102,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
 
         <Button
           onClick={onPlaceOrder}
-          disabled={loading}
+          disabled={loading || hasErrors}
           className="mt-6 w-full"
         >
           {loading ? "Processing…" : "Place Order"}

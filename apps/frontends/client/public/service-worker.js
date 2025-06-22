@@ -1,41 +1,36 @@
 // public/service-worker.js
-
-// Listen for incoming push messages
 self.addEventListener("push", (event) => {
-  if (!event.data) {
-    return;
-  }
+  if (!event.data) return;
 
-  // The payload was sent as JSON { title, message }
-  const { title, message } = event.data.json();
+  const { title, message, icon, badge, data } = event.data.json();
 
   const options = {
     body: message,
-    icon: "/icons/icon-192x192.png", // adjust path if needed
-    badge: "/icons/badge-72x72.png" // adjust path if needed
-    // you can add other options here: actions, vibrate, data, etc.
+    icon: "/bay-thngai-logo.svg",
+    data // Store URL for click handling
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Handle notification click (e.g. focus/open the app)
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+
+  const urlToOpen = event.notification.data?.url || "/";
 
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clientList) => {
-        // If there’s already an open window/tab, focus it
+        // Check if a client is already open with the target URL
         for (const client of clientList) {
-          if (client.url === "/" && "focus" in client) {
+          if (client.url === urlToOpen && "focus" in client) {
             return client.focus();
           }
         }
-        // Otherwise, open a new window/tab to the homepage
+        // Open new window/tab to the specific discount page
         if (clients.openWindow) {
-          return clients.openWindow("/");
+          return clients.openWindow(urlToOpen);
         }
       })
   );

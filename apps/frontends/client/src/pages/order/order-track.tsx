@@ -28,6 +28,13 @@ const bikeIcon = new L.Icon({
   popupAnchor: [0, -32]
 });
 
+const PinIcon = new L.Icon({
+  iconUrl: "/address.png", // Place in public/icons/
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
+
 const statusSteps = [
   "pending",
   "confirmed",
@@ -222,6 +229,7 @@ export default function OrderTrackingPage() {
                       order.deliveryAddress.coordinates[1],
                       order.deliveryAddress.coordinates[0]
                     ]}
+                    icon={PinIcon}
                   />
                   {/* Rider Marker and Polyline (only for out_for_delivery) */}
                   {isOutForDelivery && riderPos && (

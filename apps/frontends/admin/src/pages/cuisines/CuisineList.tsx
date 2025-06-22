@@ -73,6 +73,8 @@ const CuisineList: React.FC = () => {
     pageCount: pageCount
   });
 
+  const columnsArray = table.getAllColumns();
+
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} />
@@ -115,7 +117,7 @@ const CuisineList: React.FC = () => {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={columnsArray.length}
                   className="h-24 text-center"
                 >
                   {cuisinesQuery.isError

@@ -19,7 +19,7 @@ export const ProductSchema = z
     ratingsQuantity: z.number().int().positive().optional(),
     images: z.array(z.string().url().min(1)).optional().default([]),
     sold: z.number().optional().default(0),
-    discount: ObjectIdSchema
+    discount: z.string().optional()
   })
   .strict();
 

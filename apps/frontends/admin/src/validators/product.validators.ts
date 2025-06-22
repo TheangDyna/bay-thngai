@@ -25,8 +25,8 @@ export const ProductSchema = z.object({
     z.instanceof(File, { message: "Thumbnail is required." }),
     z.string().url({ message: "Thumbnail is required." })
   ]),
-  images: z.array(z.union([z.instanceof(File), z.string().url()])).optional()
-
+  images: z.array(z.union([z.instanceof(File), z.string().url()])).optional(),
+  discount: z.string().trim().optional()
   // for update
   // thumbnail: z.union([z.instanceof(File), z.string().url()]),
   // images: z.array(z.union([z.instanceof(File), z.string().url()])).optional()

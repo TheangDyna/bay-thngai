@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import { generateFileUniqueName } from "../utils/generateFileUniqueName";
-import { processImage } from "../utils/processImage";
 import { uploadToS3 } from "../utils/uploadToS3";
 
 export interface MulterRequest extends Request {
@@ -27,13 +26,7 @@ export const processThumbnailAndImages = async (
     if (req.files?.thumbnail && req.files.thumbnail.length > 0) {
       const thumbnailFile = req.files.thumbnail[0];
       const thumbnailKey = `thumbnails/${generateFileUniqueName()}.webp`;
-      const thumbnailBuffer = await processImage(
-        thumbnailFile.buffer,
-        300,
-        300,
-        "webp",
-        80
-      );
+      const thumbnailBuffer = thumbnailFile.buffer;
 
       req.s3UploadedFiles.push({ Key: thumbnailKey });
       const thumbnailUrl = await uploadToS3(
@@ -50,13 +43,7 @@ export const processThumbnailAndImages = async (
       const imageUploads = await Promise.all(
         images.map(async (image: Express.Multer.File) => {
           const imageKey = `images/${generateFileUniqueName()}.webp`;
-          const imageBuffer = await processImage(
-            image.buffer,
-            800,
-            800,
-            "webp",
-            80
-          );
+          const imageBuffer = image.buffer;
           req.s3UploadedFiles.push({ Key: imageKey });
           return uploadToS3(imageBuffer, imageKey, "image/webp");
         })

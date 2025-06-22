@@ -60,9 +60,9 @@ jobs:
           TF_VAR_aba_merchant_id: ${{ secrets.ABA_MERCHANT_ID }}
           TF_VAR_aba_public_key: ${{ secrets.ABA_PUBLIC_KEY }}
           TF_VAR_aba_endpoint: ${{ secrets.ABA_ENDPOINT }}
-          TF_VAR_backend_callback_url: ${{ secrets.BACKEND_CALLBACK_URL }}
-          TF_VAR_frontend_return_success_url: ${{ secrets.FRONTEND_RETURN_SUCCESS_URL }}
-          TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
+          TF_VAR_backend_callback_url: "https://api.baythngai.shop/api/v1/payment/callback"
+          TF_VAR_frontend_return_success_url: "https://client.baythngai.shop/payment-return"
+          TF_VAR_frontend_return_cancel_url: "https://client.baythngai.shop/payment-cancel"
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: terraform plan -lock-timeout=10m
@@ -81,9 +81,9 @@ jobs:
           TF_VAR_aba_merchant_id: ${{ secrets.ABA_MERCHANT_ID }}
           TF_VAR_aba_public_key: ${{ secrets.ABA_PUBLIC_KEY }}
           TF_VAR_aba_endpoint: ${{ secrets.ABA_ENDPOINT }}
-          TF_VAR_backend_callback_url: ${{ secrets.BACKEND_CALLBACK_URL }}
-          TF_VAR_frontend_return_success_url: ${{ secrets.FRONTEND_RETURN_SUCCESS_URL }}
-          TF_VAR_frontend_return_cancel_url: ${{ secrets.FRONTEND_RETURN_CANCEL_URL }}
+          TF_VAR_backend_callback_url: "https://api.baythngai.shop/api/v1/payment/callback"
+          TF_VAR_frontend_return_success_url: "https://client.baythngai.shop/payment-return"
+          TF_VAR_frontend_return_cancel_url: "https://client.baythngai.shop/payment-cancel"
           TF_VAR_vapid_public_key: ${{ secrets.VAPID_PUBLIC_KEY }}
           TF_VAR_vapid_private_key: ${{ secrets.VAPID_PRIVATE_KEY }}
         run: terraform apply -auto-approve -lock-timeout=10m

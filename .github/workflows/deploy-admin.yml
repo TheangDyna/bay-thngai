@@ -36,7 +36,7 @@ jobs:
         run: |
           echo "ADMIN_BUCKET=$(terraform output -raw admin_bucket_name)" >> $GITHUB_ENV
           echo "ADMIN_DIST_ID=$(terraform output -raw admin_cloudfront_id)" >> $GITHUB_ENV
-          echo "API_URL=https://$(terraform output -raw api_cloudfront_domain)" >> $GITHUB_ENV
+          echo "API_URL=https://api.baythngai.shop" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

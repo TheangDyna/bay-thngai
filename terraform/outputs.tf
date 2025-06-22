@@ -41,15 +41,15 @@ output "client_cloudfront_id" {
 
 output "backend_callback_url" {
   description = "Backend callback URL for payment gateway"
-  value       = "https://${aws_cloudfront_distribution.api.domain_name}/api/v1/payment/callback"
+  value       = "https://api.baythngai.shop/api/v1/payment/callback"
 }
 
 output "frontend_return_success_url" {
   description = "Frontend payment return success URL"
-  value       = "https://${aws_cloudfront_distribution.client.domain_name}/payment-return"
+  value       = "https://client.baythngai.shop/payment-return"
 }
 
 output "frontend_return_cancel_url" {
   description = "Frontend payment return cancel URL"
-  value       = "https://${aws_cloudfront_distribution.client.domain_name}/payment-cancel"
+  value       = "https://client.baythngai.shop/payment-cancel"
 }

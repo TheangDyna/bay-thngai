@@ -40,6 +40,8 @@ resource "aws_cloudfront_distribution" "admin" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
+  aliases = ["admin.baythngai.shop"]
+
   custom_error_response {
     error_code            = 403
     response_code         = 200

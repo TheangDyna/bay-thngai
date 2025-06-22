@@ -30,11 +30,11 @@ jobs:
         working-directory: terraform
         run: |
           echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
-          echo "ADMIN_URL=https://$(terraform output -raw admin_cloudfront_domain)" >> $GITHUB_ENV
-          echo "CLIENT_URL=https://$(terraform output -raw client_cloudfront_domain)" >> $GITHUB_ENV
-          echo "BACKEND_CALLBACK_URL=https://$(terraform output -raw api_cloudfront_domain)/api/v1/payment/callback" >> $GITHUB_ENV
-          echo "FRONTEND_RETURN_SUCCESS_URL=https://$(terraform output -raw client_cloudfront_domain)/payment-return" >> $GITHUB_ENV
-          echo "FRONTEND_RETURN_CANCEL_URL=https://$(terraform output -raw client_cloudfront_domain)/payment-cancel" >> $GITHUB_ENV
+          echo "ADMIN_URL=https://admin.baythngai.shop" >> $GITHUB_ENV
+          echo "CLIENT_URL=https://client.baythngai.shop" >> $GITHUB_ENV
+          echo "BACKEND_CALLBACK_URL=https://api.baythngai.shop/api/v1/payment/callback" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_SUCCESS_URL=https://client.baythngai.shop/payment-return" >> $GITHUB_ENV
+          echo "FRONTEND_RETURN_CANCEL_URL=https://client.baythngai.shop/payment-cancel" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -98,6 +98,8 @@ jobs:
             export VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
             export VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}
             cd /home/ec2-user/app/apps/backends/core-api
-            npm install
+            echo "Installing dependencies..."
+            npm install --production --no-optional
+            echo "Starting PM2..."
             pm2 startOrReload ecosystem.config.js
             pm2 save

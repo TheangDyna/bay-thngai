@@ -56,6 +56,8 @@ resource "aws_cloudfront_distribution" "api" {
   is_ipv6_enabled     = true
   default_root_object = ""
 
+  aliases = ["api.baythngai.shop"]
+
   default_cache_behavior {
     target_origin_id       = "${var.project_name}-core-api"
     viewer_protocol_policy = "https-only"

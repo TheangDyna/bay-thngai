@@ -46,7 +46,8 @@ router.route("/:productId").patch(
   processThumbnailAndImages as unknown as any,
   sanitizeProductInput,
   validate(UpdateProductSchema),
-  productController.updateProduct
+  productController.updateProduct,
+  cleanupUploadOnError as unknown as any
 );
 
 router

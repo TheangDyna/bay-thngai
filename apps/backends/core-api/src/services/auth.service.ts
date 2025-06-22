@@ -220,7 +220,6 @@ export class AuthService {
         });
         this.userService.createUser(userData);
       }
-      throw error;
     });
 
     return {

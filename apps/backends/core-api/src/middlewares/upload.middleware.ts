@@ -26,6 +26,9 @@ export const processThumbnailAndImages = async (
   try {
     if (req.files?.thumbnail && req.files.thumbnail.length > 0) {
       const thumbnailFile = req.files.thumbnail[0];
+      if (!thumbnailFile.buffer || thumbnailFile.buffer.length === 0) {
+        throw new Error("Invalid or empty thumbnail file");
+      }
       const thumbnailKey = `thumbnails/${generateFileUniqueName()}.webp`;
       const thumbnailBuffer = await processImage(
         thumbnailFile.buffer,
@@ -49,6 +52,11 @@ export const processThumbnailAndImages = async (
       const images = req.files.images;
       const imageUploads = await Promise.all(
         images.map(async (image: Express.Multer.File) => {
+          images.forEach((image) => {
+            if (!image.buffer || image.buffer.length === 0) {
+              throw new Error("Invalid or empty image file");
+            }
+          });
           const imageKey = `images/${generateFileUniqueName()}.webp`;
           const imageBuffer = await processImage(
             image.buffer,

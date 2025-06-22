@@ -1,10 +1,10 @@
-import { Response, NextFunction } from "express";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { NextFunction, Response } from "express";
 import { config } from "../configs/config";
 import { s3Client } from "../configs/s3.config";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { AppError } from "../utils/appError";
-import { MulterRequest } from "./upload.middleware";
 import logger from "../utils/logger";
+import { MulterRequest } from "./upload.middleware";
 
 export const cleanupUploadOnError = async (
   err: Error | AppError,

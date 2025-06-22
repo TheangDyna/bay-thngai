@@ -182,9 +182,12 @@ export class UserRepository {
 
   // WISHLIST
   public async getWishlist(userId: string): Promise<IProduct[]> {
-    const user = await User.findById(userId).select("wishlist").populate({
-      path: "wishlist"
-    });
+    const user = await User.findById(userId)
+      .select("wishlist")
+      .populate({
+        path: "wishlist",
+        populate: [{ path: "cuisines" }, { path: "discount" }]
+      });
     if (!user) throw new AppError("User not found.", 404);
     return user.wishlist as IProduct[];
   }

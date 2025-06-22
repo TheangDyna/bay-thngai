@@ -18,19 +18,20 @@ import { Copy } from "lucide-react";
 interface IShareLinkProps {
   isOpenShareLink: boolean;
   onCloseShareLink: () => void;
+  productId: string;
 }
 
 const ShareLink: React.FC<IShareLinkProps> = ({
   isOpenShareLink,
-  onCloseShareLink
+  onCloseShareLink,
+  productId
 }) => {
   const { toast } = useToast();
+  const link = `https://www.baythngai.shop/${productId}`;
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(
-        "https://ui.shadcn.com/docs/installation"
-      );
+      await navigator.clipboard.writeText(link);
       toast({
         description: "The link has been copied to your clipboard."
       });
@@ -112,7 +113,7 @@ const ShareLink: React.FC<IShareLinkProps> = ({
                   </Label>
                   <Input
                     id="link"
-                    defaultValue="https://ui.shadcn.com/docs/installation"
+                    defaultValue={link}
                     readOnly
                     className="text-gray-800 bg-gray-100 rounded-lg focus:ring focus:ring-gray-200"
                   />

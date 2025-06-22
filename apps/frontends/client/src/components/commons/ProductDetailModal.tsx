@@ -278,6 +278,7 @@ export const ProductDetailModal: FC<ProductDetailModalProps> = ({
         <ShareLink
           isOpenShareLink={shareOpen}
           onCloseShareLink={() => setShareOpen(false)}
+          productId={product._id}
         />
       </DialogContent>
     </Dialog>

@@ -26,7 +26,6 @@ resource "aws_instance" "app" {
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
-    yum install -y gcc-c++ make libpng-devel libjpeg-turbo-devel glib2-devel
     curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
     yum install -y nodejs git
     npm install -g pm2

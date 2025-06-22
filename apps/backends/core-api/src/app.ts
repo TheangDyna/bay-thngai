@@ -31,6 +31,11 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY!
 );
 
+// Health check endpoint
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "OK", uptime: process.uptime() });
+});
+
 // Security middleware
 app.use(rateLimiter);
 app.use(helmet());

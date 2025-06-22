@@ -74,7 +74,7 @@ resource "aws_cloudfront_distribution" "client" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = "arn:aws:acm:ap-southeast-2:390402568377:certificate/f491add0-ced4-4bc3-a5f0-7fc37be9447a"
     ssl_support_method             = "sni-only"
     minimum_protocol_version       = "TLSv1.2_2021"
   }

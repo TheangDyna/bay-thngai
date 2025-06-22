@@ -1,23 +1,23 @@
-# ── find the latest Amazon Linux 2023 ARM (Graviton2) AMI ──
-data "aws_ami" "amazon_linux_2023_arm" {
+# ── Find the latest Amazon Linux 2023 x86_64 AMI ──
+data "aws_ami" "amazon_linux_2023_x86" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["*al2023-ami-*-arm64*"]
+    values = ["*al2023-ami-*-x86_64*"]
   }
 
   filter {
     name   = "architecture"
-    values = ["arm64"]
+    values = ["x86_64"]
   }
 }
 
-# --- EC2 Instance for Core API (Graviton2) ---
+# --- EC2 Instance for Core API (x86_64) ---
 resource "aws_instance" "app" {
-  ami                         = data.aws_ami.amazon_linux_2023_arm.id
-  instance_type               = "t4g.micro"
+  ami                         = data.aws_ami.amazon_linux_2023_x86.id
+  instance_type               = "t3.micro"
   key_name                    = var.key_name
   subnet_id                   = module.vpc.public_subnets[0]
   vpc_security_group_ids      = [aws_security_group.ec2.id]
@@ -26,6 +26,7 @@ resource "aws_instance" "app" {
   user_data = <<-EOF
     #!/bin/bash
     yum update -y
+    yum install -y gcc-c++ make libpng-devel libjpeg-turbo-devel glib2-devel
     curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
     yum install -y nodejs git
     npm install -g pm2
@@ -38,6 +39,36 @@ resource "aws_instance" "app" {
   }
 }
 
+# --- Security Group for EC2 ---
+resource "aws_security_group" "ec2" {
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 4000
+    to_port     = 4000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow CloudFront (restrict to CloudFront IPs in production)
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Restrict SSH to your IP
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-ec2-sg"
+  }
+}
+
 # --- CloudFront Distribution: Core-API ---
 resource "aws_cloudfront_distribution" "api" {
   origin {
@@ -47,7 +78,7 @@ resource "aws_cloudfront_distribution" "api" {
     custom_origin_config {
       http_port              = 4000
       https_port             = 443
-      origin_protocol_policy = "http-only"
+      origin_protocol_policy = "http-only" # Ensure EC2 listens on HTTP port 4000
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
@@ -72,6 +103,10 @@ resource "aws_cloudfront_distribution" "api" {
         forward = "all"
       }
     }
+
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
   }
 
   viewer_certificate {
@@ -84,5 +119,9 @@ resource "aws_cloudfront_distribution" "api" {
     geo_restriction {
       restriction_type = "none"
     }
+  }
+
+  tags = {
+    Name = "${var.project_name}-cloudfront"
   }
 }

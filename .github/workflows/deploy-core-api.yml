@@ -35,6 +35,7 @@ jobs:
           echo "BACKEND_CALLBACK_URL=https://api.baythngai.shop/api/v1/payment/callback" >> $GITHUB_ENV
           echo "FRONTEND_RETURN_SUCCESS_URL=https://client.baythngai.shop/payment-return" >> $GITHUB_ENV
           echo "FRONTEND_RETURN_CANCEL_URL=https://client.baythngai.shop/payment-cancel" >> $GITHUB_ENV
+          echo "AWS_REDIRECT_URI=https://api.baythngai.shop/api/v1/auth/google/callback" >> $GITHUB_ENV
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -87,7 +88,7 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             export CLIENT_URL=${{ env.CLIENT_URL }}
             export ADMIN_URL=${{ env.ADMIN_URL }}
-            export AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}
+            export AWS_REDIRECT_URI=${{ env.AWS_REDIRECT_URI }}
             export AWS_S3_BUCKET_NAME=${{ secrets.AWS_S3_BUCKET_NAME }}
             export ABA_MERCHANT_ID=${{ secrets.ABA_MERCHANT_ID }}
             export ABA_PUBLIC_KEY=${{ secrets.ABA_PUBLIC_KEY }}

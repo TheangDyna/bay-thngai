@@ -55,7 +55,7 @@ jobs:
           TF_VAR_cognito_client_secret: ${{ secrets.AWS_COGNITO_CLIENT_SECRET }}
           TF_VAR_cognito_domain: ${{ secrets.AWS_COGNITO_DOMAIN }}
           TF_VAR_key_name: ${{ secrets.EC2_KEY_NAME }}
-          TF_VAR_aws_redirect_uri: ${{ secrets.AWS_REDIRECT_URI }}
+          TF_VAR_aws_redirect_uri: "https://api.baythngai.shop/api/v1/auth/google/callback"
           TF_VAR_aws_s3_bucket_name: ${{ secrets.AWS_S3_BUCKET_NAME }}
           TF_VAR_aba_merchant_id: ${{ secrets.ABA_MERCHANT_ID }}
           TF_VAR_aba_public_key: ${{ secrets.ABA_PUBLIC_KEY }}

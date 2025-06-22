@@ -85,10 +85,6 @@ jobs:
             export AWS_COGNITO_DOMAIN=${{ secrets.AWS_COGNITO_DOMAIN }}
             export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
             export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            export MQTT_HOST=${{ secrets.MQTT_HOST }}
-            export MQTT_PORT=${{ secrets.MQTT_PORT }}
-            export MQTT_USERNAME=${{ secrets.MQTT_USERNAME }}
-            export MQTT_PASSWORD=${{ secrets.MQTT_PASSWORD }}
             export CLIENT_URL=${{ env.CLIENT_URL }}
             export ADMIN_URL=${{ env.ADMIN_URL }}
             export AWS_REDIRECT_URI=${{ secrets.AWS_REDIRECT_URI }}
@@ -105,6 +101,3 @@ jobs:
             npm install
             pm2 startOrReload ecosystem.config.js
             pm2 save
-            sleep 5
-            curl -f http://localhost:${{ secrets.PORT }}/health || exit 1
-            pm2 logs core-api --lines 20

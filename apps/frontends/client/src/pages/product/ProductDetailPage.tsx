@@ -293,6 +293,7 @@ export default function ProductDetailPage() {
       <ShareLink
         isOpenShareLink={shareOpen}
         onCloseShareLink={() => setShareOpen(false)}
+        productId={product._id}
       />
     </div>
   );

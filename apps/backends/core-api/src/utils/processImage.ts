@@ -10,9 +10,9 @@ export const processImage = async (
   const sharpInstance = sharp(buffer).resize(width, height, { fit: "inside" });
 
   if (format === "webp") {
-    return sharpInstance.webp({ quality }).toBuffer();
+    return await sharpInstance.webp({ quality }).toBuffer();
   } else if (format === "avif") {
-    return sharpInstance.avif({ quality }).toBuffer();
+    return await sharpInstance.avif({ quality }).toBuffer();
   }
 
   throw new Error(`Unsupported format: ${format}`);

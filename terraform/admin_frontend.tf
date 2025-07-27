@@ -93,14 +93,4 @@ resource "aws_s3_bucket_lifecycle_configuration" "admin_cleanup" {
       storage_class = "STANDARD_IA"
     }
   }
-  rule {
-    id     = "expire-old-builds"
-    status = "Enabled"
-    filter {
-      prefix = ""
-    }
-    expiration {
-      days = 30
-    }
-  }
 }
